@@ -18,4 +18,14 @@ describe("OCPPoolFactory", async () => {
         await poolFactory.connect(user1).createPool(usdc.address, 6);
         expect(await poolFactory.getPool(usdc.address)).to.not.equal(AddressZero);
     });
+
+    it("check OCPF.FUNC => redeemPool()", async() => {
+        const f = poolFactory;
+
+        await expect(f.redeemPool(
+            AddressZero,
+            AddressZero,
+            0
+        )).to.be.reverted;
+    })
 });

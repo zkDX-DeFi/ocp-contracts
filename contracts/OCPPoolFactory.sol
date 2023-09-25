@@ -10,6 +10,8 @@ contract OCPPoolFactory is IOCPPoolFactory, Ownable {
     mapping(address => address) public override getPool; // srcToken -> pool
     address public router;
 
+    // todo: discuss it.
+
     modifier onlyRouter() {
         require(msg.sender == router, "OCPPoolFactory: caller is not the router");
         _;
@@ -25,6 +27,7 @@ contract OCPPoolFactory is IOCPPoolFactory, Ownable {
 
     function redeemPool(address _srcToken, address _receiver, uint256 _amount) external override onlyRouter {
         OCPPool(getPool[_srcToken]).redeem(_receiver, _amount);
+        //todo: remove redeemPool() from OCPPool
     }
 
 }

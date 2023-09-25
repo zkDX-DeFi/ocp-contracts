@@ -52,6 +52,12 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         require(_token != address(0), "OCPRouter: token invalid");
         require(_to != address(0), "OCPRouter: receiver invalid");
         require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
+
+        /* fake code */
+        //
+        // A_CHAIN.IOCPPoolFactory(_poolFactoryAddress).createPool();
+        // _TOKEN will be deposited to the `pool`
+
     }
 
     function omniMintETH(
