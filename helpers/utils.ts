@@ -3,7 +3,7 @@ import {CHAIN_ID_LOCAL, CHAIN_ID_LOCAL2} from "./constants";
 
 export async function deployFixture() {
 
-    await deployments.fixture();
+    await deployments.fixture(["poolFactory"]);
 
     const users = {
         owner: await ethers.getNamedSigner("owner"),
@@ -13,22 +13,6 @@ export async function deployFixture() {
 
     const contracts = {
         poolFactory: await ethers.getContract("OCPPoolFactory"),
-        tokenFactory: await ethers.getContract("OCPTokenFactory"),
-        tokenManager: await ethers.getContract("OCPTokenManager"),
-        router: await ethers.getContract("OCPRouter"),
-        bridge: await ethers.getContract("OCPBridge"),
-        lzEndpoint: await ethers.getContract("LZEndpoint"),
-        weth: await ethers.getContract("WETH"),
-
-        poolFactory2: await ethers.getContract("OCPPoolFactory2"),
-        tokenFactory2: await ethers.getContract("OCPTokenFactory2"),
-        tokenManager2: await ethers.getContract("OCPTokenManager2"),
-        router2: await ethers.getContract("OCPRouter2"),
-        bridge2: await ethers.getContract("OCPBridge2"),
-        lzEndpoint2: await ethers.getContract("LZEndpoint2"),
-        weth2: await ethers.getContract("WETH2"),
-
-        ocpTokenFactory: await ethers.getContract("OCPTokenFactory"),
     }
 
     return {...users, ...contracts};
