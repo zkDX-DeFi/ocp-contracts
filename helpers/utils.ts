@@ -12,7 +12,7 @@ export async function deployFixture() {
     }
 
     const contracts = {
-        poolFactory: await ethers.getContract("OCPPoolFactory"),
+        poolFactory: await ethers.getContract("OCPoolFactory"),
     }
 
     return {...users, ...contracts};

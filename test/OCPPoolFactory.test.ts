@@ -17,15 +17,7 @@ describe("OCPPoolFactory", async () => {
         expect(await poolFactory.getPool(usdc.address)).to.equal(AddressZero);
         await poolFactory.connect(user1).createPool(usdc.address, 6);
         expect(await poolFactory.getPool(usdc.address)).to.not.equal(AddressZero);
+
+        await expect(poolFactory.connect(user1).createPool(usdc.address, 6)).to.be.reverted;
     });
-
-    it("check OCPF.FUNC => redeemPool()", async() => {
-        const f = poolFactory;
-
-        await expect(f.redeemPool(
-            AddressZero,
-            AddressZero,
-            0
-        )).to.be.reverted;
-    })
 });

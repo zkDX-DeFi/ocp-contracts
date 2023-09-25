@@ -15,7 +15,7 @@ import "./libraries/Types.sol";
 contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
 
     using SafeERC20 for IERC20;
-    IOCPPoolFactory public poolFactory;
+    IOCPoolFactory public poolFactory;
     IOCPTokenManager public tokenManager;
     IOCPBridge public bridge;
 
@@ -29,7 +29,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     event CachedMint(uint16 chainId, bytes srcAddress, uint256 nonce, address token, uint256 amount, address to, bytes payload, bytes reason);
 
     constructor(address _poolFactory, address _tokenManager, address _weth) {
-        poolFactory = IOCPPoolFactory(_poolFactory);
+        poolFactory = IOCPoolFactory(_poolFactory);
         tokenManager = IOCPTokenManager(_tokenManager);
         defaultSharedDecimals = 8; // up to 184b
         weth = _weth;

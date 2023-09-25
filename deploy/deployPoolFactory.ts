@@ -7,7 +7,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     const {owner} = await getNamedAccounts();
 
     console.log(`>> deploying OCPPoolFactory...`);
-    await deploy('OCPPoolFactory', {
+    await deploy('OCPoolFactory', {
         from: owner,
         args: [],
         log: true
