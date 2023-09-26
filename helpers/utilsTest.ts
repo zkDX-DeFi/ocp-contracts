@@ -4,6 +4,7 @@ import {BigNumber, Wallet} from "ethers";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {deployNew, newWallet} from "./utils";
 import {ONE_THOUSAND_E_18, TOKEN_USDC_NAME} from "./constantsTest";
+import {expect} from "chai";
 
 export async function omniMintToken(token: any, userA: any, amountIn: BigNumber, omniMintAmount: BigNumber, router: any, userB: any, destChainID: number, receiver: Wallet, refund: Wallet, lzTxParams: {
     dstNativeAddr: string;
@@ -160,4 +161,30 @@ export async function deployOT(_userA: any, _lz: any, _tm: any, _srcChainId: any
     );
 
     return ot;
+}
+
+export async function getOCPB_omniMInt(owner: any) {
+    const b = await deployNew(
+        "OCPBridge",
+        [owner.address, AddressZero]
+    );
+    expect(await b.router()).eq(owner.address);
+
+    const _mintParams = {
+        srcToken: AddressZero,
+        srcPool: AddressZero,
+        dstChainId: 0,
+        amount: 0,
+        to: AddressZero,
+        name: "",
+        symbol: "",
+        sharedDecimals: 0
+    }
+    const _payload = "0x";
+    const _lzTxObj = {
+        dstGasForCall: 0,
+        dstNativeAmount: 0,
+        dstNativeAddr: "0x"
+    }
+    return {b, _mintParams, _payload, _lzTxObj};
 }
