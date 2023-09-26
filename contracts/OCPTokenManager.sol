@@ -62,4 +62,7 @@ contract OCPTokenManager is Ownable, IOCPTokenManager {
         assetURIs = new string[](_chainIds.length);
     }
 
+    function updateRouter(address _router) external onlyOwner {
+        router = _router;
+    }
 }
