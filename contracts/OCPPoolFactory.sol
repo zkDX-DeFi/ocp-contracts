@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "./interfaces/IOCPPoolFactory.sol";
-import "./entity/OCPPool.sol";
+import "./entity/OCPool.sol";
 
 contract OCPoolFactory is IOCPoolFactory {
     mapping(address => address) public override getPool; // srcToken -> pool
