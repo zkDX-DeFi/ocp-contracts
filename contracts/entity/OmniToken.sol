@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "@layerzerolabs/solidity-examples/contracts/token/oft/v2/OFTV2.sol";
+import "@layerzerolabs/solidity-examples/contracts/token/oft/OFT.sol";
 import "../interfaces/IOCPTokenManager.sol";
 import "../interfaces/IOCPBridge.sol";
 
-contract OmniToken is OFTV2 {
+contract OmniToken is OFT {
 
     IOCPTokenManager public tokenManager;
     uint16[] public sourceChainIds;
@@ -16,14 +16,13 @@ contract OmniToken is OFTV2 {
     constructor(
         string memory _name,
         string memory _symbol,
-        uint8 _sharedDecimals,
         uint256 _mintAmount,
         address _to,
         address _lzEndpoint,
         address _tokenManager,
         uint16 _srcChainId,
         address _srcPool
-    ) OFTV2(_name, _symbol, _sharedDecimals, _lzEndpoint) {
+    ) OFT (_name, _symbol, _lzEndpoint) {
         if (_mintAmount > 0) _mint(_to, _mintAmount);
         _transferOwnership(_tokenManager);
         sourceChainIds.push(_srcChainId);

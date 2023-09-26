@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract OCPool {
     address public factory;
     IERC20 public token;
-    uint256 public sharedDecimals;
-    uint256 public convertRate;
     bool internal initialized;
 
     /* todo: add onlyRouter */

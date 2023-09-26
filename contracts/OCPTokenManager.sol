@@ -10,15 +10,13 @@ import "./entity/OmniToken.sol";
 contract OCPTokenManager is Ownable, IOCPTokenManager {
 
     address public router;
-    address public bridge;
     IOCPTokenFactory public tokenFactory;
-    mapping(address => mapping(uint16 => address)) public getOmniToken; // srcToken -> chainId -> omniToken
-    mapping(address => mapping(uint16 => address)) public getSourceToken; // omniToken -> srcChainId -> srcToken
 
-    address[] public omniTokens;
-    mapping(address => bool) public isOmniToken;
+    mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
+    mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
+
+    address[] public omniTokenList;
     mapping(uint16 => string) public assetBaseURIs;
-    uint16 public localLzChainId;
 
     event TokenCreated(address indexed srcToken, uint16 indexed chainId, address indexed token);
 
@@ -53,6 +51,20 @@ contract OCPTokenManager is Ownable, IOCPTokenManager {
         string calldata _symbolCheck
     ) external onlyOwner {
         //
+    }
+
+    // TODO: alternative to addSourceToken -- 1
+    function requestAddSourceTokens(
+        address _omniToken,
+        uint16[] calldata _srcChainIds,
+        address[] calldata _srcTokens
+    ) external {
+        // add srcToken => chainId => omniToken
+    }
+
+    // TODO: alternative to addSourceToken -- 2
+    function approveSourceTokens() external {
+        // only Dao or Owner
     }
 
     function getAssetURIs(

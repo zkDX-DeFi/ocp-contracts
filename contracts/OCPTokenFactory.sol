@@ -19,7 +19,6 @@ contract OCPTokenFactory is IOCPTokenFactory, Ownable {
         OmniToken newToken = new OmniToken{salt: keccak256(abi.encodePacked("OCP_CREATE_TOKEN", _mintParams.srcToken))}(
             _mintParams.name,
             _mintParams.symbol,
-            _mintParams.sharedDecimals,
             _mintParams.amount,
             _mintParams.to,
             _lzEndpoint,

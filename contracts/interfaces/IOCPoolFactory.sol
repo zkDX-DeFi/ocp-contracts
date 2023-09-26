@@ -7,7 +7,7 @@ interface IOCPoolFactory {
 
     function getPool(address _token) external view returns (address pool);
 
-    function createPool(address _token, uint8 _sharedDecimals) external returns (address pool);
+    function createPool(address _token) external returns (address pool);
 
 //    function redeemPool(address _srcToken, address _receiver, uint256 _amount) external;
 

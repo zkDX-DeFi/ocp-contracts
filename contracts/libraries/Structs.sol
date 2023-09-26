@@ -17,7 +17,6 @@ library Structs {
         address to;
         string name;
         string symbol;
-        uint8 sharedDecimals;
     }
 
     struct RedeemObj {

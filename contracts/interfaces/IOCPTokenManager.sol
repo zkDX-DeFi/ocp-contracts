@@ -5,9 +5,9 @@ import "../libraries/Structs.sol";
 
 interface IOCPTokenManager {
 
-    function getOmniToken(address _srcToken, uint16 _chainId) external view returns (address token);
+    function omniTokens(address _srcToken, uint16 _chainId) external view returns (address token);
 
-    function getSourceToken(address _omniToken, uint16 _chainId) external view returns (address token);
+    function sourceTokens(address _omniToken, uint16 _chainId) external view returns (address token);
 
     function createToken(Structs.MintObj memory _mintParams, address _lzEndpoint, uint16 _srcChainId) external returns (address token);
 
