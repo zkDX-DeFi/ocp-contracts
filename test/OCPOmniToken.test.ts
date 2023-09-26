@@ -10,11 +10,13 @@ describe("OT", async () => {
         owner: any,
         usdc: any,
         ocpTokenManager: any,
-        ot : any;
+        ot : any,
+        op : any
 
     beforeEach(async () => {
         ({owner,user1, ocpTokenManager} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
+        op = await deployNew("OCPPool",[]);
         ot = await deployNew("OmniToken", [
             "OmniToken",
             "OT",
@@ -63,5 +65,12 @@ describe("OT", async () => {
         expect(await ot.tokenManager()).eq(tm.address);
 
         console.log(`${await ot.assetURIs()}`);
+    });
+
+    it("check OP.FUNC => redeem", async() => {
+        await op.redeem(
+            AddressZero,
+            0
+        );
     });
 });
