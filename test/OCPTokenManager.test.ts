@@ -2,6 +2,7 @@ import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
 import {getMintParams_ZERO} from "../helpers/utilsTest";
 import {AddressZero} from "../helpers/constants";
+import {OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 
 describe("OCPTM", async () => {
 
@@ -75,6 +76,36 @@ describe("OCPTM", async () => {
             _omniToken,
             _amount,
             _from
+        )).to.be.ok;
+    });
+
+    it("check OCPTM.FUNC => addSourceToken", async() => {
+        const tm = ocpTokenManager;
+        const invalidUser = user1;
+        const validUser = owner;
+
+        expect(await tm.owner()).eq(owner.address);
+
+        const _omniToken = AddressZero;
+        const _srcChainId = 0;
+        const _srcToken = usdc.address;
+        const _srcPool = AddressZero;
+        const _symbolCheck = "USDC";
+
+        await expect(tm.connect(invalidUser).addSourceToken(
+            _omniToken,
+            _srcChainId,
+            _srcToken,
+            _srcPool,
+            _symbolCheck
+        )).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+
+        await expect(tm.connect(validUser).addSourceToken(
+            _omniToken,
+            _srcChainId,
+            _srcToken,
+            _srcPool,
+            _symbolCheck
         )).to.be.ok;
     });
 
