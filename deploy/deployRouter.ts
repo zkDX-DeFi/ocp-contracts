@@ -10,7 +10,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
 
     console.log(`>> deploying OCPRouter...`);
 
-    const OCPPoolFactory = await get("OCPPoolFactory");
+    const OCPPoolFactory = await get("OCPoolFactory");
     const OCPTokenManager = await get("OCPTokenManager");
     const wethAddress = await getWethByChainId(chainId);
 
@@ -20,8 +20,8 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
         log: true
     });
 
-    await execute('OCPPoolFactory', {from: owner, log: true}, "updateRouter", OCPRouter.address);
-    await execute('OCPTokenManager', {from: owner, log: true}, "updateRouter", OCPRouter.address);
+    // await execute('OCPoolFactory', {from: owner, log: true}, "updateRouter", OCPRouter.address);
+    // await execute('OCPTokenManager', {from: owner, log: true}, "updateRouter", OCPRouter.address);
 };
 
 export default func;
