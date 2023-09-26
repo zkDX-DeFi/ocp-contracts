@@ -29,4 +29,8 @@ contract OCPTokenFactory is IOCPTokenFactory, Ownable {
         );
         token = address(newToken);
     }
+
+    function updateTokenManager(address _tokenManager) external onlyOwner {
+        tokenManager = _tokenManager;
+    }
 }
