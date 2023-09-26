@@ -124,4 +124,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         require(cm.to != address(0x0), "OCPRouter: no cache found");
     }
 
+    function updateBridge(address _bridge) external onlyOwner {
+        bridge = IOCPBridge(_bridge);
+    }
 }
