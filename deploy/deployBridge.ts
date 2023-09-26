@@ -19,7 +19,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
         log: true
     });
 
-    // await execute('OCPRouter', {from: owner, log: true}, "updateBridge", OCPBridge.address);
+    await execute('OCPRouter', {from: owner, log: true}, "updateBridge", OCPBridge.address);
     // await execute('OCPTokenManager', {from: owner, log: true}, "updateBridge", OCPBridge.address);
 };
 export default func;

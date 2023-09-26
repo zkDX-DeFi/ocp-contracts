@@ -11,11 +11,12 @@ describe("OCPR", async () => {
         owner: any,
         usdc: any,
         ocPoolFactory: any,
+        ocpBridge: any,
         ocpRouter: any
 
 
     beforeEach(async () => {
-        ({owner,user1, ocPoolFactory, ocpRouter} = await deployFixture());
+        ({owner,user1, ocPoolFactory, ocpRouter, ocpBridge} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPR.FUNC => OMNIMINT", async() => {
@@ -130,5 +131,28 @@ describe("OCPR", async () => {
             _refundAddress,
             _payload,
             _lzTxObj, _value)).to.be.revertedWith("OCPRouter: weth not set yet");
+    });
+
+    it("check OCPR.FUNC => quoteLayerZeroFee()", async() => {
+        const r = ocpRouter;
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: "0x"
+        };
+
+        expect( (await r.quoteLayerZeroFee(
+            0,
+            0,
+            "0x",
+            _lzTxObj
+        ))[0]).to.be.eq(0);
+
+        expect( (await r.quoteLayerZeroFee(
+            0,
+            100,
+            "0x",
+            _lzTxObj
+        ))[1]).to.be.eq(0);
     });
 });
