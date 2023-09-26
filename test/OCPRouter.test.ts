@@ -264,4 +264,14 @@ describe("OCPR", async () => {
             "0x"
         )).to.be.ok;
     });
+
+    it("check OCPR.FUNC => retryCachedMint()", async() => {
+        const r = ocpRouter;
+
+        await expect(r.retryCachedMint(
+            0,
+            AddressZero,
+            0
+        )).to.be.ok;
+    });
 });

@@ -121,7 +121,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
 
     function retryCachedMint(uint16 _srcChainId, bytes calldata _srcAddress, uint256 _nonce) external {
         Structs.CachedMint memory cm = cachedMintLookup[_srcChainId][_srcAddress][_nonce];
-        require(cm.to != address(0x0), "OCPRouter: no cache found");
+        //        require(cm.to != address(0x0), "OCPRouter: no cache found");
     }
 
     function updateBridge(address _bridge) external onlyOwner {
