@@ -2,6 +2,7 @@ import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
 import {AddressZero} from "../helpers/constants";
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
+import {parseEther} from "ethers/lib/utils";
 
 describe("OCPPoolFactory", async () => {
 
@@ -65,5 +66,62 @@ describe("OCPPoolFactory", async () => {
             "0x",
             _lzTxObj
         )).to.be.ok;
+    });
+
+    it("check OCPR.FUNC => omniMintETH", async() => {
+        const r = ocpRouter;
+
+        let _remoteChainId = 0;
+        let _amountIn = 0;
+        let _to = AddressZero;
+        let _refundAddress = AddressZero;
+        let _payload = "0x";
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: "0x"
+        }
+
+        await expect(r.omniMintETH(
+            _remoteChainId,
+            _amountIn,
+            _to,
+            _refundAddress,
+            _payload,
+            _lzTxObj
+        )).to.be.revertedWith("OCPRouter: send value must be greater than amountIn");
+
+        const _value = {value: parseEther("0.001")};
+        await expect(r.omniMintETH(
+            _remoteChainId,
+            _amountIn,
+            _to,
+            _refundAddress,
+            _payload,
+            _lzTxObj, _value
+        )).to.be.revertedWith("OCPRouter: receiver invalid");
+
+        _to = user1.address;
+        await expect(r.omniMintETH(
+            _remoteChainId,
+            _amountIn,
+            _to,
+            _refundAddress,
+            _payload,
+            _lzTxObj, _value
+        )).to.be.revertedWith("OCPRouter: amountIn must be greater than 0");
+
+
+
+
+
+
+
+
+
+
+
+
+
     });
 });
