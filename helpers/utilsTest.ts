@@ -228,3 +228,21 @@ export async function getOCPR_BRIDGE_SETTINGS(owner: any) {
     await r.connect(owner).updateBridge(owner.address);
     return {r};
 }
+
+export const getMintParams_ZERO = {
+    srcToken: AddressZero,
+        srcPool: AddressZero,
+    dstChainId: 0,
+    amount: 0,
+    to: AddressZero,
+    name: "",
+    symbol: "",
+    sharedDecimals: 0
+};
+
+export const getRedeemObj_ZERO = {
+    srcToken: AddressZero,
+    dstChainId: 0,
+    amount: 0,
+    to: AddressZero
+}

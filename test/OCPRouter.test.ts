@@ -1,7 +1,13 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
 import {AddressZero} from "../helpers/constants";
-import {getOCPB_omniMInt, getOCPB_omniRedeem, getOCPR_BRIDGE_SETTINGS, getOCPR_WETH_ZERO} from "../helpers/utilsTest";
+import {
+    getMintParams_ZERO,
+    getOCPB_omniMInt,
+    getOCPB_omniRedeem,
+    getOCPR_BRIDGE_SETTINGS,
+    getOCPR_WETH_ZERO, getRedeemObj_ZERO
+} from "../helpers/utilsTest";
 import {parseEther} from "ethers/lib/utils";
 import {OCPRouter} from "../typechain-types";
 
@@ -211,16 +217,7 @@ describe("OCPR", async () => {
     it("check OCPR.FUNC => omniMintRemote()", async() => {
         const {r} = await getOCPR_BRIDGE_SETTINGS(owner);
         expect(await r.bridge()).eq(owner.address);
-        const _mintParams = {
-            srcToken: AddressZero,
-            srcPool: AddressZero,
-            dstChainId: 0,
-            amount: 0,
-            to: AddressZero,
-            name: "",
-            symbol: "",
-            sharedDecimals: 0
-        }
+        const _mintParams = getMintParams_ZERO
         const _payload = "0x";
         const invalidUser = user1;
         await expect(r.connect(invalidUser).omniMintRemote(
@@ -242,5 +239,29 @@ describe("OCPR", async () => {
             0, // _dstGasForCall
             _payload
         );
+    });
+
+    it("check OCPR.FUNC => omniRedeemRemote()", async() => {
+        const {r} = await getOCPR_BRIDGE_SETTINGS(owner);
+        const _redeemParams = getRedeemObj_ZERO;
+        const invalidUser = user1;
+
+        await expect(r.connect(invalidUser).omniRedeemRemote(
+            0,
+            AddressZero,
+            0,
+            _redeemParams,
+            0, // _dstGasForCall = 0
+            "0x"
+        )).to.be.revertedWith("OCPRouter: caller is not the bridge");
+
+        await expect(r.omniRedeemRemote(
+            0,
+            AddressZero,
+            0,
+            _redeemParams,
+            0, // _dstGasForCall = 0
+            "0x"
+        )).to.be.ok;
     });
 });
