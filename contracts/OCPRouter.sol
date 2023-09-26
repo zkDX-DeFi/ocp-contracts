@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IOCPPoolFactory.sol";
+import "./interfaces/IOCPoolFactory.sol";
 import "./interfaces/IOCPTokenManager.sol";
 import "./interfaces/IOCPRouter.sol";
 import "./interfaces/IOCPReceiver.sol";
