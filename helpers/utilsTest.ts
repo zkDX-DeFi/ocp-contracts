@@ -188,3 +188,25 @@ export async function getOCPB_omniMInt(owner: any) {
     }
     return {b, _mintParams, _payload, _lzTxObj};
 }
+
+export async function getOCPB_omniRedeem(owner: any) {
+    const b = await deployNew(
+        "OCPBridge",
+        [owner.address, AddressZero]
+    );
+    expect(await b.router()).eq(owner.address);
+
+    const _redeemParams = {
+        srcToken: AddressZero,
+        dstChainId: 0,
+        amount: 0,
+        to: AddressZero,
+    }
+    const _payload = "0x";
+    const _lzTxObj = {
+        dstGasForCall: 0,
+        dstNativeAmount: 0,
+        dstNativeAddr: "0x"
+    }
+    return {b, _redeemParams, _payload, _lzTxObj};
+}
