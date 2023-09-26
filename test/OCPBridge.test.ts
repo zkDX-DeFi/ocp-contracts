@@ -3,7 +3,7 @@ import {expect} from "chai";
 import {AddressZero} from "../helpers/constants";
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 
-describe("OCPPoolFactory", async () => {
+describe("OCPB", async () => {
 
     let user1: any,
         owner: any,

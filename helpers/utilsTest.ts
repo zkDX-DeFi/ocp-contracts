@@ -5,6 +5,7 @@ import {formatEther, parseEther} from "ethers/lib/utils";
 import {deployNew, newWallet} from "./utils";
 import {ONE_THOUSAND_E_18, TOKEN_USDC_NAME} from "./constantsTest";
 import {expect} from "chai";
+import {OCPRouter__factory} from "../typechain-types";
 
 export async function omniMintToken(token: any, userA: any, amountIn: BigNumber, omniMintAmount: BigNumber, router: any, userB: any, destChainID: number, receiver: Wallet, refund: Wallet, lzTxParams: {
     dstNativeAddr: string;
@@ -209,4 +210,12 @@ export async function getOCPB_omniRedeem(owner: any) {
         dstNativeAddr: "0x"
     }
     return {b, _redeemParams, _payload, _lzTxObj};
+}
+
+export async function getOCPR_WETH_ZERO(owner: any) {
+    const r = await deployNew(
+        "OCPRouter",
+        [owner.address, owner.address, AddressZero]);
+
+    return {r};
 }

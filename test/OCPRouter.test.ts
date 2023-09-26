@@ -1,10 +1,11 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
 import {AddressZero} from "../helpers/constants";
-import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
+import {getOCPB_omniMInt, getOCPB_omniRedeem, getOCPR_WETH_ZERO} from "../helpers/utilsTest";
 import {parseEther} from "ethers/lib/utils";
+import {OCPRouter} from "../typechain-types";
 
-describe("OCPPoolFactory", async () => {
+describe("OCPR", async () => {
 
     let user1: any,
         owner: any,
@@ -111,17 +112,23 @@ describe("OCPPoolFactory", async () => {
             _lzTxObj, _value
         )).to.be.revertedWith("OCPRouter: amountIn must be greater than 0");
 
+        _amountIn = 100;
+        await expect(r.omniMintETH(
+            _remoteChainId,
+            _amountIn,
+            _to,
+            _refundAddress,
+            _payload,
+            _lzTxObj, _value
+        )).to.be.ok;
 
-
-
-
-
-
-
-
-
-
-
-
+        const {r: r2} = await getOCPR_WETH_ZERO(owner);
+        await expect(r2.omniMintETH(
+            _remoteChainId,
+            100,
+            _to,
+            _refundAddress,
+            _payload,
+            _lzTxObj, _value)).to.be.revertedWith("OCPRouter: weth not set yet");
     });
 });
