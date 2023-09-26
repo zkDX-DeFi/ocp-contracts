@@ -192,7 +192,19 @@ describe("OCPR", async () => {
             "0x",
             _lzTxObj
         )).to.be.ok;
+    });
 
+    it("check OCPR.FUNC => updateBridge()", async () => {
+        const {r} = await getOCPR_WETH_ZERO(owner);
+        const invalidUser = user1;
+        expect(await r.owner()).eq(owner.address);
 
+        await expect(r.connect(invalidUser)
+            .updateBridge(owner.address))
+            .to.be.revertedWith("Ownable: caller is not the owner");
+
+        expect(await r.bridge()).eq(AddressZero);
+        await r.updateBridge(owner.address);
+        expect(await r.bridge()).eq(owner.address);
     });
 });
