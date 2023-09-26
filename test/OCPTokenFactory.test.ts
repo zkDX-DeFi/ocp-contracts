@@ -1,5 +1,7 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
+import {getMintParams_ZERO} from "../helpers/utilsTest";
+import {AddressZero} from "../helpers/constants";
 
 describe("OCPTF", async () => {
 
@@ -26,5 +28,25 @@ describe("OCPTF", async () => {
 
         await expect(f.updateTokenManager(user1.address))
             .to.be.ok;
+    });
+
+    it("check OCPTF.FUNC => createToken", async() => {
+        const f = ocpTokenFactory;
+        await f.updateTokenManager(owner.address);
+        const _mintParams = getMintParams_ZERO;
+
+        const invalidUser = user1;
+        await expect(f
+            .connect(invalidUser)
+            .createToken(
+                _mintParams,
+                AddressZero,
+                0)).to.be.revertedWith("OCPTokenFactory: caller is not the tokenManager");
+
+        await expect(f.createToken(
+            _mintParams,
+            AddressZero,
+            0
+        )).to.be.ok;
     });
 });
