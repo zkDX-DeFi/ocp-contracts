@@ -70,4 +70,18 @@ describe("OCPPoolFactory", async () => {
             _lzTxObj
         );
     });
+    it("check OCPB.FUNC => quoteLayerZeroFee", async() => {
+        const b = ocpBridge;
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: "0x"
+        }
+        console.log(`${await b.quoteLayerZeroFee(
+            0,
+            0,
+            "0x",
+            _lzTxObj
+        )}`);
+    });
 });
