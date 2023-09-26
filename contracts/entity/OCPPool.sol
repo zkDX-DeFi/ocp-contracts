@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract OCPPool {
+contract OCPool {
     address public factory;
     IERC20 public token;
     uint256 public sharedDecimals;

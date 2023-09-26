@@ -16,7 +16,7 @@ describe("OT", async () => {
     beforeEach(async () => {
         ({owner,user1, ocpTokenManager} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
-        op = await deployNew("OCPPool",[]);
+        op = await deployNew("OCPool",[]);
         ot = await deployNew("OmniToken", [
             "OmniToken",
             "OT",
