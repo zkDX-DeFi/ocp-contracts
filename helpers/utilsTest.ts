@@ -219,3 +219,12 @@ export async function getOCPR_WETH_ZERO(owner: any) {
 
     return {r};
 }
+
+export async function getOCPR_BRIDGE_SETTINGS(owner: any) {
+    const r = await deployNew(
+        "OCPRouter",
+        [owner.address, owner.address, AddressZero]);
+
+    await r.connect(owner).updateBridge(owner.address);
+    return {r};
+}

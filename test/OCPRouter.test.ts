@@ -1,7 +1,7 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
 import {AddressZero} from "../helpers/constants";
-import {getOCPB_omniMInt, getOCPB_omniRedeem, getOCPR_WETH_ZERO} from "../helpers/utilsTest";
+import {getOCPB_omniMInt, getOCPB_omniRedeem, getOCPR_BRIDGE_SETTINGS, getOCPR_WETH_ZERO} from "../helpers/utilsTest";
 import {parseEther} from "ethers/lib/utils";
 import {OCPRouter} from "../typechain-types";
 
@@ -206,5 +206,41 @@ describe("OCPR", async () => {
         expect(await r.bridge()).eq(AddressZero);
         await r.updateBridge(owner.address);
         expect(await r.bridge()).eq(owner.address);
+    });
+
+    it("check OCPR.FUNC => omniMintRemote()", async() => {
+        const {r} = await getOCPR_BRIDGE_SETTINGS(owner);
+        expect(await r.bridge()).eq(owner.address);
+        const _mintParams = {
+            srcToken: AddressZero,
+            srcPool: AddressZero,
+            dstChainId: 0,
+            amount: 0,
+            to: AddressZero,
+            name: "",
+            symbol: "",
+            sharedDecimals: 0
+        }
+        const _payload = "0x";
+        const invalidUser = user1;
+        await expect(r.connect(invalidUser).omniMintRemote(
+            0,
+            AddressZero,
+            0,
+            true, //_needDeploy = true
+            _mintParams,
+            0, // _dstGasForCall
+            _payload
+        )).to.be.revertedWith("OCPRouter: caller is not the bridge");
+
+        await r.omniMintRemote(
+            0,
+            AddressZero,
+            0,
+            true, //_needDeploy = true
+            _mintParams,
+            0, // _dstGasForCall
+            _payload
+        );
     });
 });
