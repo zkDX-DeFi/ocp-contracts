@@ -39,6 +39,8 @@ contract OCPBridge is LzApp, IOCPBridge {
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
     ) external payable onlyRouter {
+        // fake code
+        _blockingLzReceive(0,"0x",0,"0x");
     }
 
     function quoteLayerZeroFee(
