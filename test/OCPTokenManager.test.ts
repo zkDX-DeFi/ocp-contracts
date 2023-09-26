@@ -56,4 +56,26 @@ describe("OCPTM", async () => {
             .to.be.ok;
     });
 
+    it("check OCPTM.FUNC => omniBurn", async() => {
+        const tm = ocpTokenManager;
+        const invalidUser = user1;
+        const validUser = owner;
+        await tm.updateRouter(validUser.address);
+
+        const _omniToken = AddressZero;
+        const _amount = 0;
+        const _from = AddressZero;
+        await expect(tm.connect(invalidUser).omniBurn(
+            _omniToken,
+            _amount,
+            _from
+        )).to.be.revertedWith("OCPTokenManager: caller is not the router");
+
+        await expect(tm.connect(validUser).omniBurn(
+            _omniToken,
+            _amount,
+            _from
+        )).to.be.ok;
+    });
+
 });
