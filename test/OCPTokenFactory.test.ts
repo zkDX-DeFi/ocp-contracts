@@ -17,8 +17,14 @@ describe("OCPTF", async () => {
     it("check OCPTF.FUNC => updateTokenManager", async() => {
         const f = ocpTokenFactory;
         const tm = ocpTokenManager;
-
         expect(await f.tokenManager()).eq(tm.address);
-        expect(await f.owner()).eq(owner.address);
+
+        const invalidUser = user1;
+        await expect(f.connect(invalidUser)
+            .updateTokenManager(user1.address))
+            .to.be.reverted;
+
+        await expect(f.updateTokenManager(user1.address))
+            .to.be.ok;
     });
 });
