@@ -43,4 +43,16 @@ describe("OT", async () => {
         await expect(ot.connect(validUser).mint(
             owner.address, 2000)).to.be.ok;
     });
+
+    it("check OT.FUNC => BURN", async() => {
+        const validUser = owner;
+        const invalidUser = user1;
+
+        await expect(ot.connect(invalidUser).burn(
+            owner.address, 2000)).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+
+        await expect(ot.connect(validUser).burn(
+            owner.address, 2000)).to.be.ok;
+
+    });
 });
