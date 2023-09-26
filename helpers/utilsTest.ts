@@ -246,3 +246,18 @@ export const getRedeemObj_ZERO = {
     amount: 0,
     to: AddressZero
 }
+
+export async function getOT_ZERO(owner: any, mintAmount: any, tmAddress: any) {
+    const ot = await deployNew("OmniToken", [
+        "OmniToken",
+        "OT",
+        18,
+        mintAmount,
+        owner.address,
+        AddressZero,
+        tmAddress,
+        0,
+        AddressZero
+    ]);
+    return {ot};
+}
