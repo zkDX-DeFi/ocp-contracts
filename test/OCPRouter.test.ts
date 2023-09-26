@@ -155,4 +155,44 @@ describe("OCPR", async () => {
             _lzTxObj
         ))[1]).to.be.eq(0);
     });
+
+    it("check OCPR.FUNC => omniRedeem()", async() => {
+        const {r} = await getOCPR_WETH_ZERO(owner);
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: "0x"
+        };
+        await expect(r.omniRedeem(
+            0,
+            AddressZero,
+            0,
+            AddressZero, //to = address(0)
+            AddressZero,
+            "0x",
+            _lzTxObj
+        )).to.be.revertedWith("OCPRouter: receiver invalid");
+
+        await expect(r.omniRedeem(
+            0,
+            AddressZero,
+            0,
+            user1.address, //to != address(0)
+            AddressZero, //refundAddress = address(0)
+            "0x",
+            _lzTxObj
+        )).to.be.revertedWith("OCPRouter: amountIn must be greater than 0");
+
+        await expect(r.omniRedeem(
+            0,
+            AddressZero,
+            100, //amountIn = 100
+            user1.address, //to != address(0)
+            AddressZero, //refundAddress = address(0)
+            "0x",
+            _lzTxObj
+        )).to.be.ok;
+
+
+    });
 });
