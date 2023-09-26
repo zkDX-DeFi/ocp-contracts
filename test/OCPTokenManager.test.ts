@@ -109,4 +109,15 @@ describe("OCPTM", async () => {
         )).to.be.ok;
     });
 
+    it("check OCPTM.FUNC => getAssetURIs", async() => {
+        const tm = ocpTokenManager;
+        const _chainIds = [0,0];
+        const _pools = [AddressZero, AddressZero];
+
+        console.log(`${await tm.getAssetURIs(
+            _chainIds,
+            _pools
+        )}`);
+    });
+
 });
