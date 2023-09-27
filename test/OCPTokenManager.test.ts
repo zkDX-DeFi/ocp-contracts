@@ -91,7 +91,7 @@ describe("OCPTM", async () => {
             _srcChainIds,
             _srcTokens
         );
-    })
+    });
 
     it("createOmniToken suc", async () => {
         let mintAmount = parseEther("1000");
@@ -116,5 +116,30 @@ describe("OCPTM", async () => {
         // check balances
         expect(await omniToken.totalSupply()).to.equal(mintAmount);
         expect(await omniToken.balanceOf(user2.address)).to.equal(mintAmount);
+    });
+
+    //added due to changes cb66d58995cd8d91c061e084b048cac4c3469799
+    it("createOmniToken suc V2", async () => {
+        const tm = ocpTokenManager;
+        const mintAmount = parseEther("1000");
+        const _mintParams = {
+            srcToken: usdc.address,
+            amount: mintAmount,
+            to: user2.address,
+            name: "USDC",
+            symbol: "USDC"
+        };
+        const _srcChainId = CHAIN_ID_LOCAL2;
+        expect(await tm.omniTokens(_mintParams.srcToken, _srcChainId)).to.equal(AddressZero);
+        await ocpTokenManager.connect(user1).createOmniToken(
+            _mintParams,
+            AddressZero, CHAIN_ID_LOCAL2
+        );
+
+        expect(await tm.omniTokens(_mintParams.srcToken, _srcChainId)).to.not.equal(AddressZero);
+        await ocpTokenManager.connect(user1).createOmniToken(
+            _mintParams,
+            AddressZero, CHAIN_ID_LOCAL2
+        );
     });
 });
