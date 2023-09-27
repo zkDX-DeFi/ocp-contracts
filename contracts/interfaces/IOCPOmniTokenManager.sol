@@ -15,13 +15,13 @@ interface IOCPOmniTokenManager {
 
     function omniBurn(address _omniToken, uint256 _amount, address _from) external;
 
-    function getAssetURIs(uint16[] calldata _chainIds, address[] calldata _pools) external view returns (string[] memory assetURIs);
+//    function getAssetURIs(uint16[] calldata _chainIds, address[] calldata _pools) external view returns (string[] memory assetURIs);
 
-    function addSourceToken(
-        address _omniToken,
-        uint16 _srcChainId,
-        address _srcToken,
-        address _srcPool,
-        string calldata _symbolCheck
-    ) external;
+//    function addSourceToken(
+//        address _omniToken,
+//        uint16 _srcChainId,
+//        address _srcToken,
+//        address _srcPool,
+//        string calldata _symbolCheck
+//    ) external;
 }

@@ -24,7 +24,6 @@ describe("OCPTM", async () => {
 
         await tm.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
     });
-
     it("check OCPTM.FUNC => updateRouter", async () => {
         const tm = ocpTokenManager;
 
@@ -38,7 +37,6 @@ describe("OCPTM", async () => {
         await expect(tm.updateRouter(validValue)).to.be.ok;
         expect(await tm.router()).eq(validValue)
     });
-
     it("check OCPTM.FUNC => omniMint", async () => {
         const tm = ocpTokenManager;
 
@@ -56,7 +54,6 @@ describe("OCPTM", async () => {
             tm.omniMint(_srcToken.address, _dstChainId, _amount, _to.address))
             .to.be.ok;
     });
-
     it("check OCPTM.FUNC => omniBurn", async () => {
         const tm = ocpTokenManager;
         const invalidUser = user1;
@@ -78,53 +75,10 @@ describe("OCPTM", async () => {
             _from
         )).to.be.ok;
     });
-
-    it("check OCPTM.FUNC => addSourceToken", async () => {
-        const tm = ocpTokenManager;
-        const invalidUser = user1;
-        const validUser = owner;
-
-        expect(await tm.owner()).eq(owner.address);
-
-        const _omniToken = AddressZero;
-        const _srcChainId = 0;
-        const _srcToken = usdc.address;
-        const _srcPool = AddressZero;
-        const _symbolCheck = "USDC";
-
-        await expect(tm.connect(invalidUser).addSourceToken(
-            _omniToken,
-            _srcChainId,
-            _srcToken,
-            _srcPool,
-            _symbolCheck
-        )).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
-
-        await expect(tm.connect(validUser).addSourceToken(
-            _omniToken,
-            _srcChainId,
-            _srcToken,
-            _srcPool,
-            _symbolCheck
-        )).to.be.ok;
-    });
-
-    it("check OCPTM.FUNC => getAssetURIs", async () => {
-        const tm = ocpTokenManager;
-        const _chainIds = [0, 0];
-        const _pools = [AddressZero, AddressZero];
-
-        console.log(`${await tm.getAssetURIs(
-            _chainIds,
-            _pools
-        )}`);
-    });
-
     it("check OCPTM.FUNC => approveSourceTokens", async () => {
         const tm = ocpTokenManager;
         await tm.approveSourceTokens();
     });
-
     it("check OCPTM.FUNC => requestAddSourceTokens()", async () => {
         const tm = ocpTokenManager;
         const _omniToken = usdc;
@@ -136,5 +90,4 @@ describe("OCPTM", async () => {
             _srcTokens
         );
     })
-
 });

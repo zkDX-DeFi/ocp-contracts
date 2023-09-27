@@ -35,15 +35,15 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         // OmniToken.burn()
     }
 
-    function addSourceToken(
-        address _omniToken,
-        uint16 _srcChainId,
-        address _srcToken,
-        address _srcPool,
-        string calldata _symbolCheck
-    ) external onlyOwner {
-        //
-    }
+//    function addSourceToken(
+//        address _omniToken,
+//        uint16 _srcChainId,
+//        address _srcToken,
+//        address _srcPool,
+//        string calldata _symbolCheck
+//    ) external onlyOwner {
+//        //
+//    }
 
     // TODO: alternative to addSourceToken -- 1
     function requestAddSourceTokens(
@@ -59,12 +59,12 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         // only Dao or Owner
     }
 
-    function getAssetURIs(
-        uint16[] calldata _chainIds,
-        address[] calldata _pools
-    ) public view override returns (string[] memory assetURIs){
-        assetURIs = new string[](_chainIds.length);
-    }
+//    function getAssetURIs(
+//        uint16[] calldata _chainIds,
+//        address[] calldata _pools
+//    ) public view override returns (string[] memory assetURIs){
+//        assetURIs = new string[](_chainIds.length);
+//    }
 
     function updateRouter(address _router) external onlyOwner {
         router = _router;
