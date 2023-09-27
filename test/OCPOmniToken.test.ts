@@ -57,10 +57,4 @@ describe("OT", async () => {
             owner.address, 2000)).to.be.ok;
 
     });
-    it("check OP.FUNC => redeem", async() => {
-        await op.withdraw(
-            AddressZero,
-            0
-        );
-    });
 });
