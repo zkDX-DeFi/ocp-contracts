@@ -1,26 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
-
 import "@layerzerolabs/solidity-examples/contracts/lzApp/LzApp.sol";
 import "./interfaces/IOCPBridge.sol";
 import "./libraries/Structs.sol";
 import "./libraries/Types.sol";
 
 contract OCPBridge is LzApp, IOCPBridge {
-
     address public router;
     mapping(uint16 => mapping(uint8 => uint256)) public gasLookup; // chainId -> type -> gas
     bool public useLzToken;
-
     constructor(address _router, address _lzEndpoint) LzApp(_lzEndpoint) {
         router = _router;
     }
-
     modifier onlyRouter() {
         require(msg.sender == address(router), "OCPBridge: caller is not the router");
         _;
     }
 
+    //TYPES = 1
     function omniMint(
         uint16 _remoteChainId,
         address payable _refundAddress,
@@ -31,19 +28,6 @@ contract OCPBridge is LzApp, IOCPBridge {
     ) external payable onlyRouter {
         _blockingLzReceive(0,"0x",0,"0x");
     }
-
-    // todo: v0.2 to implement omniRedeem
-//    function omniRedeem(
-//        uint16 _remoteChainId,
-//        address payable _refundAddress,
-//        uint8 _type,
-//        Structs.RedeemObj memory _redeemParams,
-//        bytes memory _payload,
-//        Structs.LzTxObj memory _lzTxParams
-//    ) external payable onlyRouter {
-//        // fake code
-//        _blockingLzReceive(0,"0x",0,"0x");
-//    }
 
     function quoteLayerZeroFee(
         uint16 _remoteChainId,
