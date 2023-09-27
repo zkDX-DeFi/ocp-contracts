@@ -21,40 +21,73 @@ describe("OCPB", async () => {
     });
     it("check OCPB.FUNC => omniMint", async () => {
         const {b, _mintParams, _payload, _lzTxObj} = await getOCPB_omniMInt(owner);
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        await expect(b.connect(user1).omniMint(
+            _remoteChainId,
+            AddressZero,
+            0,
+            _mintParams,
+            _payload,
+            _lzTxObj
+        )).to.be.reverted;
 
-        // await expect(b.connect(user1).omniMint(
-        //     0,
-        //     AddressZero,
-        //     0,
-        //     _mintParams,
-        //     _payload,
-        //     _lzTxObj
-        // )).to.be.reverted;
-        //
-        // await b.omniMint(
-        //     0,
-        //     AddressZero,
-        //     0,
-        //     _mintParams,
-        //     _payload,
-        //     _lzTxObj
-        // );
+        await expect(b.omniMint(
+            _remoteChainId,
+            AddressZero,
+            0,
+            _mintParams,
+            _payload,
+            _lzTxObj
+        )).to.be.reverted;
     });
 
-
-    it("check OCPB.FUNC => quoteLayerZeroFee", async () => {
+    it("check OCPB.FUNC => omniMint v2", async () => {
         const b = ocpBridge;
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+
+        const _mintParams = {
+            srcToken: AddressZero,
+            srcPool: AddressZero,
+            dstChainId: 0,
+            amount: 0,
+            to: AddressZero,
+            name: "",
+            symbol: "",
+            sharedDecimals: 0
+        }
+        const _payload = "0x";
         const _lzTxObj = {
             dstGasForCall: 0,
             dstNativeAmount: 0,
             dstNativeAddr: "0x"
         }
-        // console.log(`${await b.quoteLayerZeroFee(
-        //     0,
-        //     0,
-        //     "0x",
-        //     _lzTxObj
-        // )}`);
+
+        await expect(b.omniMint(
+            _remoteChainId,
+            AddressZero,
+            0,
+            _mintParams,
+            _payload,
+            _lzTxObj
+        )).to.be.ok;
+    });
+
+
+    it("check OCPB.FUNC => quoteLayerZeroFee", async () => {
+        const b = ocpBridge;
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _type = 1;
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: "0x"
+        }
+        console.log(`${await b.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            "0x",
+            _lzTxObj
+        )}`);
     });
 
     it("omniMint messaging reverted, not enough fees", async () => {
