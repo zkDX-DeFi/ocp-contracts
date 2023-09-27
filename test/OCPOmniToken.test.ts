@@ -67,7 +67,7 @@ describe("OT", async () => {
     });
 
     it("check OP.FUNC => redeem", async() => {
-        await op.redeem(
+        await op.withdraw(
             AddressZero,
             0
         );
