@@ -251,7 +251,6 @@ export async function getOT_ZERO(owner: any, mintAmount: any, tmAddress: any) {
     const ot = await deployNew("OmniToken", [
         "OmniToken",
         "OT",
-        18,
         mintAmount,
         owner.address,
         AddressZero,

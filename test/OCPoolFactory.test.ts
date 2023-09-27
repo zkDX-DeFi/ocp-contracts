@@ -19,9 +19,9 @@ describe("OCPPoolFactory", async () => {
     it("create pool suc", async () => {
         const f = ocPoolFactory;
         expect(await f.getPool(usdc.address)).to.equal(AddressZero);
-        await f.connect(user1).createPool(usdc.address, 6);
+        await f.connect(user1).createPool(usdc.address);
         expect(await f.getPool(usdc.address)).to.not.equal(AddressZero);
 
-        await expect(f.connect(user1).createPool(usdc.address, 6)).to.be.reverted;
+        await expect(f.connect(user1).createPool(usdc.address)).to.be.reverted;
     });
 });

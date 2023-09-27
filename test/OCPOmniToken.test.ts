@@ -20,7 +20,6 @@ describe("OT", async () => {
         ot = await deployNew("OmniToken", [
             "OmniToken",
             "OT",
-            18,
             1000,
             owner.address,
             AddressZero,
