@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.1.0](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.0.0...v1.1.0) (2023-09-27)
+
+
+### Bug Fixes
+
+* code coverage = 100% ([9e901c9](https://github.com/zkDX-DeFi/ocp-contracts/commit/9e901c94c1dcbf99583aedeefa3a050754430eb3))
+* modify OCPool.sol ([105b674](https://github.com/zkDX-DeFi/ocp-contracts/commit/105b674cc995b127e408d3aaf8ff8503339bfc46))
+* removed unused code ([4b8b6ac](https://github.com/zkDX-DeFi/ocp-contracts/commit/4b8b6ac30680b4cc6b041dc827b53122811bf641))
+
+
+### Code Refactoring
+
+* Bridge.sol ([7eeeaa6](https://github.com/zkDX-DeFi/ocp-contracts/commit/7eeeaa61a6ed08adf30994bc66c71ea1ae8fa461))
+* IOCPB.SOL ([626215b](https://github.com/zkDX-DeFi/ocp-contracts/commit/626215b68c03ef0186baac2e28760b7c485cc9fb))
+* IOCPOmniTokenFactory ([47c427e](https://github.com/zkDX-DeFi/ocp-contracts/commit/47c427e061201e9aba64eb5f22dbef3fd854075d))
+* IOCPool ([af88a0d](https://github.com/zkDX-DeFi/ocp-contracts/commit/af88a0dde6d8c45e12ed49d2dde27b635c4f7d54))
+* IOT ([021af30](https://github.com/zkDX-DeFi/ocp-contracts/commit/021af30be5306d3ab07c027ebdda68cf0365515a))
+* IWETH ([dc87583](https://github.com/zkDX-DeFi/ocp-contracts/commit/dc875831ab5ae863855171662c475e1bcaf39402))
+* move createToken to TokenManager.sol ([67652fd](https://github.com/zkDX-DeFi/ocp-contracts/commit/67652fde922f258cbae29267c2dfb22c4eef1f9f))
+* OCPF.sol ([3654693](https://github.com/zkDX-DeFi/ocp-contracts/commit/3654693c67ddec80188e241b875c3eb284a1b888))
+* OCPOmniTokenFactory.sol ([f275dbd](https://github.com/zkDX-DeFi/ocp-contracts/commit/f275dbd1267bc1a1563dcca7f1dad951eb3bb038))
+* OCPool.sol ([bbe54bd](https://github.com/zkDX-DeFi/ocp-contracts/commit/bbe54bdb3ecfe9312f576417c965d1c3c55e1f69))
+* OCPOTM ([d1d2d1e](https://github.com/zkDX-DeFi/ocp-contracts/commit/d1d2d1e61246b886f83076a32f0852a2ff75e8bc))
+* OCPOTM ([097ea61](https://github.com/zkDX-DeFi/ocp-contracts/commit/097ea61c8aa91c44faab9289a17f5fe4b68b1bd4))
+* OCPTokenFactory =&gt; OCPOmniTokenFactory ([2d90112](https://github.com/zkDX-DeFi/ocp-contracts/commit/2d9011205e106676a848347f127055ee378abab1))
+* OmniToken.sol ([6d4f093](https://github.com/zkDX-DeFi/ocp-contracts/commit/6d4f093d3812837e05ad2a742e08dfbb52691a71))
+* remove unused code ([25bc9e4](https://github.com/zkDX-DeFi/ocp-contracts/commit/25bc9e4c9aa8506a924e6b5b3e71d3650a46b534))
+* removed unused code ([cf880b2](https://github.com/zkDX-DeFi/ocp-contracts/commit/cf880b2cd2569d6dfa56be0732394cbc023f0a12))
+* TokenManager =&gt; OmniTokenManager.sol ([ae9aa45](https://github.com/zkDX-DeFi/ocp-contracts/commit/ae9aa4548efe907130ac05f650f2276b3f25533c))
+* update oft, token manager variables ([93662e2](https://github.com/zkDX-DeFi/ocp-contracts/commit/93662e26ea55d1950ddbdb4ae531907de4ffec25))
+
+
+### Tests
+
+* check OCPTM.FUNC =&gt; approveSourceTokens ([63a97b9](https://github.com/zkDX-DeFi/ocp-contracts/commit/63a97b996eaee73a878cda1147001ab694602ce6))
+* check OCPTM.FUNC =&gt; requestAddSourceTokens() && code coverage = 100% ([30c6aff](https://github.com/zkDX-DeFi/ocp-contracts/commit/30c6affa57e0bef88086567451a98efc99375ebb))
+* refactoring ocpOmniTokenFactory ([b2e1a1c](https://github.com/zkDX-DeFi/ocp-contracts/commit/b2e1a1cc327ba14460e70500cfb2ee92552b7015))
+* tuning failed test cases ([b19b670](https://github.com/zkDX-DeFi/ocp-contracts/commit/b19b6705d317a69c616cccb07b3cb66f57c96428))
+
 ## 1.0.0 (2023-09-26)
 
 
