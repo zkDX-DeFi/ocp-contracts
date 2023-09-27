@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
         },
     },
     contractSizer: {
-        runOnCompile: false
+        runOnCompile: true
     },
     docgen: {
         pages: 'files',

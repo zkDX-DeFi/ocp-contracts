@@ -29,10 +29,10 @@ contract OCPTokenManager is Ownable, IOCPTokenManager {
         tokenFactory = IOCPOmniTokenFactory(_tokenFactory);
     }
 
-    function createToken(Structs.MintObj memory _mintParams, address _lzEndpoint, uint16 _srcChainId) external returns (address token) {
-        // TF.createToken()
-        return address(0x0);
-    }
+//    function createToken(Structs.MintObj memory _mintParams, address _lzEndpoint, uint16 _srcChainId) external returns (address token) {
+//        // TF.createToken()
+//        return address(0x0);
+//    }
 
     function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
         // OmniToken.mint()
@@ -76,5 +76,23 @@ contract OCPTokenManager is Ownable, IOCPTokenManager {
 
     function updateRouter(address _router) external onlyOwner {
         router = _router;
+    }
+
+    function createOmniToken(
+        Structs.MintObj memory _mintParams,
+        address _lzEndpoint,
+        uint16 _srcChainId
+    ) external returns (address token) {
+        OmniToken newToken = new OmniToken{salt: keccak256(abi.encodePacked("OCP_CREATE_TOKEN", _mintParams.srcToken))}(
+            _mintParams.name,
+            _mintParams.symbol,
+            _mintParams.amount,
+            _mintParams.to,
+            _lzEndpoint,
+            address(this),
+            _srcChainId,
+            _mintParams.srcPool
+        );
+        token = address(newToken);
     }
 }

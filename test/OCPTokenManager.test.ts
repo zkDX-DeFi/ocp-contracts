@@ -22,7 +22,7 @@ describe("OCPTM", async () => {
         const _lzEndpoint = AddressZero;
         const _srcChainId = 0;
 
-        await tm.createToken(_mintParams, _lzEndpoint, _srcChainId);
+        await tm.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
     });
 
     it("check OCPTM.FUNC => updateRouter", async () => {

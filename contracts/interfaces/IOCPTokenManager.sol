@@ -9,7 +9,7 @@ interface IOCPTokenManager {
 
     function sourceTokens(address _omniToken, uint16 _chainId) external view returns (address token);
 
-    function createToken(Structs.MintObj memory _mintParams, address _lzEndpoint, uint16 _srcChainId) external returns (address token);
+    function createOmniToken(Structs.MintObj memory _mintParams, address _lzEndpoint, uint16 _srcChainId) external returns (address token);
 
     function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external returns (address token);
 
