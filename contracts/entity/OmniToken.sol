@@ -7,7 +7,7 @@ import "../interfaces/IOCPBridge.sol";
 
 contract OmniToken is OFT {
 
-    IOCPOmniTokenManager public tokenManager;
+    IOCPOmniTokenManager public otm;
     uint16[] public sourceChainIds;
     address[] public sourcePools;
 
@@ -19,15 +19,15 @@ contract OmniToken is OFT {
         uint256 _mintAmount,
         address _to,
         address _lzEndpoint,
-        address _tokenManager,
+        address _otmAddress,
         uint16 _srcChainId,
         address _srcPool
     ) OFT (_name, _symbol, _lzEndpoint) {
         if (_mintAmount > 0) _mint(_to, _mintAmount);
-        _transferOwnership(_tokenManager);
+        _transferOwnership(_otmAddress);
         sourceChainIds.push(_srcChainId);
         sourcePools.push(_srcPool);
-        tokenManager = IOCPOmniTokenManager(_tokenManager);
+        otm = IOCPOmniTokenManager(_otmAddress);
     }
 
     function mint(address account, uint256 amount) external onlyOwner {
@@ -37,8 +37,4 @@ contract OmniToken is OFT {
     function burn(address account, uint256 amount) external onlyOwner {
         _burn(account, amount);
     }
-
-//    function assetURIs() external view returns (string[] memory){
-//        return tokenManager.getAssetURIs(sourceChainIds, sourcePools);
-//    }
 }
