@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
-
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IOCPOmniTokenManager.sol";
 import "./libraries/Structs.sol";
@@ -17,7 +16,6 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         require(msg.sender == router, "OCPTokenManager: caller is not the router");
         _;
     }
-
     constructor() {
     }
 
@@ -39,15 +37,13 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         );
         token = address(newToken);
     }
-
     function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
-        //todo: OT.MINT()
+        //todo: v0.2: TYPES=2
         return address(0x0);
     }
     function omniBurn(address _omniToken, uint256 _amount, address _from) external onlyRouter override {
-        //todo: OT.BURN()
+        //todo: v0.3: TYPES=3
     }
-
     //DAO
     function requestAddSourceTokens(
         address _omniToken,
@@ -61,7 +57,6 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         // TODO: alternative to addSourceToken -- 2
         // only Dao or Owner
     }
-
     //Settings
     function updateRouter(address _router) external onlyOwner {
         router = _router;
