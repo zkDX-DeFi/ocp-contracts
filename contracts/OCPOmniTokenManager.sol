@@ -66,6 +66,4 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
     function updateRouter(address _router) external onlyOwner {
         router = _router;
     }
-
-
 }
