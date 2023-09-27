@@ -8,16 +8,16 @@ describe("OCPTF", async () => {
     let user1: any,
         owner: any,
         usdc: any,
-        ocpTokenFactory: any,
+        ocpOmniTokenFactory: any,
         ocpTokenManager: any
 
 
     beforeEach(async () => {
-        ({owner,user1, ocpTokenFactory, ocpTokenManager} = await deployFixture());
+        ({owner,user1, ocpOmniTokenFactory, ocpTokenManager} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPTF.FUNC => updateTokenManager", async() => {
-        const f = ocpTokenFactory;
+        const f = ocpOmniTokenFactory;
         const tm = ocpTokenManager;
         expect(await f.tokenManager()).eq(tm.address);
 
@@ -31,7 +31,7 @@ describe("OCPTF", async () => {
     });
 
     it("check OCPTF.FUNC => createToken", async() => {
-        const f = ocpTokenFactory;
+        const f = ocpOmniTokenFactory;
         await f.updateTokenManager(owner.address);
         const _mintParams = getMintParams_ZERO;
 
