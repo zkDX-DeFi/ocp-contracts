@@ -7,17 +7,12 @@ import "./libraries/Structs.sol";
 import "./entity/OmniToken.sol";
 
 contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
-
     address public router;
-
-    mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
-    mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
-
     address[] public omniTokenList;
     mapping(uint16 => string) public assetBaseURIs;
-
+    mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
+    mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
     event TokenCreated(address indexed srcToken, uint16 indexed chainId, address indexed token);
-
     modifier onlyRouter() {
         require(msg.sender == router, "OCPTokenManager: caller is not the router");
         _;
@@ -26,50 +21,7 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
     constructor() {
     }
 
-    function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
-        // OmniToken.mint()
-        return address(0x0);
-    }
-
-    function omniBurn(address _omniToken, uint256 _amount, address _from) external onlyRouter override {
-        // OmniToken.burn()
-    }
-
-//    function addSourceToken(
-//        address _omniToken,
-//        uint16 _srcChainId,
-//        address _srcToken,
-//        address _srcPool,
-//        string calldata _symbolCheck
-//    ) external onlyOwner {
-//        //
-//    }
-
-    // TODO: alternative to addSourceToken -- 1
-    function requestAddSourceTokens(
-        address _omniToken,
-        uint16[] calldata _srcChainIds,
-        address[] calldata _srcTokens
-    ) external {
-        // add srcToken => chainId => omniToken
-    }
-
-    // TODO: alternative to addSourceToken -- 2
-    function approveSourceTokens() external {
-        // only Dao or Owner
-    }
-
-//    function getAssetURIs(
-//        uint16[] calldata _chainIds,
-//        address[] calldata _pools
-//    ) public view override returns (string[] memory assetURIs){
-//        assetURIs = new string[](_chainIds.length);
-//    }
-
-    function updateRouter(address _router) external onlyOwner {
-        router = _router;
-    }
-
+    //PUBLIC FUNC
     function createOmniToken(
         Structs.MintObj memory _mintParams,
         address _lzEndpoint,
@@ -87,4 +39,33 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         );
         token = address(newToken);
     }
+
+    function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
+        //todo: OT.MINT()
+        return address(0x0);
+    }
+    function omniBurn(address _omniToken, uint256 _amount, address _from) external onlyRouter override {
+        //todo: OT.BURN()
+    }
+
+    //DAO
+    function requestAddSourceTokens(
+        address _omniToken,
+        uint16[] calldata _srcChainIds,
+        address[] calldata _srcTokens
+    ) external {
+        // TODO: alternative to addSourceToken -- 1
+        // add srcToken => chainId => omniToken
+    }
+    function approveSourceTokens() external {
+        // TODO: alternative to addSourceToken -- 2
+        // only Dao or Owner
+    }
+
+    //Settings
+    function updateRouter(address _router) external onlyOwner {
+        router = _router;
+    }
+
+
 }
