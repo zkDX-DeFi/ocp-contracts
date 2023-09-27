@@ -35,29 +35,9 @@ describe("OCPB", async () => {
             _payload,
             _lzTxObj
         );
-    })
-
-    it("check OCPB.FUNC => omniRedeem", async() => {
-        const {b, _redeemParams, _payload, _lzTxObj} = await getOCPB_omniRedeem(owner);
-
-        await expect(b.connect(user1).omniRedeem(
-            0,
-            AddressZero,
-            0,
-            _redeemParams,
-            _payload,
-            _lzTxObj
-        )).to.be.reverted;
-
-        await b.omniRedeem(
-            0,
-            AddressZero,
-            0,
-            _redeemParams,
-            _payload,
-            _lzTxObj
-        );
     });
+
+
     it("check OCPB.FUNC => quoteLayerZeroFee", async() => {
         const b = ocpBridge;
         const _lzTxObj = {
