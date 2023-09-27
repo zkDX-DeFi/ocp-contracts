@@ -57,15 +57,6 @@ describe("OT", async () => {
             owner.address, 2000)).to.be.ok;
 
     });
-
-    it("check OT.FUNC => assetURIs", async () => {
-        const tm = ocpTokenManager;
-        const {ot} = await getOT_ZERO(owner, 1000, tm.address);
-        expect(await ot.tokenManager()).eq(tm.address);
-
-        console.log(`${await ot.assetURIs()}`);
-    });
-
     it("check OP.FUNC => redeem", async() => {
         await op.withdraw(
             AddressZero,

@@ -38,7 +38,7 @@ contract OmniToken is OFT {
         _burn(account, amount);
     }
 
-    function assetURIs() external view returns (string[] memory){
-        return tokenManager.getAssetURIs(sourceChainIds, sourcePools);
-    }
+//    function assetURIs() external view returns (string[] memory){
+//        return tokenManager.getAssetURIs(sourceChainIds, sourcePools);
+//    }
 }
