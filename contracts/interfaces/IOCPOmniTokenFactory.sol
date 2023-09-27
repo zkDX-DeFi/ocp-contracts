@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 import "../libraries/Structs.sol";
 
-interface IOCPTokenFactory {
+interface IOCPOmniTokenFactory {
 
     function createToken(
         Structs.MintObj memory _mintParams,

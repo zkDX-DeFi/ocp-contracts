@@ -2,10 +2,10 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IOCPTokenFactory.sol";
+import "./interfaces/IOCPOmniTokenFactory.sol";
 import "./entity/OmniToken.sol";
 
-contract OCPTokenFactory is IOCPTokenFactory, Ownable {
+contract OCPTokenFactory is IOCPOmniTokenFactory, Ownable {
 
     address public tokenManager;
 

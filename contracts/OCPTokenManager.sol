@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IOCPTokenFactory.sol";
+import "./interfaces/IOCPOmniTokenFactory.sol";
 import "./interfaces/IOCPTokenManager.sol";
 import "./libraries/Structs.sol";
 import "./entity/OmniToken.sol";
@@ -10,7 +10,7 @@ import "./entity/OmniToken.sol";
 contract OCPTokenManager is Ownable, IOCPTokenManager {
 
     address public router;
-    IOCPTokenFactory public tokenFactory;
+    IOCPOmniTokenFactory public tokenFactory;
 
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
@@ -26,7 +26,7 @@ contract OCPTokenManager is Ownable, IOCPTokenManager {
     }
 
     constructor(address _tokenFactory) {
-        tokenFactory = IOCPTokenFactory(_tokenFactory);
+        tokenFactory = IOCPOmniTokenFactory(_tokenFactory);
     }
 
     function createToken(Structs.MintObj memory _mintParams, address _lzEndpoint, uint16 _srcChainId) external returns (address token) {
