@@ -253,9 +253,9 @@ export async function getOT_ZERO(owner: any, mintAmount: any, tmAddress: any) {
         "OT",
         mintAmount,
         owner.address,
-        AddressZero,
-        tmAddress,
-        0,
+        // AddressZero,
+        // tmAddress,
+        // 0,
         AddressZero
     ]);
     return {ot};

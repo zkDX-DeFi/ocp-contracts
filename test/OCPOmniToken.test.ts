@@ -22,9 +22,9 @@ describe("OT", async () => {
             "OT",
             1000,
             owner.address,
-            AddressZero,
-            owner.address, //tm.address = owner.address
-            0,
+            // AddressZero,
+            // owner.address, //tm.address = owner.address
+            // 0,
             AddressZero
         ]);
     });

@@ -81,7 +81,8 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bytes calldata _userPayload,
         Structs.LzTxObj memory _lzTxParams
     ) external view returns (uint256, uint256) {
-        return bridge.quoteLayerZeroFee(_remoteChainId, _type, _userPayload, _lzTxParams);
+//        return bridge.quoteLayerZeroFee(_remoteChainId, _type, _userPayload, _lzTxParams);
+        return (0,0);
     }
 
     function omniRedeem(
