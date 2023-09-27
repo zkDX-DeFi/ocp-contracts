@@ -120,4 +120,9 @@ describe("OCPTM", async () => {
         )}`);
     });
 
+    it("check OCPTM.FUNC => approveSourceTokens", async() => {
+        const tm = ocpTokenManager;
+        await tm.approveSourceTokens();
+    })
+
 });
