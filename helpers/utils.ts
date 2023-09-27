@@ -15,7 +15,7 @@ export async function deployFixture() {
         ocpBridge : await ethers.getContract("OCPBridge"),
         ocPoolFactory: await ethers.getContract("OCPoolFactory"),
         ocpRouter : await ethers.getContract("OCPRouter"),
-        ocpTokenFactory: await ethers.getContract("OCPTokenFactory"),
+        ocpTokenFactory: await ethers.getContract("OCPOmniTokenFactory"),
         ocpTokenManager: await ethers.getContract("OCPTokenManager"),
     }
 

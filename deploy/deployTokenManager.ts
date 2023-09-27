@@ -7,14 +7,14 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     const {owner} = await getNamedAccounts();
 
     console.log(`>> deploying OCPTokenManager...`);
-    const OCPTokenFactory = await get('OCPTokenFactory');
+    const OCPTokenFactory = await get('OCPOmniTokenFactory');
     const OCPTokenManager = await deploy('OCPTokenManager', {
         from: owner,
         args: [OCPTokenFactory.address],
         log: true
     });
 
-    await execute('OCPTokenFactory', {from: owner, log: true}, "updateTokenManager", OCPTokenManager.address);
+    await execute('OCPOmniTokenFactory', {from: owner, log: true}, "updateTokenManager", OCPTokenManager.address);
 };
 export default func;
 func.dependencies = ['tokenFactory']

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IOCPOmniTokenFactory.sol";
 import "./entity/OmniToken.sol";
 
-contract OCPTokenFactory is IOCPOmniTokenFactory, Ownable {
+contract OCPOmniTokenFactory is IOCPOmniTokenFactory, Ownable {
 
     address public tokenManager;
 
