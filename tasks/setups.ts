@@ -15,7 +15,7 @@ task("setup-local",).setAction(async function (taskArgs, hre) {
     await lzEndpoint2.setDestLzEndpoint(ocpBridge1.address, lzEndpoint1.address);
 
     // set gasLookup
-    await ocpBridge1.updateGasLookup([CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2], [1, 2, 3], [7500000, 300000, 300000]);
-    await ocpBridge2.updateGasLookup([CHAIN_ID_LOCAL, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL], [1, 2, 3], [7500000, 300000, 300000]);
+    await ocpBridge1.updateGasLookup([CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2], [1, 2, 3], [6000000, 300000, 300000]);
+    await ocpBridge2.updateGasLookup([CHAIN_ID_LOCAL, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL], [1, 2, 3], [6000000, 300000, 300000]);
 });
 

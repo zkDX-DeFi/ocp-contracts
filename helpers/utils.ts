@@ -12,10 +12,14 @@ export async function deployFixture() {
     }
 
     const contracts = {
-        ocpBridge : await ethers.getContract("OCPBridge"),
         ocPoolFactory: await ethers.getContract("OCPoolFactory"),
-        ocpRouter : await ethers.getContract("OCPRouter"),
         ocpTokenManager: await ethers.getContract("OCPOmniTokenManager"),
+        ocpBridge : await ethers.getContract("OCPBridge"),
+        ocpRouter : await ethers.getContract("OCPRouter"),
+
+        ocPoolFactory2: await ethers.getContract("OCPoolFactory2"),
+        ocpTokenManager2: await ethers.getContract("OCPOmniTokenManager2"),
+        ocpBridge2 : await ethers.getContract("OCPBridge2"),
     }
 
     return {...users, ...contracts};

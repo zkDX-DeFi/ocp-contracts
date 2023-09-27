@@ -95,7 +95,7 @@ describe("OCPTM", async () => {
 
     it("createOmniToken suc", async () => {
         let mintAmount = parseEther("1000");
-        await ocpTokenManager.createOmniToken(
+        await ocpTokenManager.connect(user1).createOmniToken(
             [
                 usdc.address,
                 mintAmount,

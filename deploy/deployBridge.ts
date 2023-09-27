@@ -10,18 +10,12 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
 
     console.log(`>> deploying OCPBridge...`);
 
-    const OCPRouter = await get("OCPRouter");
-    // const lzEndpoint = await getLzEndPointByChainId(chainId);
-    const lzEndpoint = AddressZero;
-    const OCPBridge = await deploy('OCPBridge', {
+    const lzEndpoint = await getLzEndPointByChainId(chainId);
+    await deploy('OCPBridge', {
         from: owner,
-        args: [OCPRouter.address, lzEndpoint],
+        args: [AddressZero, lzEndpoint],
         log: true
     });
-
-    await execute('OCPRouter', {from: owner, log: true}, "updateBridge", OCPBridge.address);
-    // await execute('OCPTokenManager', {from: owner, log: true}, "updateBridge", OCPBridge.address);
 };
 export default func;
-func.dependencies = ['router'];
 func.tags = ['bridge'];

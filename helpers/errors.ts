@@ -1,3 +1,5 @@
+import {expect} from "chai";
+
 export const OCP_FACTORY_ROUTER_INVALID = "OCPPoolFactory: router invalid";
 export const OWNABLE_CALLER_IS_NOT_THE_OWNER = "Ownable: caller is not the owner";
 export const OCPROUTER_MINT_FEE_INVALID = "OCPRouter: mint fee invalid";
@@ -23,3 +25,5 @@ export const OCPBRIDGE_INVALID_PARAMS = "OCPBridge: invalid params";
 
 export const OCPROUTER_NO_CACHE_FOUND = "OCPRouter: no cache found";
 export const OCPROUTER_TOKEN_INVALID = "OCPRouter: token invalid";
+
+export const LZ_NOT_ENOUGH_FEES = "LayerZeroMock: not enough native for fees";

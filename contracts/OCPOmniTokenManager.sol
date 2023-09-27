@@ -15,8 +15,6 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         require(msg.sender == router, "OCPTokenManager: caller is not the router");
         _;
     }
-    constructor() {
-    }
 
     //PUBLIC FUNC
     function createOmniToken(
