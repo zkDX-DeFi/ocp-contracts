@@ -8,10 +8,9 @@ import "./entity/OmniToken.sol";
 contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
     address public router;
     address[] public omniTokenList;
-    mapping(uint16 => string) public assetBaseURIs;
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
-    event TokenCreated(address indexed srcToken, uint16 indexed chainId, address indexed token);
+    event TokenCreated(address indexed srcToken, uint16 indexed srcChainId, address indexed token);
     modifier onlyRouter() {
         require(msg.sender == router, "OCPTokenManager: caller is not the router");
         _;
@@ -24,18 +23,23 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         Structs.MintObj memory _mintParams,
         address _lzEndpoint,
         uint16 _srcChainId
-    ) external returns (address token) {
-        OmniToken newToken = new OmniToken{salt: keccak256(abi.encodePacked("OCP_CREATE_TOKEN", _mintParams.srcToken))}(
+    ) external returns (address token) {  // TODO: onlyRouter
+        token  = omniTokens[_mintParams.srcToken][_srcChainId];
+        if (token != address(0x0)) return token;
+
+        OmniToken newToken = new OmniToken{salt: keccak256(abi.encodePacked(_mintParams.srcToken))}(
             _mintParams.name,
             _mintParams.symbol,
             _mintParams.amount,
             _mintParams.to,
-            _lzEndpoint,
-            address(this),
-            _srcChainId,
-            _mintParams.srcPool
+            _lzEndpoint
         );
         token = address(newToken);
+
+        omniTokens[_mintParams.srcToken][_srcChainId] = token;
+        sourceTokens[token][_srcChainId] = _mintParams.srcToken;
+        omniTokenList.push(token);
+        emit TokenCreated(_mintParams.srcToken, _srcChainId, token);
     }
     function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
         //todo: v0.2: TYPES=2

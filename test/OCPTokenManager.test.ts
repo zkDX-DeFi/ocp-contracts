@@ -1,18 +1,20 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
 import {getMintParams_ZERO} from "../helpers/utilsTest";
-import {AddressZero} from "../helpers/constants";
-import {OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
+import {AddressZero, CHAIN_ID_LOCAL2} from "../helpers/constants";
+import {parseEther} from "ethers/lib/utils";
+import {ethers} from "hardhat";
 
 describe("OCPTM", async () => {
 
     let user1: any,
+        user2: any,
         owner: any,
         usdc: any,
         ocpTokenManager: any
 
     beforeEach(async () => {
-        ({owner, user1, ocpTokenManager} = await deployFixture());
+        ({owner, user1, user2, ocpTokenManager} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPTM.FUNC => createToken", async () => {
@@ -90,4 +92,29 @@ describe("OCPTM", async () => {
             _srcTokens
         );
     })
+
+    it("createOmniToken suc", async () => {
+        let mintAmount = parseEther("1000");
+        await ocpTokenManager.createOmniToken(
+            [
+                usdc.address,
+                mintAmount,
+                user2.address,
+                "USDC",
+                "USDC"
+            ],
+            AddressZero, CHAIN_ID_LOCAL2
+        );
+
+        // check data
+        let omniTokenAddr = await ocpTokenManager.omniTokens(usdc.address, CHAIN_ID_LOCAL2);
+        let omniToken = await ethers.getContractAt("OmniToken", omniTokenAddr);
+        expect(omniTokenAddr).to.not.equal(AddressZero);
+        expect(await ocpTokenManager.sourceTokens(omniTokenAddr, CHAIN_ID_LOCAL2)).to.eq(usdc.address);
+        expect(await ocpTokenManager.omniTokenList(0)).to.equal(omniTokenAddr);
+
+        // check balances
+        expect(await omniToken.totalSupply()).to.equal(mintAmount);
+        expect(await omniToken.balanceOf(user2.address)).to.equal(mintAmount);
+    });
 });

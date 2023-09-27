@@ -11,8 +11,6 @@ library Structs {
 
     struct MintObj {
         address srcToken;
-        address srcPool;
-        uint16 dstChainId;
         uint256 amount;
         address to;
         string name;

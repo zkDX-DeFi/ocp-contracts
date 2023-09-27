@@ -4,26 +4,15 @@ import "@layerzerolabs/solidity-examples/contracts/token/oft/OFT.sol";
 import "../interfaces/IOCPOmniTokenManager.sol";
 import "../interfaces/IOCPBridge.sol";
 contract OmniToken is OFT {
-    IOCPOmniTokenManager public otm;
-    uint16[] public sourceChainIds;
-    address[] public sourcePools;
-    event SourceUpdated(uint16 indexed chainId, address indexed pool);
 
     constructor(
         string memory _name,
         string memory _symbol,
         uint256 _mintAmount,
         address _to,
-        address _lzEndpoint,
-        address _otmAddress,
-        uint16 _srcChainId,
-        address _srcPool
+        address _lzEndpoint
     ) OFT (_name, _symbol, _lzEndpoint) {
         if (_mintAmount > 0) _mint(_to, _mintAmount);
-        _transferOwnership(_otmAddress);
-        sourceChainIds.push(_srcChainId);
-        sourcePools.push(_srcPool);
-        otm = IOCPOmniTokenManager(_otmAddress);
     }
     function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
