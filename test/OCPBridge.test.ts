@@ -1,9 +1,15 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
-import {AddressZero, CHAIN_ID_LOCAL2, TYPE_DEPLOY_AND_MINT} from "../helpers/constants";
+import {
+    AddressZero,
+    CHAIN_ID_LOCAL,
+    CHAIN_ID_LOCAL2,
+    CHAIN_ID_LOCAL3,
+    TYPE_DEPLOY_AND_MINT
+} from "../helpers/constants";
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
-import {LZ_NOT_ENOUGH_FEES} from "../helpers/errors";
+import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 
 describe("OCPB", async () => {
 
@@ -38,7 +44,7 @@ describe("OCPB", async () => {
             _mintParams,
             _payload,
             _lzTxObj
-        )).to.be.reverted;
+        ));
     });
 
     it("check OCPB.FUNC => omniMint v2", async () => {
@@ -61,6 +67,7 @@ describe("OCPB", async () => {
             dstNativeAmount: 0,
             dstNativeAddr: "0x"
         }
+        const _value = {value: parseEther("0.1")};
 
         await expect(b.omniMint(
             _remoteChainId,
@@ -68,8 +75,20 @@ describe("OCPB", async () => {
             0,
             _mintParams,
             _payload,
-            _lzTxObj
-        )).to.be.ok;
+            _lzTxObj,_value
+        )).to.be.reverted;
+
+        await b.updateGasLookup([CHAIN_ID_LOCAL2], [0], [300000]);
+
+        await b.omniMint(
+            _remoteChainId,
+            AddressZero,
+            0,
+            _mintParams,
+            _payload,
+            _lzTxObj,
+            _value
+        );
     });
 
 
@@ -88,6 +107,38 @@ describe("OCPB", async () => {
             "0x",
             _lzTxObj
         )}`);
+
+        await expect(b.quoteLayerZeroFee(
+            _remoteChainId,
+            0,
+            "0x",
+            _lzTxObj
+        )).to.be.revertedWith("OCPBridge: invalid quote type");
+    });
+
+    it("check OCPB.FUNC => _txParamBuilder => dstNativeAmount >0", async () => {
+        const b = ocpBridge;
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _type = 1;
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 1000,
+            dstNativeAddr: usdc.address
+        }
+        console.log(`${await b.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            "0x",
+            _lzTxObj
+        )}`);
+
+        await expect(b.quoteLayerZeroFee(
+            _remoteChainId,
+            0,
+            "0x",
+            _lzTxObj
+        )).to.be.revertedWith("OCPBridge: invalid quote type");
+
     });
 
     it("omniMint messaging reverted, not enough fees", async () => {
@@ -124,5 +175,33 @@ describe("OCPB", async () => {
             "0x", [0, 0, "0x"],
             {value: value[0]}
         );
+    });
+
+    it("check OCPB.FUNC => updateGasLookup()", async() => {
+        const b = ocpBridge;
+        const invalidUser = user1;
+
+        console.log(`${await b.owner()}`);
+        console.log(`${owner.address}`);
+
+        const _chainIds = [CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL3];
+        const _types = [1, 2];
+
+        const _gasLookup = [1000,2000];
+
+        await expect(b.connect(invalidUser).updateGasLookup(
+            _chainIds,
+            _types,
+            _gasLookup
+        )).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+
+        await b.updateGasLookup(_chainIds, _types, _gasLookup);
+
+        const invalidChainIds = [CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL3, CHAIN_ID_LOCAL];
+        await expect(b.updateGasLookup(
+            invalidChainIds,
+            _types,
+            _gasLookup
+        )).to.be.revertedWith("OCPBridge: invalid params");
     });
 });

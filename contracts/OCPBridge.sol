@@ -14,10 +14,10 @@ contract OCPBridge is LzApp, IOCPBridge {
     constructor(address _router, address _lzEndpoint) LzApp(_lzEndpoint) {
         router = _router;
     }
-    modifier onlyRouter() {
-        require(msg.sender == address(router), "OCPBridge: caller is not the router");
-        _;
-    }
+//    modifier onlyRouter() {
+//        require(msg.sender == address(router), "OCPBridge: caller is not the router");
+//        _;
+//    }
 
     //TYPES = 1
     function omniMint(
