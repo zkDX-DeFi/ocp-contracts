@@ -11,7 +11,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     console.log(`>> deploying OCPRouter...`);
 
     const OCPPoolFactory = await get("OCPoolFactory");
-    const OCPTokenManager = await get("OCPTokenManager");
+    const OCPTokenManager = await get("OCPOmniTokenManager");
     const wethAddress = await getWethByChainId(chainId);
 
     const OCPRouter = await deploy('OCPRouter', {

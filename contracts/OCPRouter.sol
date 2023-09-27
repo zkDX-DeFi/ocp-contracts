@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IOCPoolFactory.sol";
-import "./interfaces/IOCPTokenManager.sol";
+import "./interfaces/IOCPOmniTokenManager.sol";
 import "./interfaces/IOCPRouter.sol";
 import "./interfaces/IOCPReceiver.sol";
 import "./interfaces/IOCPBridge.sol";
@@ -16,7 +16,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
 
     using SafeERC20 for IERC20;
     IOCPoolFactory public poolFactory;
-    IOCPTokenManager public tokenManager;
+    IOCPOmniTokenManager public tokenManager;
     IOCPBridge public bridge;
 
     uint256 public mintFeeBasisPoint;
@@ -30,7 +30,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
 
     constructor(address _poolFactory, address _tokenManager, address _weth) {
         poolFactory = IOCPoolFactory(_poolFactory);
-        tokenManager = IOCPTokenManager(_tokenManager);
+        tokenManager = IOCPOmniTokenManager(_tokenManager);
         defaultSharedDecimals = 8; // up to 184b
         weth = _weth;
     }

@@ -2,12 +2,12 @@
 pragma solidity ^0.8.17;
 
 import "@layerzerolabs/solidity-examples/contracts/token/oft/OFT.sol";
-import "../interfaces/IOCPTokenManager.sol";
+import "../interfaces/IOCPOmniTokenManager.sol";
 import "../interfaces/IOCPBridge.sol";
 
 contract OmniToken is OFT {
 
-    IOCPTokenManager public tokenManager;
+    IOCPOmniTokenManager public tokenManager;
     uint16[] public sourceChainIds;
     address[] public sourcePools;
 
@@ -27,7 +27,7 @@ contract OmniToken is OFT {
         _transferOwnership(_tokenManager);
         sourceChainIds.push(_srcChainId);
         sourcePools.push(_srcPool);
-        tokenManager = IOCPTokenManager(_tokenManager);
+        tokenManager = IOCPOmniTokenManager(_tokenManager);
     }
 
     function mint(address account, uint256 amount) external onlyOwner {

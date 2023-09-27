@@ -3,7 +3,7 @@ pragma solidity ^0.8.17;
 
 import "../libraries/Structs.sol";
 
-interface IOCPTokenManager {
+interface IOCPOmniTokenManager {
 
     function omniTokens(address _srcToken, uint16 _chainId) external view returns (address token);
 

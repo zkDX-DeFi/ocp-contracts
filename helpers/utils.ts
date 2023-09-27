@@ -16,7 +16,7 @@ export async function deployFixture() {
         ocPoolFactory: await ethers.getContract("OCPoolFactory"),
         ocpRouter : await ethers.getContract("OCPRouter"),
         ocpOmniTokenFactory: await ethers.getContract("OCPOmniTokenFactory"),
-        ocpTokenManager: await ethers.getContract("OCPTokenManager"),
+        ocpTokenManager: await ethers.getContract("OCPOmniTokenManager"),
     }
 
     return {...users, ...contracts};
