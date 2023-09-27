@@ -1,11 +1,11 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
-import {getMintParams_ZERO, getOT_ZERO} from "../helpers/utilsTest";
+import {getOT_ZERO} from "../helpers/utilsTest";
 import {AddressZero} from "../helpers/constants";
 import {OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
+import {OT_BURN_AMOUNT, OT_MINT_AMOUNT} from "../helpers/constantsTest";
 
 describe("OT", async () => {
-
     let user1: any,
         owner: any,
         usdc: any,
@@ -16,15 +16,14 @@ describe("OT", async () => {
     beforeEach(async () => {
         ({owner,user1, ocpTokenManager} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
-        op = await deployNew("OCPool",[]);
+
+        const _amount = OT_MINT_AMOUNT;
+        const _accountAddress = owner.address;
         ot = await deployNew("OmniToken", [
             "OmniToken",
             "OT",
-            1000,
-            owner.address,
-            // AddressZero,
-            // owner.address, //tm.address = owner.address
-            // 0,
+            _amount,
+            _accountAddress,
             AddressZero
         ]);
     });
@@ -39,22 +38,24 @@ describe("OT", async () => {
         const validUser = owner;
         const invalidUser = user1;
 
-        await expect(ot.connect(invalidUser).mint(
-            owner.address, 2000)).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+        const _amount = OT_MINT_AMOUNT;
+        const _accountAddress = owner.address;
 
-        await expect(ot.connect(validUser).mint(
-            owner.address, 2000)).to.be.ok;
+        await expect(ot.connect(invalidUser).mint(
+            _accountAddress, _amount)).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+        await ot.connect(validUser).mint(
+            _accountAddress, _amount);
     });
 
     it("check OT.FUNC => BURN", async() => {
         const validUser = owner;
         const invalidUser = user1;
 
+        const _amount = OT_BURN_AMOUNT;
+        const _accountAddress = owner.address;
         await expect(ot.connect(invalidUser).burn(
-            owner.address, 2000)).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
-
-        await expect(ot.connect(validUser).burn(
-            owner.address, 2000)).to.be.ok;
-
+            _accountAddress, _amount)).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+        await (ot.connect(validUser).burn(
+            _accountAddress, _amount));
     });
 });
