@@ -3,13 +3,10 @@ pragma solidity ^0.8.17;
 import "@layerzerolabs/solidity-examples/contracts/token/oft/OFT.sol";
 import "../interfaces/IOCPOmniTokenManager.sol";
 import "../interfaces/IOCPBridge.sol";
-
 contract OmniToken is OFT {
-
     IOCPOmniTokenManager public otm;
     uint16[] public sourceChainIds;
     address[] public sourcePools;
-
     event SourceUpdated(uint16 indexed chainId, address indexed pool);
 
     constructor(
@@ -28,11 +25,9 @@ contract OmniToken is OFT {
         sourcePools.push(_srcPool);
         otm = IOCPOmniTokenManager(_otmAddress);
     }
-
     function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
     }
-
     function burn(address account, uint256 amount) external onlyOwner {
         _burn(account, amount);
     }
