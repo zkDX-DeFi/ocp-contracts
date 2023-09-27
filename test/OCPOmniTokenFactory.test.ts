@@ -3,7 +3,7 @@ import {expect} from "chai";
 import {getMintParams_ZERO} from "../helpers/utilsTest";
 import {AddressZero} from "../helpers/constants";
 
-describe("OCPTF", async () => {
+describe("OCPOTF", async () => {
 
     let user1: any,
         owner: any,
@@ -16,7 +16,7 @@ describe("OCPTF", async () => {
         ({owner,user1, ocpOmniTokenFactory, ocpTokenManager} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
-    it("check OCPTF.FUNC => updateTokenManager", async() => {
+    it("check OCPOTF.FUNC => updateTokenManager", async() => {
         const f = ocpOmniTokenFactory;
         const tm = ocpTokenManager;
         expect(await f.tokenManager()).eq(tm.address);
@@ -30,7 +30,7 @@ describe("OCPTF", async () => {
             .to.be.ok;
     });
 
-    it("check OCPTF.FUNC => createToken", async() => {
+    it("check OCPOTF.FUNC => createToken", async() => {
         const f = ocpOmniTokenFactory;
         await f.updateTokenManager(owner.address);
         const _mintParams = getMintParams_ZERO;
