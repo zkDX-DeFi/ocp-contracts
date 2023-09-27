@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
-
 import "@layerzerolabs/solidity-examples/contracts/token/oft/OFT.sol";
 import "../interfaces/IOCPOmniTokenManager.sol";
 import "../interfaces/IOCPBridge.sol";
