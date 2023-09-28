@@ -48,9 +48,9 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
     }
     //DAO
     function requestAddSourceTokens(
-        address _omniToken,
+        address[] calldata _srcTokens,
         uint16[] calldata _srcChainIds,
-        address[] calldata _srcTokens
+        address _omniToken
     ) external {
         // TODO: alternative to addSourceToken -- 1
         // add srcToken => chainId => omniToken
