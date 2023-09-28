@@ -83,17 +83,17 @@ describe("OCPTM", async () => {
     //     const tm = ocpTokenManager;
     //     await tm.approveSourceTokens();
     // });
-    it("check OCPTM.FUNC => requestAddSourceTokens()", async () => {
-        const tm = ocpTokenManager;
-        const _omniToken = usdc;
-        const _srcChainIds = [0];
-        const _srcTokens = [usdc.address];
-        await tm.requestAddSourceTokens(
-            _omniToken.address,
-            _srcChainIds,
-            _srcTokens
-        );
-    });
+    // it("check OCPTM.FUNC => requestAddSourceTokens()", async () => {
+    //     const tm = ocpTokenManager;
+    //     const _omniToken = usdc;
+    //     const _srcChainIds = [0];
+    //     const _srcTokens = [usdc.address];
+    //     await tm.requestAddSourceTokens(
+    //         _omniToken.address,
+    //         _srcChainIds,
+    //         _srcTokens
+    //     );
+    // });
 
     it("createOmniToken suc", async () => {
         let mintAmount = parseEther("1000");
@@ -176,6 +176,14 @@ describe("OCPTM", async () => {
         await expect(tm
             .approveSourceTokens(_invalidOmniTokens, _srcChainIds, _srcTokens))
             .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
+    });
 
-    })
+    it("check OCPTM.FUNC => requestAddSourceTokens()", async() => {
+        const tm = ocpTokenManager;
+        const _srcTokens = [usdc.address];
+        const _srcChainIds = [CHAIN_ID_LOCAL];
+        const _omniToken = usdc.address;
+
+        await tm.requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken);
+    });
 });
