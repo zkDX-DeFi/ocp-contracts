@@ -1,4 +1,5 @@
 import {DeployFunction} from 'hardhat-deploy/types';
+import {AddressZero} from "../helpers/constants";
 
 
 const func: DeployFunction = async function ({deployments, getNamedAccounts, network, getChainId}) {
@@ -15,7 +16,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
 
     await deploy('MockTM', {
         from: owner,
-        args: [],
+        args: [AddressZero],
         log: true
     });
 
