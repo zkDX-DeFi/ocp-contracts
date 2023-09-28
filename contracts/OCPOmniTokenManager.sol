@@ -5,14 +5,23 @@ import "./interfaces/IOCPOmniTokenManager.sol";
 import "./libraries/Structs.sol";
 import "./entity/OmniToken.sol";
 
-contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
+contract OCPOmniTokenManager is IOCPOmniTokenManager {
     address public router;
+    address public timeLock;
+    constructor () {
+        timeLock = msg.sender;
+    }
 //    address[] public omniTokenList;
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
     event TokenCreated(address indexed srcToken, uint16 indexed srcChainId, address indexed token);
     modifier onlyRouter() {
         require(msg.sender == router, "OCPTokenManager: caller is not the router");
+        _;
+    }
+
+    modifier onlyTimeLock() {
+        require(msg.sender == timeLock, "OCPTokenManager: caller is not the timelock");
         _;
     }
 
@@ -51,7 +60,7 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         address[] calldata _srcTokens,
         uint16[] calldata _srcChainIds,
         address _omniToken
-    ) external {
+    ) external onlyTimeLock {
         // TODO: alternative to addSourceToken -- 1
         // add srcToken => chainId => omniToken
         require(_srcTokens.length == _srcChainIds.length, "OCPTokenManager: invalid input");
@@ -59,7 +68,7 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
             sourceTokens[_srcTokens[i]][_srcChainIds[i]] = _omniToken;
         }
     }
-    function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external {
+    function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external onlyTimeLock {
         // TODO: alternative to addSourceToken -- 2
         // only Dao or Owner
 
@@ -69,7 +78,11 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         }
     }
     //Settings
-    function updateRouter(address _router) external onlyOwner {
+    function updateRouter(address _router) external onlyTimeLock {
         router = _router;
+    }
+
+    function updateTimeLock(address _timeLock) external onlyTimeLock {
+        timeLock = _timeLock;
     }
 }
