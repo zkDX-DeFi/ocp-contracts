@@ -3,8 +3,9 @@ pragma solidity ^0.8.17;
 import "../entity/OmniToken.sol";
 import "../libraries/Structs.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../interfaces/IOCPOmniTokenManager.sol";
 
-contract MockTM is Ownable {
+contract MockTM is Ownable,IOCPOmniTokenManager {
     address public router;
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
@@ -35,9 +36,20 @@ contract MockTM is Ownable {
         sourceTokens[_token][_srcChainId] = _mintParams.srcToken;
         emit TokenCreated(_mintParams.srcToken, _srcChainId, _token);
     }
-    function omniMint() external onlyRouter returns(address _token) {
+    function omniMint(
+        address _srcToken,
+        uint16 _dstChainId,
+        uint256 _amount,
+        address _to
+    ) external override onlyRouter returns(address _token) {
+
     }
-    function omniBurn() external onlyRouter returns(address _token) {
+    function omniBurn(
+        address _omniToken,
+        uint256 _amount,
+        address _from
+    ) external onlyRouter {
+
     }
 
     function requestAddSourceTokens(
