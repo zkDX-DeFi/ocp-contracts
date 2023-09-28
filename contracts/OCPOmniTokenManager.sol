@@ -7,7 +7,7 @@ import "./entity/OmniToken.sol";
 
 contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
     address public router;
-    address[] public omniTokenList;
+//    address[] public omniTokenList;
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
     event TokenCreated(address indexed srcToken, uint16 indexed srcChainId, address indexed token);
@@ -36,7 +36,7 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
 
         omniTokens[_mintParams.srcToken][_srcChainId] = token;
         sourceTokens[token][_srcChainId] = _mintParams.srcToken;
-        omniTokenList.push(token);
+//        omniTokenList.push(token);
         emit TokenCreated(_mintParams.srcToken, _srcChainId, token);
     }
     function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
