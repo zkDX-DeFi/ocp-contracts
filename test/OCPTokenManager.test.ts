@@ -185,5 +185,10 @@ describe("OCPTM", async () => {
         const _omniToken = usdc.address;
 
         await tm.requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken);
+
+        const _invalidSrcTokens = [usdc.address, usdc.address];
+        await expect(tm
+            .requestAddSourceTokens(_invalidSrcTokens, _srcChainIds, _omniToken))
+            .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
     });
 });
