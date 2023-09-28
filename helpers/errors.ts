@@ -27,3 +27,5 @@ export const OCPROUTER_NO_CACHE_FOUND = "OCPRouter: no cache found";
 export const OCPROUTER_TOKEN_INVALID = "OCPRouter: token invalid";
 
 export const LZ_NOT_ENOUGH_FEES = "LayerZeroMock: not enough native for fees";
+
+export const OCPTOKENMANAGER_INVALID_INPUT = "OCPTokenManager: invalid input";

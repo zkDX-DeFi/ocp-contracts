@@ -1,10 +1,10 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
 import {getMintParams_ZERO} from "../helpers/utilsTest";
-import {AddressZero, CHAIN_ID_LOCAL2} from "../helpers/constants";
+import {AddressZero, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL2} from "../helpers/constants";
 import {parseEther} from "ethers/lib/utils";
 import {ethers} from "hardhat";
-import {OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
+import {OCPTOKENMANAGER_INVALID_INPUT, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 
 describe("OCPTM", async () => {
 
@@ -79,10 +79,10 @@ describe("OCPTM", async () => {
             _from
         )).to.be.ok;
     });
-    it("check OCPTM.FUNC => approveSourceTokens", async () => {
-        const tm = ocpTokenManager;
-        await tm.approveSourceTokens();
-    });
+    // it("check OCPTM.FUNC => approveSourceTokens", async () => {
+    //     const tm = ocpTokenManager;
+    //     await tm.approveSourceTokens();
+    // });
     it("check OCPTM.FUNC => requestAddSourceTokens()", async () => {
         const tm = ocpTokenManager;
         const _omniToken = usdc;
@@ -145,7 +145,8 @@ describe("OCPTM", async () => {
         );
     });
 
-    it("check OCPTM.VARIABLES => router", async () => {
+    /* added @20230928 */
+    it("check OCPTM.VARIABLES => updateRouter", async () => {
         const tm = ocpTokenManager;
         const r = ocpRouter;
         expect(await tm.router()).eq(AddressZero);
@@ -163,4 +164,18 @@ describe("OCPTM", async () => {
 
         expect (await tm.router()).eq(r.address);
     });
+
+    it("check OCPTM.FUNC => approveSourceTokens()", async() => {
+        const tm = ocpTokenManager;
+        const _omniTokens = [usdc.address];
+        const _srcTokens = [usdc.address];
+        const _srcChainIds = CHAIN_ID_LOCAL;
+        await tm.approveSourceTokens(_omniTokens, _srcChainIds, _srcTokens);
+
+        const _invalidOmniTokens = [usdc.address, usdc.address];
+        await expect(tm
+            .approveSourceTokens(_invalidOmniTokens, _srcChainIds, _srcTokens))
+            .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
+
+    })
 });
