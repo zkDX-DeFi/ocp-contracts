@@ -2,23 +2,19 @@
 pragma solidity ^0.8.17;
 import "../entity/OmniToken.sol";
 import "../libraries/Structs.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MockTM  {
+contract MockTM is Ownable {
     address public router;
-    address public owner;
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
+    event TokenCreated(address indexed srcToken, uint16 indexed srcChainId, address indexed token);
 
     constructor (address _router) {
         router = _router;
-        owner = msg.sender;
     }
     modifier onlyRouter() {
         require(msg.sender == router, "OCPTokenManager: caller is not the router");
-        _;
-    }
-    modifier onlyOwner() {
-        require(msg.sender == owner, "OCPTokenManager: caller is not the owner");
         _;
     }
 
@@ -37,15 +33,28 @@ contract MockTM  {
         _token = address (newToken);
         omniTokens[_mintParams.srcToken][_srcChainId] = _token;
         sourceTokens[_token][_srcChainId] = _mintParams.srcToken;
+        emit TokenCreated(_mintParams.srcToken, _srcChainId, _token);
     }
-    function omniMint() external returns(address _token) {
+    function omniMint() external onlyRouter returns(address _token) {
     }
-    function omniBurn() external returns(address _token) {
+    function omniBurn() external onlyRouter returns(address _token) {
     }
 
-    function requestAddSourceTokens() external {
+    function requestAddSourceTokens(
+        address[] calldata _srcTokens,
+        uint16[] calldata _srcChainIds,
+        address _omniToken
+    ) external {
+        require(_srcTokens.length == _srcChainIds.length, "OCPTokenManager: invalid input");
+        for (uint256 i = 0; i < _srcTokens.length; i++) {
+            sourceTokens[_srcTokens[i]][_srcChainIds[i]] = _omniToken;
+        }
     }
-    function approveSourceTokens() external {
+    function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external {
+        require(_omniTokens.length == _srcTokens.length, "OCPTokenManager: invalid input");
+        for (uint256 i = 0; i < _omniTokens.length; i++) {
+            sourceTokens[_omniTokens[i]][_srcChainId] = _srcTokens[i];
+        }
     }
     function updateRouter(address _router) external onlyOwner {
         router = _router;
