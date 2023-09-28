@@ -54,6 +54,10 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
     ) external {
         // TODO: alternative to addSourceToken -- 1
         // add srcToken => chainId => omniToken
+        require(_srcTokens.length == _srcChainIds.length, "OCPTokenManager: invalid input");
+        for (uint256 i = 0; i < _srcTokens.length; i++) {
+            sourceTokens[_srcTokens[i]][_srcChainIds[i]] = _omniToken;
+        }
     }
     function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external {
         // TODO: alternative to addSourceToken -- 2
