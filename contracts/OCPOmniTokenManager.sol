@@ -11,7 +11,6 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
     constructor () {
         timeLock = msg.sender;
     }
-//    address[] public omniTokenList;
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
     event TokenCreated(address indexed srcToken, uint16 indexed srcChainId, address indexed token);
@@ -45,7 +44,6 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
 
         omniTokens[_mintParams.srcToken][_srcChainId] = token;
         sourceTokens[token][_srcChainId] = _mintParams.srcToken;
-//        omniTokenList.push(token);
         emit TokenCreated(_mintParams.srcToken, _srcChainId, token);
     }
     function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
@@ -55,6 +53,7 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
     function omniBurn(address _omniToken, uint256 _amount, address _from) external onlyRouter override {
         //todo: v0.3: TYPES=3
     }
+
     //DAO
     function requestAddSourceTokens(
         address[] calldata _srcTokens,
@@ -62,7 +61,6 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         address _omniToken
     ) external onlyTimeLock {
         // TODO: alternative to addSourceToken -- 1
-        // add srcToken => chainId => omniToken
         require(_srcTokens.length == _srcChainIds.length, "OCPTokenManager: invalid input");
         for (uint256 i = 0; i < _srcTokens.length; i++) {
             sourceTokens[_srcTokens[i]][_srcChainIds[i]] = _omniToken;
@@ -70,18 +68,14 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
     }
     function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external onlyTimeLock {
         // TODO: alternative to addSourceToken -- 2
-        // only Dao or Owner
-
         require(_omniTokens.length == _srcTokens.length, "OCPTokenManager: invalid input");
         for (uint256 i = 0; i < _omniTokens.length; i++) {
             sourceTokens[_omniTokens[i]][_srcChainId] = _srcTokens[i];
         }
     }
-    //Settings
     function updateRouter(address _router) external onlyTimeLock {
         router = _router;
     }
-
     function updateTimeLock(address _timeLock) external onlyTimeLock {
         timeLock = _timeLock;
     }
