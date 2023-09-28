@@ -13,7 +13,7 @@ describe("OP", async () => {
     beforeEach(async () => {
         ({owner,user1} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
-        op = await deployNew("OCPool",[]);
+        op = await deployNew("OCPool",[usdc.address]);
     });
     it("check OP.FUNC => redeem", async() => {
         await op.withdraw(
