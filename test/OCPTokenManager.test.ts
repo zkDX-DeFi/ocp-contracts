@@ -83,21 +83,6 @@ describe("OCPTM", async () => {
             _from
         )).to.be.ok;
     });
-    // it("check OCPTM.FUNC => approveSourceTokens", async () => {
-    //     const tm = ocpTokenManager;
-    //     await tm.approveSourceTokens();
-    // });
-    // it("check OCPTM.FUNC => requestAddSourceTokens()", async () => {
-    //     const tm = ocpTokenManager;
-    //     const _omniToken = usdc;
-    //     const _srcChainIds = [0];
-    //     const _srcTokens = [usdc.address];
-    //     await tm.requestAddSourceTokens(
-    //         _omniToken.address,
-    //         _srcChainIds,
-    //         _srcTokens
-    //     );
-    // });
 
     it("createOmniToken suc", async () => {
         let mintAmount = parseEther("1000");
@@ -206,5 +191,18 @@ describe("OCPTM", async () => {
             .connect(_invalidUser)
             .requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken))
             .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
+    });
+
+    it("check OCPTM.FUNC => updateTimeLock()", async() => {
+        const tm = ocpTokenManager;
+        const _newTimeLock = user1.address;
+
+        const invalidUser = user1;
+        await expect(tm
+            .connect(invalidUser)
+            .updateTimeLock(_newTimeLock))
+            .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
+
+        await tm.updateTimeLock(_newTimeLock);
     });
 });
