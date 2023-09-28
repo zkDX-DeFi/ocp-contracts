@@ -60,7 +60,9 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         // only Dao or Owner
 
         require(_omniTokens.length == _srcTokens.length, "OCPTokenManager: invalid input");
-
+        for (uint256 i = 0; i < _omniTokens.length; i++) {
+            sourceTokens[_omniTokens[i]][_srcChainId] = _srcTokens[i];
+        }
     }
     //Settings
     function updateRouter(address _router) external onlyOwner {
