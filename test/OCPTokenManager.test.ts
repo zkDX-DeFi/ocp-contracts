@@ -180,6 +180,12 @@ describe("OCPTM", async () => {
         await expect(tm
             .approveSourceTokens(_invalidOmniTokens, _srcChainIds, _srcTokens))
             .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
+
+        const invalidUser = user1;
+        await expect(tm
+            .connect(invalidUser)
+            .approveSourceTokens(_omniTokens, _srcChainIds, _srcTokens))
+            .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
     });
 
     it("check OCPTM.FUNC => requestAddSourceTokens()", async() => {
@@ -194,5 +200,11 @@ describe("OCPTM", async () => {
         await expect(tm
             .requestAddSourceTokens(_invalidSrcTokens, _srcChainIds, _omniToken))
             .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
+
+        const _invalidUser = user1;
+        await expect(tm
+            .connect(_invalidUser)
+            .requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken))
+            .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
     });
 });
