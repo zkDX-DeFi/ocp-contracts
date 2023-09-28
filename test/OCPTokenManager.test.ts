@@ -4,7 +4,11 @@ import {getMintParams_ZERO} from "../helpers/utilsTest";
 import {AddressZero, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL2} from "../helpers/constants";
 import {parseEther} from "ethers/lib/utils";
 import {ethers} from "hardhat";
-import {OCPTOKENMANAGER_INVALID_INPUT, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
+import {
+    OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK,
+    OCPTOKENMANAGER_INVALID_INPUT,
+    OWNABLE_CALLER_IS_NOT_THE_OWNER
+} from "../helpers/errors";
 
 describe("OCPTM", async () => {
 
@@ -36,7 +40,7 @@ describe("OCPTM", async () => {
         const validValue = owner.address;
         await expect(tm.connect(invalidUser)
             .updateRouter(validValue))
-            .to.be.revertedWith("Ownable: caller is not the owner");
+            .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
 
         await expect(tm.updateRouter(validValue)).to.be.ok;
         expect(await tm.router()).eq(validValue)
@@ -156,7 +160,7 @@ describe("OCPTM", async () => {
         await expect(tm
             .connect(invalidUser)
             .updateRouter(r.address))
-            .to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+            .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
         await expect(tm
             .connect(validUser)
             .updateRouter(r.address))

@@ -29,3 +29,4 @@ export const OCPROUTER_TOKEN_INVALID = "OCPRouter: token invalid";
 export const LZ_NOT_ENOUGH_FEES = "LayerZeroMock: not enough native for fees";
 
 export const OCPTOKENMANAGER_INVALID_INPUT = "OCPTokenManager: invalid input";
+export const OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK = "OCPTokenManager: caller is not the timelock";
