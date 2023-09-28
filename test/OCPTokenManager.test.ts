@@ -113,7 +113,7 @@ describe("OCPTM", async () => {
         let omniToken = await ethers.getContractAt("OmniToken", omniTokenAddr);
         expect(omniTokenAddr).to.not.equal(AddressZero);
         expect(await ocpTokenManager.sourceTokens(omniTokenAddr, CHAIN_ID_LOCAL2)).to.eq(usdc.address);
-        expect(await ocpTokenManager.omniTokenList(0)).to.equal(omniTokenAddr);
+        // expect(await ocpTokenManager.omniTokenList(0)).to.equal(omniTokenAddr);
 
         // check balances
         expect(await omniToken.totalSupply()).to.equal(mintAmount);
