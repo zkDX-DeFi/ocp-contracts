@@ -55,9 +55,12 @@ contract OCPOmniTokenManager is Ownable, IOCPOmniTokenManager {
         // TODO: alternative to addSourceToken -- 1
         // add srcToken => chainId => omniToken
     }
-    function approveSourceTokens() external {
+    function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external {
         // TODO: alternative to addSourceToken -- 2
         // only Dao or Owner
+
+        require(_omniTokens.length == _srcTokens.length, "OCPTokenManager: invalid input");
+
     }
     //Settings
     function updateRouter(address _router) external onlyOwner {
