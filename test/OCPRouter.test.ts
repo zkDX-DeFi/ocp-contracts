@@ -86,6 +86,18 @@ describe("OCPR", async () => {
                 {value: _value}
             )
         ).to.be.revertedWith("OCPRouter: token invalid");
+
+        await expect(r.omniMint(
+            _remoteChainId,
+            _token.address,
+            0,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        )).to.be.revertedWith("OCPRouter: amountIn must be greater than 0");
     });
 
 });
