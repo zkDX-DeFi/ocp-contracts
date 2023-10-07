@@ -266,4 +266,14 @@ describe("OCPB", async () => {
             _lzTxObj
         )).to.be.reverted;
     });
+
+    it("check OCPB.FUNC => updateRouter()", async () => {
+        const b = bridge;
+        await b.updateRouter(bridge2.address);
+
+        const invalidUser = user1;
+        await expect(b.connect(invalidUser)
+            .updateRouter(bridge2.address))
+            .to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+    });
 });
