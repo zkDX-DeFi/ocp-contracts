@@ -265,4 +265,16 @@ describe("OCPOTM", async () => {
         await expect(f.createPool(tokenAddress))
             .to.be.revertedWith("OCPPoolFactory: Pool already exists");
     });
+
+    it("check OCP.FUNC => constructor()", async() => {
+        const _tokenAddress = usdc.address;
+        const pool = await deployNew("OCPool", [_tokenAddress]);
+
+
+        await pool.withdraw(user1.address, ONE_THOUSAND_E_18);
+
+
+        expect(await pool.token()).eq(_tokenAddress);
+        expect(await pool.router()).eq(AddressZero);
+    });
 });
