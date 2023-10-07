@@ -1,4 +1,4 @@
-const path = require("path")
+import path from "path";
 const fs = require("fs")
 
 let lzChainIds: { [key: string]: number } = {
@@ -34,7 +34,7 @@ export function getLzChainIdByNetworkName(networkName: string) {
     return id;
 }
 
-export function getDeploymentAddresses(networkName) {
+export function getDeploymentAddresses(networkName: string) {
     const PROJECT_ROOT = path.resolve(__dirname, "..")
     const DEPLOYMENT_PATH = path.resolve(PROJECT_ROOT, "deployments")
 
@@ -43,15 +43,15 @@ export function getDeploymentAddresses(networkName) {
         folderName = "localhost"
     }
 
-    const networkFolderName = fs.readdirSync(DEPLOYMENT_PATH).filter((f) => f === folderName)[0]
+    const networkFolderName = fs.readdirSync(DEPLOYMENT_PATH).filter((f: string) => f === folderName)[0]
     if (networkFolderName === undefined) {
         throw new Error("missing deployment files for endpoint " + folderName)
     }
 
     let rtnAddresses = {}
     const networkFolderPath = path.resolve(DEPLOYMENT_PATH, folderName)
-    const files = fs.readdirSync(networkFolderPath).filter((f) => f.includes(".json"))
-    files.forEach((file) => {
+    const files = fs.readdirSync(networkFolderPath).filter((f: string) => f.includes(".json"))
+    files.forEach((file: string) => {
         const filepath = path.resolve(networkFolderPath, file)
         const data = JSON.parse(fs.readFileSync(filepath))
         const contractName = file.split(".")[0]

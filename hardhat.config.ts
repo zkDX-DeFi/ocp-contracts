@@ -46,6 +46,10 @@ const config: HardhatUserConfig = {
             url: secret.url_goerli,
             accounts: [secret.key_dev]
         },
+        base_testnet: {
+            url: secret.url_base_testnet,
+            accounts: [secret.key_dev]
+        },
     },
     contractSizer: {
         runOnCompile: true

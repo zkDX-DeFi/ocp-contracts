@@ -19,3 +19,4 @@ task("setup-local",).setAction(async function (taskArgs, hre) {
     await ocpBridge2.updateGasLookup([CHAIN_ID_LOCAL, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL], [1, 2, 3], [5000000, 300000, 300000]);
 });
 
+

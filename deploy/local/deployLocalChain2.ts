@@ -3,7 +3,6 @@ import {AddressZero, CHAIN_ID_LOCAL2} from "../../helpers/constants";
 import {getLzEndPointByChainId, getWethByChainId} from "../../helpers/utils";
 import {run} from "hardhat";
 
-
 const func: DeployFunction = async function ({deployments, getNamedAccounts, network, getChainId}) {
 
     const {deploy, execute} = deployments;
@@ -33,11 +32,11 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
         log: true
     });
 
-    const wethAddress2 = await getWethByChainId(CHAIN_ID_LOCAL2);
+    // const wethAddress2 = await getWethByChainId(CHAIN_ID_LOCAL2);
     const OCPRouter2 = await deploy('OCPRouter2', {
         contract: 'OCPRouter',
         from: owner,
-        args: [OCPPoolFactory2.address, OCPTokenManager2.address, OCPBridge2.address, wethAddress2],
+        args: [OCPPoolFactory2.address, OCPTokenManager2.address, OCPBridge2.address, AddressZero],
         log: true
     });
 
