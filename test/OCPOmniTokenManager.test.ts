@@ -18,10 +18,11 @@ describe("OCPOTM", async () => {
         owner: any,
         usdc: any,
         ocpRouter: any,
+        ocPoolFactory: any,
         ocpTokenManager: any
 
     beforeEach(async () => {
-        ({owner, user1, user2, ocpRouter, ocpTokenManager} = await deployFixture());
+        ({owner, user1, user2, ocpRouter, ocpTokenManager, ocPoolFactory} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPTM.FUNC => createToken", async () => {
@@ -251,5 +252,17 @@ describe("OCPOTM", async () => {
 
         await expect(tm.connect(user).updateTimeLock(_timeLockAddress)).to.be.reverted;
         await expect(tm.updateTimeLock(_timeLockAddress)).to.be.ok;
+    });
+
+    it("check OCPF.FUNC => createPool()", async() => {
+        const f = ocPoolFactory;
+        const tokenAddress = usdc.address;
+        expect(await f.getPool(tokenAddress)).eq(AddressZero);
+
+        await f.createPool(tokenAddress);
+        expect(await f.getPool(tokenAddress)).to.not.equal(AddressZero);
+
+        await expect(f.createPool(tokenAddress))
+            .to.be.revertedWith("OCPPoolFactory: Pool already exists");
     });
 });
