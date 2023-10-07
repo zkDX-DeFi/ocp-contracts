@@ -9,7 +9,7 @@ import {
     OCPTOKENMANAGER_INVALID_INPUT,
     OWNABLE_CALLER_IS_NOT_THE_OWNER
 } from "../helpers/errors";
-import {ONE_THOUSAND_E_18} from "../helpers/constantsTest";
+import {ONE_HUNDRED_E_18, ONE_THOUSAND_E_18} from "../helpers/constantsTest";
 
 describe("OCPOTM", async () => {
 
@@ -299,5 +299,16 @@ describe("OCPOTM", async () => {
             _lzEndpoint
         ];
         const ot2 = await deployNew("OmniToken", _constructorParams2);
+
+        const _toAddress2 = user2.address;
+        await ot2.mint(_toAddress2, ONE_THOUSAND_E_18);
+
+        await ot2.burn(_toAddress2, ONE_HUNDRED_E_18);
+        await ot2.burn(_toAddress2, ONE_HUNDRED_E_18);
+
+        await expect(
+            ot2.connect(user1)
+            .burn(_toAddress2, ONE_HUNDRED_E_18))
+            .to.be.reverted;
     });
 });
