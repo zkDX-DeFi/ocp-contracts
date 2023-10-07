@@ -157,4 +157,12 @@ describe("OCPR", async () => {
             _lzTxObj
         )}`);
     });
+
+    it("check OCPR.FUNC => updateBridge()", async() => {
+        const r = router;
+
+        await r.updateBridge(bridge2.address);
+        await expect(r.connect(user1).updateBridge(bridge2.address))
+            .to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+    });
 });
