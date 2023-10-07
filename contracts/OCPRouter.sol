@@ -61,30 +61,30 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         _omniMint(_token, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value);
     }
 
-    function omniMintETH(
-        uint16 _remoteChainId,
-        uint256 _amountIn,
-        address _to,
-        bool _needDeploy,
-        address payable _refundAddress,
-        bytes memory _payload,
-        Structs.LzTxObj memory _lzTxParams
-    ) external payable {
-        require(msg.value > _amountIn, "OCPRouter: send value must be greater than amountIn");
-        require(weth != address(0), "OCPRouter: weth not set yet");
-        require(_to != address(0), "OCPRouter: receiver invalid");
-        require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
-
-        {
-            // transfer weth to pool
-            IWETH(weth).deposit{value: _amountIn}();
-            address _pool = poolFactory.getPool(weth);
-            if (_pool == address(0)) _pool = poolFactory.createPool(weth);
-            IERC20(weth).safeTransfer(_pool, _amountIn);
-        }
-
-        _omniMint(weth, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value - _amountIn);
-    }
+//    function omniMintETH(
+//        uint16 _remoteChainId,
+//        uint256 _amountIn,
+//        address _to,
+//        bool _needDeploy,
+//        address payable _refundAddress,
+//        bytes memory _payload,
+//        Structs.LzTxObj memory _lzTxParams
+//    ) external payable {
+//        require(msg.value > _amountIn, "OCPRouter: send value must be greater than amountIn");
+//        require(weth != address(0), "OCPRouter: weth not set yet");
+//        require(_to != address(0), "OCPRouter: receiver invalid");
+//        require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
+//
+//        {
+//            // transfer weth to pool
+//            IWETH(weth).deposit{value: _amountIn}();
+//            address _pool = poolFactory.getPool(weth);
+//            if (_pool == address(0)) _pool = poolFactory.createPool(weth);
+//            IERC20(weth).safeTransfer(_pool, _amountIn);
+//        }
+//
+//        _omniMint(weth, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value - _amountIn);
+//    }
 
     function _omniMint(
         address _token,
@@ -120,19 +120,19 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         return bridge.quoteLayerZeroFee(_remoteChainId, _type, _userPayload, _lzTxParams);
     }
 
-    function omniRedeem(
-        uint16 _remoteChainId,
-        address _token,
-        uint256 _amountIn,
-        address _to,
-        address payable _refundAddress,
-        bytes memory _payload,
-        Structs.LzTxObj memory _lzTxParams
-    ) external override payable {
-        require(_to != address(0), "OCPRouter: receiver invalid");
-        require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
-
-    }
+//    function omniRedeem(
+//        uint16 _remoteChainId,
+//        address _token,
+//        uint256 _amountIn,
+//        address _to,
+//        address payable _refundAddress,
+//        bytes memory _payload,
+//        Structs.LzTxObj memory _lzTxParams
+//    ) external override payable {
+//        require(_to != address(0), "OCPRouter: receiver invalid");
+//        require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
+//
+//    }
 
     function omniMintRemote(
         uint16 _srcChainId,
@@ -159,20 +159,20 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         }
     }
 
-    function omniRedeemRemote(
-        uint16 _srcChainId,
-        bytes memory _srcAddress,
-        uint256 _nonce,
-        Structs.RedeemObj memory _redeemParams,
-        uint256 _dstGasForCall,
-        bytes memory _payload
-    ) external onlyBridge {
-    }
+//    function omniRedeemRemote(
+//        uint16 _srcChainId,
+//        bytes memory _srcAddress,
+//        uint256 _nonce,
+//        Structs.RedeemObj memory _redeemParams,
+//        uint256 _dstGasForCall,
+//        bytes memory _payload
+//    ) external onlyBridge {
+//    }
 
-    function retryCachedMint(uint16 _srcChainId, bytes calldata _srcAddress, uint256 _nonce) external {
-        Structs.CachedMint memory cm = cachedMintLookup[_srcChainId][_srcAddress][_nonce];
-        //        require(cm.to != address(0x0), "OCPRouter: no cache found");
-    }
+//    function retryCachedMint(uint16 _srcChainId, bytes calldata _srcAddress, uint256 _nonce) external {
+//        Structs.CachedMint memory cm = cachedMintLookup[_srcChainId][_srcAddress][_nonce];
+//        //        require(cm.to != address(0x0), "OCPRouter: no cache found");
+//    }
 
     function updateBridge(address _bridge) external onlyOwner {
         bridge = IOCPBridge(_bridge);
