@@ -217,9 +217,10 @@ describe("OCPR", async () => {
             .updateBridge(owner.address))
             .to.be.revertedWith("Ownable: caller is not the owner");
 
-        expect(await r.bridge()).eq(AddressZero);
-        await r.updateBridge(owner.address);
-        expect(await r.bridge()).eq(owner.address);
+        expect(await r.bridge()).not.eq(AddressZero);
+        const _targetAddress = owner.address;
+        await r.updateBridge(_targetAddress);
+        expect(await r.bridge()).eq(_targetAddress);
     });
 
     it("check OCPR.FUNC => omniMintRemote()", async() => {
