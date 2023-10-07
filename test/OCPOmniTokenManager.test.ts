@@ -10,7 +10,7 @@ import {
     OWNABLE_CALLER_IS_NOT_THE_OWNER
 } from "../helpers/errors";
 
-describe("OCPTM", async () => {
+describe("OCPOTM", async () => {
 
     let user1: any,
         user2: any,
