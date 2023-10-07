@@ -9,6 +9,7 @@ import {
     OCPTOKENMANAGER_INVALID_INPUT,
     OWNABLE_CALLER_IS_NOT_THE_OWNER
 } from "../helpers/errors";
+import {ONE_THOUSAND_E_18} from "../helpers/constantsTest";
 
 describe("OCPOTM", async () => {
 
@@ -204,5 +205,33 @@ describe("OCPOTM", async () => {
             .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
 
         await tm.updateTimeLock(_newTimeLock);
+    });
+
+    it("check OCPOTM.FUNC => createOmniToken", async() => {
+        const tm = ocpTokenManager;
+
+        expect(await tm.router()).eq(AddressZero);
+        expect(await tm.timeLock()).eq(owner.address);
+
+        const _mintParams = {
+            srcToken: usdc.address,
+            amount: ONE_THOUSAND_E_18,
+            to: user2.address,
+            name: "USDC",
+            symbol: "USDC"
+        };
+        const _lzEndpoint = AddressZero;
+        const _srcChainId = CHAIN_ID_LOCAL2;
+        expect(await tm.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
+
+        await tm.createOmniToken(
+            _mintParams,
+            _lzEndpoint,
+            _srcChainId
+        );
+
+        expect(await tm.omniTokens(usdc.address, _srcChainId)).to.not.equal(AddressZero);
+        const omniTokenAddress = await tm.omniTokens(usdc.address, _srcChainId);
+        expect(await tm.sourceTokens(omniTokenAddress, _srcChainId)).eq(usdc.address);
     });
 });
