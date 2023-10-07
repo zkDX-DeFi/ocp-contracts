@@ -309,6 +309,13 @@ describe("OCPOTM", async () => {
         await expect(
             ot2.connect(user1)
             .burn(_toAddress2, ONE_HUNDRED_E_18))
-            .to.be.reverted;
+            .to.be.revertedWith("Ownable: caller is not the owner");
+
+        await expect(
+            ot2.connect(user2)
+            .mint(_toAddress2, ONE_HUNDRED_E_18))
+            .to.be.revertedWith("Ownable: caller is not the owner");
+
+
     });
 });
