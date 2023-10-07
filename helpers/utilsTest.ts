@@ -165,11 +165,7 @@ export async function deployOT(_userA: any, _lz: any, _tm: any, _srcChainId: any
 }
 
 export async function getOCPB_omniMInt(owner: any) {
-    const b = await deployNew(
-        "OCPBridge",
-        [owner.address, AddressZero]
-    );
-    expect(await b.router()).eq(owner.address);
+    const b = await deployNew("OCPBridge", [AddressZero]);
 
     const _mintParams = {
         srcToken: AddressZero,
@@ -215,7 +211,7 @@ export async function getOCPB_omniRedeem(owner: any) {
 export async function getOCPR_WETH_ZERO(owner: any) {
     const r = await deployNew(
         "OCPRouter",
-        [owner.address, owner.address, AddressZero]);
+        [owner.address, owner.address, owner.address, AddressZero]);
 
     return {r};
 }
@@ -223,7 +219,7 @@ export async function getOCPR_WETH_ZERO(owner: any) {
 export async function getOCPR_BRIDGE_SETTINGS(owner: any) {
     const r = await deployNew(
         "OCPRouter",
-        [owner.address, owner.address, AddressZero]);
+        [owner.address, owner.address, owner.address, AddressZero]);
 
     await r.connect(owner).updateBridge(owner.address);
     return {r};

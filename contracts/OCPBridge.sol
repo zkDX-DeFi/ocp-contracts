@@ -3,17 +3,18 @@ pragma solidity ^0.8.17;
 
 import "@layerzerolabs/solidity-examples/contracts/lzApp/LzApp.sol";
 import "./interfaces/IOCPBridge.sol";
+import "./interfaces/IOCPRouter.sol";
 import "./libraries/Structs.sol";
 import "./libraries/Types.sol";
 import "hardhat/console.sol";
 
 contract OCPBridge is LzApp, IOCPBridge {
-    address public router;
+
+    IOCPRouter public router;
     mapping(uint16 => mapping(uint8 => uint256)) public gasLookup; // chainId -> type -> gas
     bool public useLzToken;
-    constructor(address _router, address _lzEndpoint) LzApp(_lzEndpoint) {
-        router = _router;
-    }
+
+    constructor(address _lzEndpoint) LzApp(_lzEndpoint) {}
 
     //TYPES = 1
     function omniMint(
@@ -76,6 +77,8 @@ contract OCPBridge is LzApp, IOCPBridge {
                 uint256 _dstGasForCall
             ) = abi.decode(_payload, (uint8, Structs.MintObj, bytes, uint256));
             console.log("# Type1 Received Suc, Deploy Token:", _mintParams.name);
+            router.omniMintRemote(_srcChainId, _srcAddress, _nonce, _type == Types.TYPE_DEPLOY_AND_MINT, _mintParams,
+                address(lzEndpoint), _dstGasForCall, payload);
         }
     }
 
@@ -84,5 +87,9 @@ contract OCPBridge is LzApp, IOCPBridge {
         for (uint256 i = 0; i < _chainIds.length; i++) {
             gasLookup[_chainIds[i]][_types[i]] = _gas[i];
         }
+    }
+
+    function updateRouter(address _router) external onlyOwner {
+        router = IOCPRouter(_router);
     }
 }

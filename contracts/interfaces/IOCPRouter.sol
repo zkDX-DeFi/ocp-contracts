@@ -10,6 +10,7 @@ interface IOCPRouter {
         address _token,
         uint256 _amountIn,
         address _to,
+        bool _needDeploy,
         address payable _refundAddress,
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
@@ -19,6 +20,7 @@ interface IOCPRouter {
         uint16 _remoteChainId,
         uint256 _amountIn,
         address _to,
+        bool _needDeploy,
         address payable _refundAddress,
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
@@ -30,6 +32,7 @@ interface IOCPRouter {
         uint256 _nonce,
         bool _needDeploy,
         Structs.MintObj memory _mintParams,
+        address _lzEndpoint,
         uint256 _dstGasForCall,
         bytes memory payload
     ) external;

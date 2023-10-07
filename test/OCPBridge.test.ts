@@ -17,12 +17,12 @@ describe("OCPB", async () => {
         user2: any,
         owner: any,
         usdc: any,
-        ocpBridge: any,
-        ocpBridge2: any
+        bridge: any,
+        bridge2: any
 
 
     beforeEach(async () => {
-        ({owner, user1, user2, ocpBridge, ocpBridge2} = await deployFixture());
+        ({owner, user1, user2, bridge, bridge2} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPB.FUNC => omniMint", async () => {
@@ -48,7 +48,7 @@ describe("OCPB", async () => {
     });
 
     it("check OCPB.FUNC => omniMint v2", async () => {
-        const b = ocpBridge;
+        const b = bridge;
         const _remoteChainId = CHAIN_ID_LOCAL2;
 
         const _mintParams = {
@@ -93,7 +93,7 @@ describe("OCPB", async () => {
 
 
     it("check OCPB.FUNC => quoteLayerZeroFee", async () => {
-        const b = ocpBridge;
+        const b = bridge;
         const _remoteChainId = CHAIN_ID_LOCAL2;
         const _type = 1;
         const _lzTxObj = {
@@ -117,7 +117,7 @@ describe("OCPB", async () => {
     });
 
     it("check OCPB.FUNC => _txParamBuilder => dstNativeAmount >0", async () => {
-        const b = ocpBridge;
+        const b = bridge;
         const _remoteChainId = CHAIN_ID_LOCAL2;
         const _type = 1;
         const _lzTxObj = {
@@ -143,7 +143,7 @@ describe("OCPB", async () => {
 
     it("omniMint messaging reverted, not enough fees", async () => {
         let mintAmount = parseEther("1000");
-        await expect(ocpBridge.connect(user1).omniMint(
+        await expect(bridge.connect(user1).omniMint(
             CHAIN_ID_LOCAL2,
             user1.address,
             TYPE_DEPLOY_AND_MINT,
@@ -160,8 +160,8 @@ describe("OCPB", async () => {
 
     it("omniMint messaging suc", async () => {
         let mintAmount = parseEther("1000");
-        let value = await ocpBridge.quoteLayerZeroFee(CHAIN_ID_LOCAL2, TYPE_DEPLOY_AND_MINT, "0x", [0, 0, "0x"]);
-        await ocpBridge.connect(user1).omniMint(
+        let value = await bridge.quoteLayerZeroFee(CHAIN_ID_LOCAL2, TYPE_DEPLOY_AND_MINT, "0x", [0, 0, "0x"]);
+        await bridge.connect(user1).omniMint(
             CHAIN_ID_LOCAL2,
             user1.address,
             TYPE_DEPLOY_AND_MINT,
@@ -178,7 +178,7 @@ describe("OCPB", async () => {
     });
 
     it("check OCPB.FUNC => updateGasLookup()", async() => {
-        const b = ocpBridge;
+        const b = bridge;
         const invalidUser = user1;
 
         console.log(`${await b.owner()}`);

@@ -11,14 +11,14 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
 
     console.log(`>> deploying same on local chain 2 (test only) ...`);
 
-    await deploy('OCPoolFactory2', {
+    const OCPPoolFactory2 = await deploy('OCPoolFactory2', {
         contract: 'OCPoolFactory',
         from: owner,
         args: [],
         log: true
     });
 
-    await deploy('OCPOmniTokenManager2', {
+    const OCPTokenManager2 = await deploy('OCPOmniTokenManager2', {
         contract: "OCPOmniTokenManager",
         from: owner,
         args: [],
@@ -26,12 +26,22 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     });
 
     let lzEndpoint = await getLzEndPointByChainId(CHAIN_ID_LOCAL2);
-    await deploy('OCPBridge2', {
+    const OCPBridge2 = await deploy('OCPBridge2', {
         contract: 'OCPBridge',
         from: owner,
-        args: [AddressZero, lzEndpoint],
+        args: [lzEndpoint],
         log: true
     });
+
+    const wethAddress2 = await getWethByChainId(CHAIN_ID_LOCAL2);
+    const OCPRouter2 = await deploy('OCPRouter2', {
+        contract: 'OCPRouter',
+        from: owner,
+        args: [OCPPoolFactory2.address, OCPTokenManager2.address, OCPBridge2.address, wethAddress2],
+        log: true
+    });
+
+    await execute('OCPBridge2', {from: owner, log: true}, "updateRouter", OCPRouter2.address);
 
     await run("setup-local");
 };

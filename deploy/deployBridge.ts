@@ -13,7 +13,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     const lzEndpoint = await getLzEndPointByChainId(chainId);
     await deploy('OCPBridge', {
         from: owner,
-        args: [AddressZero, lzEndpoint],
+        args: [lzEndpoint],
         log: true
     });
 };

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -10,7 +11,9 @@ import "./interfaces/IOCPOmniTokenManager.sol";
 import "./interfaces/IOCPRouter.sol";
 import "./interfaces/IOCPReceiver.sol";
 import "./interfaces/IOCPBridge.sol";
+import "./interfaces/IWETH.sol";
 import "./libraries/Types.sol";
+import "hardhat/console.sol";
 
 contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
 
@@ -18,20 +21,16 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     IOCPoolFactory public poolFactory;
     IOCPOmniTokenManager public tokenManager;
     IOCPBridge public bridge;
-
-    uint256 public mintFeeBasisPoint;
-    uint8 public defaultSharedDecimals;
-    address public feeReceiver;
     address public weth;
 
     mapping(uint16 => mapping(bytes => mapping(uint256 => Structs.CachedMint))) public cachedMintLookup; // chainId -> src -> nonce -> cache
 
     event CachedMint(uint16 chainId, bytes srcAddress, uint256 nonce, address token, uint256 amount, address to, bytes payload, bytes reason);
 
-    constructor(address _poolFactory, address _tokenManager, address _weth) {
+    constructor(address _poolFactory, address _tokenManager, address _bridge, address _weth) {
         poolFactory = IOCPoolFactory(_poolFactory);
         tokenManager = IOCPOmniTokenManager(_tokenManager);
-        defaultSharedDecimals = 8; // up to 184b
+        bridge = IOCPBridge(_bridge);
         weth = _weth;
     }
 
@@ -45,6 +44,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         address _token,
         uint256 _amountIn,
         address _to,
+        bool _needDeploy,
         address payable _refundAddress,
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
@@ -53,17 +53,19 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         require(_to != address(0), "OCPRouter: receiver invalid");
         require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
 
-        /* fake code */
-        //
-        // A_CHAIN.IOCPPoolFactory(_poolFactoryAddress).createPool();
-        // _TOKEN will be deposited to the `pool`
+        // transfer token to pool
+        address _pool = poolFactory.getPool(_token);
+        if (_pool == address(0)) _pool = poolFactory.createPool(_token);
+        IERC20(_token).safeTransferFrom(msg.sender, _pool, _amountIn);
 
+        _omniMint(_token, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value);
     }
 
     function omniMintETH(
         uint16 _remoteChainId,
         uint256 _amountIn,
         address _to,
+        bool _needDeploy,
         address payable _refundAddress,
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
@@ -73,6 +75,40 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         require(_to != address(0), "OCPRouter: receiver invalid");
         require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
 
+        {
+            // transfer weth to pool
+            IWETH(weth).deposit{value: _amountIn}();
+            address _pool = poolFactory.getPool(weth);
+            if (_pool == address(0)) _pool = poolFactory.createPool(weth);
+            IERC20(weth).safeTransfer(_pool, _amountIn);
+        }
+
+        _omniMint(weth, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value - _amountIn);
+    }
+
+    function _omniMint(
+        address _token,
+        uint16 _remoteChainId,
+        uint256 _amountIn,
+        address _to,
+        bool _needDeploy,
+        address payable _refundAddress,
+        bytes memory _payload,
+        Structs.LzTxObj memory _lzTxParams,
+        uint256 _msgFee
+    ) internal {
+
+        Structs.MintObj memory mintParams;
+        mintParams.srcToken = _token;
+        mintParams.amount = _amountIn;
+        mintParams.to = _to;
+        if (_needDeploy) {
+            mintParams.name = IERC20Metadata(_token).name();
+            mintParams.symbol = IERC20Metadata(_token).symbol();
+        }
+
+        uint8 _type = _needDeploy ? Types.TYPE_DEPLOY_AND_MINT : Types.TYPE_MINT;
+        bridge.omniMint{value: _msgFee}(_remoteChainId, _refundAddress, _type, mintParams, _payload, _lzTxParams);
     }
 
     function quoteLayerZeroFee(
@@ -81,8 +117,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bytes calldata _userPayload,
         Structs.LzTxObj memory _lzTxParams
     ) external view returns (uint256, uint256) {
-//        return bridge.quoteLayerZeroFee(_remoteChainId, _type, _userPayload, _lzTxParams);
-        return (0,0);
+        return bridge.quoteLayerZeroFee(_remoteChainId, _type, _userPayload, _lzTxParams);
     }
 
     function omniRedeem(
@@ -105,9 +140,23 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         uint256 _nonce,
         bool _needDeploy,
         Structs.MintObj memory _mintParams,
+        address _lzEndpoint,
         uint256 _dstGasForCall,
         bytes memory _payload
     ) external onlyBridge {
+        address token;
+        if (_needDeploy)
+            token = tokenManager.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
+        // else token = tokenManager.omniMint(_mintParams.srcToken, _mintParams.dstChainId, _mintParams.amount, _mintParams.to);
+        if (_payload.length > 0) {
+            try IOCPReceiver(_mintParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce, token,
+                _mintParams.amount, _payload){} catch (bytes memory reason) {
+                console.logBytes(reason);
+                // save failed payload to cache
+                cachedMintLookup[_srcChainId][_srcAddress][_nonce] = Structs.CachedMint(token, _mintParams.amount, _mintParams.to, _payload);
+                emit CachedMint(_srcChainId, _srcAddress, _nonce, token, _mintParams.amount, _mintParams.to, _payload, reason);
+            }
+        }
     }
 
     function omniRedeemRemote(

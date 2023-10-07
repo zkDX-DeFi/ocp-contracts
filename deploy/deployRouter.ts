@@ -13,17 +13,19 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     const OCPPoolFactory = await get("OCPoolFactory");
     const OCPTokenManager = await get("OCPOmniTokenManager");
     const wethAddress = await getWethByChainId(chainId);
+    const OCPBridge = await get("OCPBridge");
 
     const OCPRouter = await deploy('OCPRouter', {
         from: owner,
-        args: [OCPPoolFactory.address, OCPTokenManager.address, wethAddress],
+        args: [OCPPoolFactory.address, OCPTokenManager.address, OCPBridge.address, wethAddress],
         log: true
     });
 
+    await execute('OCPBridge', {from: owner, log: true}, "updateRouter", OCPRouter.address);
     // await execute('OCPoolFactory', {from: owner, log: true}, "updateRouter", OCPRouter.address);
     // await execute('OCPTokenManager', {from: owner, log: true}, "updateRouter", OCPRouter.address);
 };
 
 export default func;
-func.dependencies = ['poolFactory', 'tokenManager'];
+func.dependencies = ['poolFactory', 'tokenManager', 'bridge'];
 func.tags = ['router'];

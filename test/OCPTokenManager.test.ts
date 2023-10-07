@@ -16,15 +16,15 @@ describe("OCPTM", async () => {
         user2: any,
         owner: any,
         usdc: any,
-        ocpRouter: any,
-        ocpTokenManager: any
+        router: any,
+        tokenManager: any
 
     beforeEach(async () => {
-        ({owner, user1, user2, ocpRouter, ocpTokenManager} = await deployFixture());
+        ({owner, user1, user2, router, tokenManager} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPTM.FUNC => createToken", async () => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
 
         const _mintParams = getMintParams_ZERO;
         const _lzEndpoint = AddressZero;
@@ -33,7 +33,7 @@ describe("OCPTM", async () => {
         await tm.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
     });
     it("check OCPTM.FUNC => updateRouter", async () => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
 
         expect(await tm.router()).eq(AddressZero);
         const invalidUser = user1;
@@ -46,7 +46,7 @@ describe("OCPTM", async () => {
         expect(await tm.router()).eq(validValue)
     });
     it("check OCPTM.FUNC => omniMint", async () => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
 
         const _srcToken = usdc;
         const _dstChainId = 0;
@@ -63,7 +63,7 @@ describe("OCPTM", async () => {
             .to.be.ok;
     });
     it("check OCPTM.FUNC => omniBurn", async () => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
         const invalidUser = user1;
         const validUser = owner;
         await tm.updateRouter(validUser.address);
@@ -86,7 +86,7 @@ describe("OCPTM", async () => {
 
     it("createOmniToken suc", async () => {
         let mintAmount = parseEther("1000");
-        await ocpTokenManager.connect(user1).createOmniToken(
+        await tokenManager.connect(user1).createOmniToken(
             [
                 usdc.address,
                 mintAmount,
@@ -98,10 +98,10 @@ describe("OCPTM", async () => {
         );
 
         // check data
-        let omniTokenAddr = await ocpTokenManager.omniTokens(usdc.address, CHAIN_ID_LOCAL2);
+        let omniTokenAddr = await tokenManager.omniTokens(usdc.address, CHAIN_ID_LOCAL2);
         let omniToken = await ethers.getContractAt("OmniToken", omniTokenAddr);
         expect(omniTokenAddr).to.not.equal(AddressZero);
-        expect(await ocpTokenManager.sourceTokens(omniTokenAddr, CHAIN_ID_LOCAL2)).to.eq(usdc.address);
+        expect(await tokenManager.sourceTokens(omniTokenAddr, CHAIN_ID_LOCAL2)).to.eq(usdc.address);
         // expect(await ocpTokenManager.omniTokenList(0)).to.equal(omniTokenAddr);
 
         // check balances
@@ -111,7 +111,7 @@ describe("OCPTM", async () => {
 
     //added due to changes cb66d58995cd8d91c061e084b048cac4c3469799
     it("createOmniToken suc V2", async () => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
         const mintAmount = parseEther("1000");
         const _mintParams = {
             srcToken: usdc.address,
@@ -122,13 +122,13 @@ describe("OCPTM", async () => {
         };
         const _srcChainId = CHAIN_ID_LOCAL2;
         expect(await tm.omniTokens(_mintParams.srcToken, _srcChainId)).to.equal(AddressZero);
-        await ocpTokenManager.connect(user1).createOmniToken(
+        await tokenManager.connect(user1).createOmniToken(
             _mintParams,
             AddressZero, CHAIN_ID_LOCAL2
         );
 
         expect(await tm.omniTokens(_mintParams.srcToken, _srcChainId)).to.not.equal(AddressZero);
-        await ocpTokenManager.connect(user1).createOmniToken(
+        await tokenManager.connect(user1).createOmniToken(
             _mintParams,
             AddressZero, CHAIN_ID_LOCAL2
         );
@@ -136,8 +136,8 @@ describe("OCPTM", async () => {
 
     /* added @20230928 */
     it("check OCPTM.VARIABLES => updateRouter", async () => {
-        const tm = ocpTokenManager;
-        const r = ocpRouter;
+        const tm = tokenManager;
+        const r = router;
         expect(await tm.router()).eq(AddressZero);
 
         const invalidUser = user1;
@@ -155,7 +155,7 @@ describe("OCPTM", async () => {
     });
 
     it("check OCPTM.FUNC => approveSourceTokens()", async() => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
         const _omniTokens = [usdc.address];
         const _srcTokens = [usdc.address];
         const _srcChainIds = CHAIN_ID_LOCAL;
@@ -174,7 +174,7 @@ describe("OCPTM", async () => {
     });
 
     it("check OCPTM.FUNC => requestAddSourceTokens()", async() => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
         const _srcTokens = [usdc.address];
         const _srcChainIds = [CHAIN_ID_LOCAL];
         const _omniToken = usdc.address;
@@ -194,7 +194,7 @@ describe("OCPTM", async () => {
     });
 
     it("check OCPTM.FUNC => updateTimeLock()", async() => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
         const _newTimeLock = user1.address;
 
         const invalidUser = user1;

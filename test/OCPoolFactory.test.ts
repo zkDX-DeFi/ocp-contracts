@@ -9,15 +9,15 @@ describe("OCPPoolFactory", async () => {
     let user1: any,
         owner: any,
         usdc: any,
-        ocPoolFactory: any
+        poolFactory: any
 
     beforeEach(async () => {
-        ({owner,user1, ocPoolFactory} = await deployFixture());
+        ({owner,user1, poolFactory} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
 
     it("check OCPF.FUNC => createPool()", async () => {
-        const f = ocPoolFactory;
+        const f = poolFactory;
         expect(await f.getPool(usdc.address)).to.equal(AddressZero);
         await f.connect(user1).createPool(usdc.address);
         expect(await f.getPool(usdc.address)).to.not.equal(AddressZero);
@@ -25,7 +25,7 @@ describe("OCPPoolFactory", async () => {
         await expect(f.connect(user1).createPool(usdc.address)).to.be.reverted;
     });
     it("check OCPF.FUNC => createPool() v2", async() => {
-        const f = ocPoolFactory;
+        const f = poolFactory;
         const token = usdc;
         await f.createPool(token.address);
         expect(await f.getPool(token.address)).to.not.equal(AddressZero);
