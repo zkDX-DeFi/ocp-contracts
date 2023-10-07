@@ -5,7 +5,7 @@ import {
     CHAIN_ID_LOCAL,
     CHAIN_ID_LOCAL2,
     CHAIN_ID_LOCAL3,
-    TYPE_DEPLOY_AND_MINT
+    TYPE_DEPLOY_AND_MINT, TYPE_MINT
 } from "../helpers/constants";
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
@@ -246,5 +246,24 @@ describe("OCPB", async () => {
             _lzTxObj,
             {value: value}
         );
+
+        const _remoteChainId2 = CHAIN_ID_LOCAL2;
+        await b.connect(OPRUSER).omniMint(
+            _remoteChainId2,
+            _refundAddress,
+            _type,
+            _mintParams,
+            _userPayload,
+            _lzTxObj,
+            {value: value}
+        );
+
+        const _type2 = TYPE_MINT;
+        await expect(b.quoteLayerZeroFee(
+            _remoteChainId2,
+            _type2,
+            _userPayload,
+            _lzTxObj
+        )).to.be.reverted;
     });
 });
