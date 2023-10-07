@@ -138,4 +138,23 @@ describe("OCPR", async () => {
         );
     });
 
+    it("check OCPR.FUNC => quoteLayerZeroFee()", async () => {
+        const r = router;
+
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _type = TYPE_DEPLOY_AND_MINT;
+        const _userPayload = "0x";
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: AddressZero,
+        };
+
+        console.log(`${await r.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        )}`);
+    });
 });
