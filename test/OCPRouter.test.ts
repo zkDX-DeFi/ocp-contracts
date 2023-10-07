@@ -122,6 +122,20 @@ describe("OCPR", async () => {
             _lzTxObj,
             {value: _value}
         );
+
+        _needDeploy = false;
+
+        await r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        );
     });
 
 });
