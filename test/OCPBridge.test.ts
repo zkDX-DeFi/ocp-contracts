@@ -5,11 +5,12 @@ import {
     CHAIN_ID_LOCAL,
     CHAIN_ID_LOCAL2,
     CHAIN_ID_LOCAL3,
-    TYPE_DEPLOY_AND_MINT
+    TYPE_DEPLOY_AND_MINT, TYPE_MINT
 } from "../helpers/constants";
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
+import {ONE_THOUSAND_E_18} from "../helpers/constantsTest";
 
 describe("OCPB", async () => {
 
@@ -203,5 +204,66 @@ describe("OCPB", async () => {
             _types,
             _gasLookup
         )).to.be.revertedWith("OCPBridge: invalid params");
+    });
+
+    it("check OCPB.FUNC => quoteLayerZeroFee()", async () => {
+        let mintAmount = parseEther("1000");
+
+        const b = ocpBridge;
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _type = TYPE_DEPLOY_AND_MINT;
+        const _userPayload = "0x";
+        const _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: "0x"
+        };
+
+        const [value,value2] = await b.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`${formatEther(value)}, ${value2}`);
+
+
+        const OPRUSER = user1;
+        const _refundAddress = OPRUSER.address;
+        const _mintParams = {
+            srcToken: usdc.address,
+            amount : ONE_THOUSAND_E_18,
+            to: OPRUSER.address,
+            name: "USDC",
+            symbol : "USDC"
+        };
+        await b.connect(OPRUSER).omniMint(
+            _remoteChainId,
+            _refundAddress,
+            _type,
+            _mintParams,
+            _userPayload,
+            _lzTxObj,
+            {value: value}
+        );
+
+        const _remoteChainId2 = CHAIN_ID_LOCAL2;
+        await b.connect(OPRUSER).omniMint(
+            _remoteChainId2,
+            _refundAddress,
+            _type,
+            _mintParams,
+            _userPayload,
+            _lzTxObj,
+            {value: value}
+        );
+
+        const _type2 = TYPE_MINT;
+        await expect(b.quoteLayerZeroFee(
+            _remoteChainId2,
+            _type2,
+            _userPayload,
+            _lzTxObj
+        )).to.be.reverted;
     });
 });

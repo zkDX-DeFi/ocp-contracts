@@ -9,18 +9,20 @@ import {
     OCPTOKENMANAGER_INVALID_INPUT,
     OWNABLE_CALLER_IS_NOT_THE_OWNER
 } from "../helpers/errors";
+import {ONE_HUNDRED_E_18, ONE_THOUSAND_E_18} from "../helpers/constantsTest";
 
-describe("OCPTM", async () => {
+describe("OCPOTM", async () => {
 
     let user1: any,
         user2: any,
         owner: any,
         usdc: any,
         router: any,
-        tokenManager: any
+        tokenManager: any,
+        poolFactory: any
 
     beforeEach(async () => {
-        ({owner, user1, user2, router, tokenManager} = await deployFixture());
+        ({owner, user1, user2, router, tokenManager, poolFactory} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPTM.FUNC => createToken", async () => {
@@ -204,5 +206,116 @@ describe("OCPTM", async () => {
             .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
 
         await tm.updateTimeLock(_newTimeLock);
+    });
+
+    it("check OCPOTM.FUNC => createOmniToken", async() => {
+        const tm = ocpTokenManager;
+
+        expect(await tm.router()).eq(AddressZero);
+        expect(await tm.timeLock()).eq(owner.address);
+
+        const _mintParams = {
+            srcToken: usdc.address,
+            amount: ONE_THOUSAND_E_18,
+            to: user2.address,
+            name: "USDC",
+            symbol: "USDC"
+        };
+        const _lzEndpoint = AddressZero;
+        const _srcChainId = CHAIN_ID_LOCAL2;
+        expect(await tm.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
+
+        await tm.createOmniToken(
+            _mintParams,
+            _lzEndpoint,
+            _srcChainId
+        );
+
+        expect(await tm.omniTokens(usdc.address, _srcChainId)).to.not.equal(AddressZero);
+        const omniTokenAddress = await tm.omniTokens(usdc.address, _srcChainId);
+        expect(await tm.sourceTokens(omniTokenAddress, _srcChainId)).eq(usdc.address);
+    });
+
+    it("check OCPOTM.FUNC => updateRouter", async() => {
+        const tm = ocpTokenManager;
+        const user = user1;
+        const _routerAddress = AddressZero;
+
+        await expect(tm.connect(user).updateRouter(_routerAddress)).to.be.reverted;
+        await expect(tm.updateRouter(_routerAddress)).to.be.ok;
+    });
+
+    it("check OCPOTM.FUNC => updateTimeLock", async() => {
+        const tm = ocpTokenManager;
+        const user = user1;
+        const _timeLockAddress = AddressZero;
+
+        await expect(tm.connect(user).updateTimeLock(_timeLockAddress)).to.be.reverted;
+        await expect(tm.updateTimeLock(_timeLockAddress)).to.be.ok;
+    });
+
+    it("check OCPF.FUNC => createPool()", async() => {
+        const f = ocPoolFactory;
+        const tokenAddress = usdc.address;
+        expect(await f.getPool(tokenAddress)).eq(AddressZero);
+
+        await f.createPool(tokenAddress);
+        expect(await f.getPool(tokenAddress)).to.not.equal(AddressZero);
+
+        await expect(f.createPool(tokenAddress))
+            .to.be.revertedWith("OCPPoolFactory: Pool already exists");
+    });
+
+    it("check OCP.FUNC => constructor()", async() => {
+        const _tokenAddress = usdc.address;
+        const pool = await deployNew("OCPool", [_tokenAddress]);
+
+
+        await pool.withdraw(user1.address, ONE_THOUSAND_E_18);
+
+
+        expect(await pool.token()).eq(_tokenAddress);
+        expect(await pool.router()).eq(AddressZero);
+    });
+
+    it("check OT.FUNC => constructor()", async() => {
+        const _toAddress = user1.address;
+        const _lzEndpoint = AddressZero;
+        const _tokenSymbol = "USDC";
+        const _constructorParams = [
+            _tokenSymbol,
+            _tokenSymbol,
+            ONE_THOUSAND_E_18,
+            _toAddress,
+            _lzEndpoint
+        ];
+        const ot = await deployNew("OmniToken", _constructorParams);
+
+        const _constructorParams2 = [
+            _tokenSymbol,
+            _tokenSymbol,
+            0,
+            _toAddress,
+            _lzEndpoint
+        ];
+        const ot2 = await deployNew("OmniToken", _constructorParams2);
+
+        const _toAddress2 = user2.address;
+        await ot2.mint(_toAddress2, ONE_THOUSAND_E_18);
+
+        await ot2.burn(_toAddress2, ONE_HUNDRED_E_18);
+        await ot2.burn(_toAddress2, ONE_HUNDRED_E_18);
+
+        await expect(
+            ot2.connect(user1)
+            .burn(_toAddress2, ONE_HUNDRED_E_18))
+            .to.be.revertedWith("Ownable: caller is not the owner");
+
+        await expect(
+            ot2.connect(user2)
+            .mint(_toAddress2, ONE_HUNDRED_E_18))
+            .to.be.revertedWith("Ownable: caller is not the owner");
+
+
     });
 });
