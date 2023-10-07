@@ -98,6 +98,30 @@ describe("OCPR", async () => {
             _lzTxObj,
             {value: _value}
         )).to.be.revertedWith("OCPRouter: amountIn must be greater than 0");
+
+        await expect(r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            AddressZero,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        )).to.be.revertedWith("OCPRouter: receiver invalid");
+
+        await r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        );
     });
 
 });
