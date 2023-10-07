@@ -10,7 +10,7 @@ import {
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
-import {ONE_THOUSAND_E_18} from "../helpers/constantsTest";
+import {ONE_HUNDRED_E_18, ONE_THOUSAND_E_18, POINT_ONE_E_18} from "../helpers/constantsTest";
 
 describe("OCPR", async () => {
 
@@ -38,6 +38,40 @@ describe("OCPR", async () => {
         expect(await r.bridge()).eq(b.address);
         expect(await r.tokenManager()).eq(tm.address);
         expect(await r.poolFactory()).eq(f.address);
+    });
+
+    it("check OCPR.FUNC => omniMint()", async () => {
+        const r = router;
+
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _token = usdc;
+        let _amount = ONE_HUNDRED_E_18;
+        let _toAddress = user1.address;
+        let _needDeploy = true;
+        let _refundAddress = user1.address;
+        let _payload = "0x";
+        let _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: AddressZero,
+        };
+        let _value = POINT_ONE_E_18;
+
+
+        await _token.mint(owner.address, ONE_THOUSAND_E_18);
+        await _token.approve(r.address, ONE_THOUSAND_E_18);
+
+        await r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        );
     });
 
 });
