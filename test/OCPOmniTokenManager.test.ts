@@ -234,4 +234,22 @@ describe("OCPOTM", async () => {
         const omniTokenAddress = await tm.omniTokens(usdc.address, _srcChainId);
         expect(await tm.sourceTokens(omniTokenAddress, _srcChainId)).eq(usdc.address);
     });
+
+    it("check OCPOTM.FUNC => updateRouter", async() => {
+        const tm = ocpTokenManager;
+        const user = user1;
+        const _routerAddress = AddressZero;
+
+        await expect(tm.connect(user).updateRouter(_routerAddress)).to.be.reverted;
+        await expect(tm.updateRouter(_routerAddress)).to.be.ok;
+    });
+
+    it("check OCPOTM.FUNC => updateTimeLock", async() => {
+        const tm = ocpTokenManager;
+        const user = user1;
+        const _timeLockAddress = AddressZero;
+
+        await expect(tm.connect(user).updateTimeLock(_timeLockAddress)).to.be.reverted;
+        await expect(tm.updateTimeLock(_timeLockAddress)).to.be.ok;
+    });
 });
