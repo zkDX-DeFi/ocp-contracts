@@ -209,7 +209,7 @@ describe("OCPB", async () => {
     it("check OCPB.FUNC => quoteLayerZeroFee()", async () => {
         let mintAmount = parseEther("1000");
 
-        const b = ocpBridge;
+        const b = bridge;
         const _remoteChainId = CHAIN_ID_LOCAL2;
         const _type = TYPE_DEPLOY_AND_MINT;
         const _userPayload = "0x";

@@ -104,7 +104,7 @@ describe("OCPOTM", async () => {
         let omniToken = await ethers.getContractAt("OmniToken", omniTokenAddr);
         expect(omniTokenAddr).to.not.equal(AddressZero);
         expect(await tokenManager.sourceTokens(omniTokenAddr, CHAIN_ID_LOCAL2)).to.eq(usdc.address);
-        // expect(await ocpTokenManager.omniTokenList(0)).to.equal(omniTokenAddr);
+        // expect(await tokenManager.omniTokenList(0)).to.equal(omniTokenAddr);
 
         // check balances
         expect(await omniToken.totalSupply()).to.equal(mintAmount);
@@ -209,7 +209,7 @@ describe("OCPOTM", async () => {
     });
 
     it("check OCPOTM.FUNC => createOmniToken", async() => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
 
         expect(await tm.router()).eq(AddressZero);
         expect(await tm.timeLock()).eq(owner.address);
@@ -237,7 +237,7 @@ describe("OCPOTM", async () => {
     });
 
     it("check OCPOTM.FUNC => updateRouter", async() => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
         const user = user1;
         const _routerAddress = AddressZero;
 
@@ -246,7 +246,7 @@ describe("OCPOTM", async () => {
     });
 
     it("check OCPOTM.FUNC => updateTimeLock", async() => {
-        const tm = ocpTokenManager;
+        const tm = tokenManager;
         const user = user1;
         const _timeLockAddress = AddressZero;
 
@@ -255,7 +255,7 @@ describe("OCPOTM", async () => {
     });
 
     it("check OCPF.FUNC => createPool()", async() => {
-        const f = ocPoolFactory;
+        const f = poolFactory;
         const tokenAddress = usdc.address;
         expect(await f.getPool(tokenAddress)).eq(AddressZero);
 
