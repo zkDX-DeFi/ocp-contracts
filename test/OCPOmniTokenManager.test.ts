@@ -277,4 +277,27 @@ describe("OCPOTM", async () => {
         expect(await pool.token()).eq(_tokenAddress);
         expect(await pool.router()).eq(AddressZero);
     });
+
+    it("check OT.FUNC => constructor()", async() => {
+        const _toAddress = user1.address;
+        const _lzEndpoint = AddressZero;
+        const _tokenSymbol = "USDC";
+        const _constructorParams = [
+            _tokenSymbol,
+            _tokenSymbol,
+            ONE_THOUSAND_E_18,
+            _toAddress,
+            _lzEndpoint
+        ];
+        const ot = await deployNew("OmniToken", _constructorParams);
+
+        const _constructorParams2 = [
+            _tokenSymbol,
+            _tokenSymbol,
+            0,
+            _toAddress,
+            _lzEndpoint
+        ];
+        const ot2 = await deployNew("OmniToken", _constructorParams2);
+    });
 });
