@@ -96,6 +96,30 @@ contract OCPBridge is LzApp, IOCPBridge {
         return lzEndpoint.estimateFees(_remoteChainId, address(this), abi.encodePacked(address(this)), useLzToken, _txParams);
     }
 
+    /**
+        * @dev build tx params
+
+        * `gasLookup` is a helper function to estimate the fees for minting a token on a remote chain.
+
+        * `_type` is the type of minting operation to be performed on the remote chain.
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, then `_userPayload` is the payload to be sent to the remote chain.
+
+        * `_userPayload` is the payload to be sent to the remote chain.
+
+        * Requirements:
+
+            * - _chainId must be valid
+
+            * - _type must be valid
+
+            * - _lzTxParams must be valid
+
+        * @param _chainId remote chain id
+        * @param _type mint type
+        * @param _lzTxParams layer zero tx params
+        * @return lzTxParam layer zero tx params
+    */
     function _txParamBuilder(uint16 _chainId, uint8 _type, Structs.LzTxObj memory _lzTxParams) internal view returns (bytes memory) {
         bytes memory lzTxParam;
         address dstNativeAddr;
