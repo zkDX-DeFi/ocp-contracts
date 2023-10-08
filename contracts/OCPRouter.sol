@@ -24,6 +24,14 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     mapping(uint16 => mapping(bytes => mapping(uint256 => Structs.CachedMint))) public cachedMintLookup; // chainId -> src -> nonce -> cache
     event CachedMint(uint16 chainId, bytes srcAddress, uint256 nonce, address token, uint256 amount, address to, bytes payload, bytes reason);
 
+    /**
+        * @dev Initializes the contract setting the deployer as the initial owner.
+
+        * @param _poolFactory The address of the pool factory contract.
+        * @param _tokenManager The address of the token manager contract.
+        * @param _bridge The address of the bridge contract.
+        * @param _weth The address of the WETH contract.
+    */
     constructor(address _poolFactory, address _tokenManager, address _bridge, address _weth) {
         poolFactory = IOCPoolFactory(_poolFactory);
         tokenManager = IOCPOmniTokenManager(_tokenManager);
@@ -36,6 +44,34 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         _;
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * If the `getPool` is not deployed, it will be deployed.
+
+        * If the `getPool` is deployed, it will be used.
+
+        * `_token` cannot be the zero address and it will be transferred from sender to receiver.
+
+        * `_omniMint` will be called to mint the token on the receiver chain.
+
+        * Requirements:
+
+        * - `_token` cannot be the zero address.
+
+        * - `_to` cannot be the zero address.
+
+        * - `_amountIn` must be greater than 0.
+
+        * @param _remoteChainId The chain id of the receiver.
+        * @param _token The address of the token to transfer.
+        * @param _amountIn The amount of tokens to transfer.
+        * @param _to The address of the receiver.
+        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _refundAddress The address to refund the fee to.
+        * @param _payload The payload to send to the receiver.
+        * @param _lzTxParams The layer zero transaction parameters.
+    */
     function omniMint(
         uint16 _remoteChainId,
         address _token,
