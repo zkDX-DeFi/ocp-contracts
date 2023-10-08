@@ -9,8 +9,7 @@ import {task} from "hardhat/config";
 import "hardhat-contract-sizer";
 import 'solidity-docgen';
 
-import "./tasks/setups";
-import "./tasks/setRemote";
+import "./tasks/setupBridge";
 
 const secret = require("./secret.json");
 

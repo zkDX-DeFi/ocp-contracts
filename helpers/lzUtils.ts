@@ -21,6 +21,7 @@ let lzChainIds: { [key: string]: number } = {
     "fantom_testnet": 10112,
     "meter_testnet": 10156,
     "linea_testnet": 10157,
+    "base_testnet": 10160,
     "zksync_testnet": 10165,
 
     "local_chain1": 31337,

@@ -1,6 +1,6 @@
 import {task} from "hardhat/config";
 
-task("deploy-ocp",).setAction(async function (taskArgs, hre) {
+task("deployOCP",).setAction(async function (taskArgs, hre) {
 
     await hre.run("deploy", {tags: "tokenManager"});
     await hre.run("deploy", {tags: "poolFactory"});
