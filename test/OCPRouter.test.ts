@@ -166,5 +166,33 @@ describe("OCPR", async () => {
             .to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
     });
 
+    it('check OCPR.FUNC => omniMintRemote()', async() => {
+        const r = router;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _srcAddress = user1.address;
+        const _nonce = 0;
+        const _needDeploy = true;
+        const _mintParams = {
+            srcToken: usdc.address,
+            amount: 0,
+            to: user1.address,
+            name: "USDC",
+            symbol: "USDC"
+        };
+        const _lzEndPoint = AddressZero;
+        const _dstGasForCall = 0;
+        const _payload = "0x";
+
+        await expect(r.omniMintRemote(
+            _srcChainId,
+            _srcAddress,
+            _nonce,
+            _needDeploy,
+            _mintParams,
+            _lzEndPoint,
+            _dstGasForCall,
+            _payload)).to.be.revertedWith("OCPRouter: caller is not the bridge");
+    });
+
 
 });

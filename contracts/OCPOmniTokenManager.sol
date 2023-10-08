@@ -4,6 +4,15 @@ import "./interfaces/IOCPOmniTokenManager.sol";
 import "./libraries/Structs.sol";
 import "./entity/OmniToken.sol";
 
+/**
+    @title OCPOmniTokenManager
+    @author Muller
+    @dev This contract is used to manage the OmniTokens
+    @dev It is used by the router to create OmniTokens and mint/burn tokens
+
+
+*/
+
 contract OCPOmniTokenManager is IOCPOmniTokenManager {
     address public router;
     address public timeLock;
@@ -23,7 +32,33 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         _;
     }
 
-    //PUBLIC FUNC
+    /**
+        * @dev Create a new OmniToken
+
+        * Requirements:
+
+            * `_mintParams.srcToken` cannot be the zero address
+
+            * `_mintParams.srcChainId` cannot be the zero address
+
+            * `_mintParams.name` cannot be the zero address
+
+            * `_mintParams.symbol` cannot be the zero address
+
+            * `_mintParams.amount` cannot be the zero address
+
+            * `_mintParams.to` cannot be the zero address
+
+            * `_lzEndpoint` cannot be the zero address
+
+            * `_srcChainId` cannot be the zero address
+
+
+        * @param _mintParams The mint parameters
+        * @param _lzEndpoint The endpoint of the Lazynode
+        * @param _srcChainId The source chain id
+        * @return token The address of the new OmniToken
+    */
     function createOmniToken(
         Structs.MintObj memory _mintParams,
         address _lzEndpoint,
