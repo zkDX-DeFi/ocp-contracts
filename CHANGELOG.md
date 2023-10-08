@@ -1,5 +1,87 @@
 # Changelog
 
+## [1.3.0](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.2.0...v1.3.0) (2023-10-08)
+
+
+### Features
+
+* update router - omni deploy and mint ([f47a05e](https://github.com/zkDX-DeFi/ocp-contracts/commit/f47a05ecb3819ef445a2ff1525234060cfff4532))
+
+
+### Bug Fixes
+
+* removed unused code ([c29c25a](https://github.com/zkDX-DeFi/ocp-contracts/commit/c29c25a4ad93fdba823c7955f7b74b6ae3812b24))
+* removed unused code ([94e0dd0](https://github.com/zkDX-DeFi/ocp-contracts/commit/94e0dd007ae96f5d2173b31ded87f28654c4a5fc))
+
+
+### Feature Improvements
+
+* mint _amountD18, add deploy scripts ([59b0d1e](https://github.com/zkDX-DeFi/ocp-contracts/commit/59b0d1e85627b8023f21f35fbde8bb16d5d079d6))
+
+
+### Docs
+
+* _amountD18 in OCPR.SOL ([f909f24](https://github.com/zkDX-DeFi/ocp-contracts/commit/f909f24b395c75f2653aa0eae89f7e46b847fc7c))
+* _blockingLzReceive in OCPB.SOL ([f757342](https://github.com/zkDX-DeFi/ocp-contracts/commit/f7573426fd7a85fb8623bfc19e941854a366c25f))
+* _txParamBuilder in OCPB.SOL ([119d3e2](https://github.com/zkDX-DeFi/ocp-contracts/commit/119d3e2ffdefc9b4e789dd3826c49588590b2573))
+* add doc for 'createOmniToken' in  OCPOTM ([3c748ed](https://github.com/zkDX-DeFi/ocp-contracts/commit/3c748edd6fd588b4f85bc1c31c56b09015b0f089))
+* add doc for createOmniToken() ([8b6fed5](https://github.com/zkDX-DeFi/ocp-contracts/commit/8b6fed56840ad16f891380258cad7bd8c77e0b62))
+* add docs for OCPOTM ([0a12ab3](https://github.com/zkDX-DeFi/ocp-contracts/commit/0a12ab3ecef954234e05ecce5221dbe796ff58eb))
+* createPool in OCPF.SOL ([ee73ce9](https://github.com/zkDX-DeFi/ocp-contracts/commit/ee73ce9487f9894b37bd0786c2b918fcbe052f97))
+* OCP.SOL ([cf08e43](https://github.com/zkDX-DeFi/ocp-contracts/commit/cf08e4302ce5c5dfa7cb83f278c02bc19e572822))
+* omniMint in OCPB.SOL ([22fb512](https://github.com/zkDX-DeFi/ocp-contracts/commit/22fb5120a4e9af196f7ca165cee720b404b30610))
+* omniMint in OCPOTM.SOL ([52feb78](https://github.com/zkDX-DeFi/ocp-contracts/commit/52feb787ee33f2a447cf36abca59c74cd5e0eed1))
+* omniMint in OCPR.SOL ([ad26ec9](https://github.com/zkDX-DeFi/ocp-contracts/commit/ad26ec90a33cf386e67ddd6a74facf88df508c9e))
+* OT.SOL ([49ce340](https://github.com/zkDX-DeFi/ocp-contracts/commit/49ce34000491d239b14e197601db999b2235abc2))
+* quoteLayerZeroFee in OCPB.SOL ([78e5bb3](https://github.com/zkDX-DeFi/ocp-contracts/commit/78e5bb312632162ddd48e20a9d8f1bcd2f16899c))
+* quoteLayerZeroFee in OCPR.SOL ([51fcd6b](https://github.com/zkDX-DeFi/ocp-contracts/commit/51fcd6b717e3be8d837d9b8e4185858bad38e17a))
+* updateBridge in OCPR.SOL ([ebec354](https://github.com/zkDX-DeFi/ocp-contracts/commit/ebec354174cbb69e92b0a03ab841b4dfb534f3a4))
+* updateGasLookup in OCPB.SOL ([e3be413](https://github.com/zkDX-DeFi/ocp-contracts/commit/e3be41325c56b41d493dec37a8ec8f40a2441d35))
+* updateRouter in OCPB.SOL ([31cd628](https://github.com/zkDX-DeFi/ocp-contracts/commit/31cd6282a259e649ac3128a2869fda09f7d11c5e))
+
+
+### Tests
+
+* _omniMint in OCPR.SOL ([3422da9](https://github.com/zkDX-DeFi/ocp-contracts/commit/3422da9b7d81731d2ae9b3ca48c1c31423db7c62))
+* "check OCPF.FUNC =&gt; createPool()" ([ee79e81](https://github.com/zkDX-DeFi/ocp-contracts/commit/ee79e81833c4859050788eebe418d6857f606c00))
+* add code coverage ([d4746aa](https://github.com/zkDX-DeFi/ocp-contracts/commit/d4746aaa4d412fafdc685e0f42dbe5210065d9fd))
+* add code coverage ([225c3aa](https://github.com/zkDX-DeFi/ocp-contracts/commit/225c3aa0bd2f3424cbfc5ac15329ad3edf8d3d11))
+* add code coverage ([da1f9be](https://github.com/zkDX-DeFi/ocp-contracts/commit/da1f9befc3ee2a08dc7411ce79c9fa67465218b8))
+* add code coverage && 78.95% for OCPR.SOL ([c1d6151](https://github.com/zkDX-DeFi/ocp-contracts/commit/c1d61519d7298c4272161898fb671d9c28e8f4b1))
+* add router tests ([d88f140](https://github.com/zkDX-DeFi/ocp-contracts/commit/d88f140e974a70162ef9270599701b44356d36b2))
+* check OCP.FUNC =&gt; constructor() ([4d7c218](https://github.com/zkDX-DeFi/ocp-contracts/commit/4d7c218bdfcbe85e5edd5f3ca34bfdccd600c590))
+* check OCPB.FUNC =&gt; quoteLayerZeroFee() ([2182d0a](https://github.com/zkDX-DeFi/ocp-contracts/commit/2182d0a05aaa4c131077a3b868aac927a48ab170))
+* check OCPB.FUNC =&gt; quoteLayerZeroFee() ([bc6db2d](https://github.com/zkDX-DeFi/ocp-contracts/commit/bc6db2df3b3a18aa1a3b1afb20290c0e24d3b04d))
+* check OCPOTM.FUNC =&gt; createOmniToken ([65fdaec](https://github.com/zkDX-DeFi/ocp-contracts/commit/65fdaec3ac7463398f3a514456b8b054151e424b))
+* check OCPOTM.FUNC =&gt; updateRouter ([d8dc542](https://github.com/zkDX-DeFi/ocp-contracts/commit/d8dc542d509c9234e42269fcb91f4be59bac3c36))
+* check OCPR.FUNC =&gt; _amountD18() ([b3c4f64](https://github.com/zkDX-DeFi/ocp-contracts/commit/b3c4f6460da9c5e2456be93d23411d4455f5b3da))
+* check OCPR.FUNC =&gt; omniMint() ([e490dd1](https://github.com/zkDX-DeFi/ocp-contracts/commit/e490dd1f5b9cb8fbdb0eda23ef7113d2945773c1))
+* check OCPR.FUNC =&gt; omniMintRemote() && code coverage = All files                  |    94.74 |    96.88 |      100 |    95.51 | ([0a0f4af](https://github.com/zkDX-DeFi/ocp-contracts/commit/0a0f4af223efc732da0a52d64a277ef874ffa210))
+* check OCPR.FUNC =&gt; quoteLayerZeroFee() ([fc1e9ad](https://github.com/zkDX-DeFi/ocp-contracts/commit/fc1e9ad8402c7a2f5fd83bc7f5553909b8d119da))
+* check OT.FUNC =&gt; constructor() ([3978de3](https://github.com/zkDX-DeFi/ocp-contracts/commit/3978de3c8bde3faae2ef6531905842ef5678959a))
+* check OT.FUNC =&gt; constructor() ([959df12](https://github.com/zkDX-DeFi/ocp-contracts/commit/959df128a6e49948252fae8c936feb28dfc93f5d))
+* check OT.FUNC =&gt; constructor() ([c9b0089](https://github.com/zkDX-DeFi/ocp-contracts/commit/c9b0089916950c42512f15697e86570d63116a71))
+* code coverage = 94.74% ([1cd28e2](https://github.com/zkDX-DeFi/ocp-contracts/commit/1cd28e2731f4b381952c79f2a38e7bb10da7e2b9))
+* create OCPR.TEST.TS ([986a665](https://github.com/zkDX-DeFi/ocp-contracts/commit/986a665cd93e198f9d20fbf2fae2792d5c1b37be))
+* removed OCPR.TEST.TS ([1d31f7c](https://github.com/zkDX-DeFi/ocp-contracts/commit/1d31f7c8c4e9e47951541384fd45b0e8b759be64))
+* rename OCPOTM.test.ts ([3980776](https://github.com/zkDX-DeFi/ocp-contracts/commit/39807768b4715769dcf52cad6c76d582588a15a7))
+* testnet omni mint pass ([ed6ffde](https://github.com/zkDX-DeFi/ocp-contracts/commit/ed6ffdefe642ba471be60dc8c45444b297146071))
+* tuning failed "check OCPR.FUNC =&gt; updateBridge()" ([89c7a5a](https://github.com/zkDX-DeFi/ocp-contracts/commit/89c7a5ab63ca69cd8a21e4b1cf8d280690732d48))
+* tuning failed test cases ([8e8bbc1](https://github.com/zkDX-DeFi/ocp-contracts/commit/8e8bbc1a6ef52653a01fb90785206bf8e75a207f))
+* tuning failed test cases ([17e648b](https://github.com/zkDX-DeFi/ocp-contracts/commit/17e648bebe25a6c39247f2b213b197c83bb51ad1))
+* tuning failed test cases ([886e3db](https://github.com/zkDX-DeFi/ocp-contracts/commit/886e3dbf2bf6ff04449615d55fdb87d5a0e664d2))
+
+
+### Build System
+
+* deploy testnet 1008 ([eda30b8](https://github.com/zkDX-DeFi/ocp-contracts/commit/eda30b8a3ce9fc8ef126ef825848d91def52ecc0))
+
+
+### CI
+
+* merge fix ([b7bb3ac](https://github.com/zkDX-DeFi/ocp-contracts/commit/b7bb3ace3809652faa5e64d29f2ade5bb480902b))
+* update setup scripts ([4c5c369](https://github.com/zkDX-DeFi/ocp-contracts/commit/4c5c36928d60057c194c3b5ab2a3c8ba9ced3fa3))
+
 ## [1.2.0](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.1.0...v1.2.0) (2023-09-28)
 
 
