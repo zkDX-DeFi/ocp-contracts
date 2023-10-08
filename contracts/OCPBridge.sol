@@ -211,6 +211,21 @@ contract OCPBridge is LzApp, IOCPBridge {
         }
     }
 
+    /**
+        * @dev update router
+
+        * `updateRouter` is a helper function to update the router contract.
+
+        * `_router` is the new router contract address.
+
+        * Requirements:
+
+            * - onlyOwner
+
+            * - _router must be valid
+
+        * @param _router router address
+    */
     function updateRouter(address _router) external onlyOwner {
         router = IOCPRouter(_router);
     }
