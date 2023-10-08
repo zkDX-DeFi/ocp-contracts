@@ -9,14 +9,39 @@ import "./libraries/Types.sol";
 import "hardhat/console.sol";
 
 contract OCPBridge is LzApp, IOCPBridge {
-
     IOCPRouter public router;
     mapping(uint16 => mapping(uint8 => uint256)) public gasLookup; // chainId -> type -> gas
     bool public useLzToken;
-
     constructor(address _lzEndpoint) LzApp(_lzEndpoint) {}
 
-    //TYPES = 1
+    /**
+        * @dev mint token on remote chain
+
+        * Requirements:
+
+            * - onlyRouter
+
+            * - _remoteChainId must be valid
+
+            * - _refundAddress must be valid
+
+            * - _type must be valid
+
+            * - _lzTxParams must be valid
+
+            * - _payload must be valid
+
+            * - _mintParams must be valid
+
+            * - _lzTxParams must be valid
+
+        * @param _remoteChainId remote chain id
+        * @param _refundAddress address to refund
+        * @param _type mint type
+        * @param _mintParams mint params
+        * @param _payload user payload
+        * @param _lzTxParams layer zero tx params
+    */
     function omniMint(
         uint16 _remoteChainId,
         address payable _refundAddress,
