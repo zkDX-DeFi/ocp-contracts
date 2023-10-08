@@ -9,14 +9,39 @@ import "./libraries/Types.sol";
 import "hardhat/console.sol";
 
 contract OCPBridge is LzApp, IOCPBridge {
-
     IOCPRouter public router;
     mapping(uint16 => mapping(uint8 => uint256)) public gasLookup; // chainId -> type -> gas
     bool public useLzToken;
-
     constructor(address _lzEndpoint) LzApp(_lzEndpoint) {}
 
-    //TYPES = 1
+    /**
+        * @dev mint token on remote chain
+
+        * Requirements:
+
+            * - onlyRouter
+
+            * - _remoteChainId must be valid
+
+            * - _refundAddress must be valid
+
+            * - _type must be valid
+
+            * - _lzTxParams must be valid
+
+            * - _payload must be valid
+
+            * - _mintParams must be valid
+
+            * - _lzTxParams must be valid
+
+        * @param _remoteChainId remote chain id
+        * @param _refundAddress address to refund
+        * @param _type mint type
+        * @param _mintParams mint params
+        * @param _payload user payload
+        * @param _lzTxParams layer zero tx params
+    */
     function omniMint(
         uint16 _remoteChainId,
         address payable _refundAddress,
@@ -29,6 +54,32 @@ contract OCPBridge is LzApp, IOCPBridge {
         _lzSend(_remoteChainId, payload, _refundAddress, address(this), _txParamBuilder(_remoteChainId, _type, _lzTxParams), msg.value);
     }
 
+    /**
+        * @dev quote mint token on remote chain
+
+        * `quoteLayerZeroFee` is a helper function to estimate the fees for minting a token on a remote chain.
+
+        * `_type` is the type of minting operation to be performed on the remote chain.
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, then `_userPayload` is the payload to be sent to the remote chain.
+
+        * `_userPayload` is the payload to be sent to the remote chain.
+
+        * Requirements:
+
+            * - _remoteChainId must be valid
+
+            * - _type must be valid
+
+            * - _lzTxParams must be valid
+
+            * - _payload must be valid
+
+        * @param _remoteChainId remote chain id
+        * @param _type mint type
+        * @param _userPayload user payload
+        * @param _lzTxParams layer zero tx params
+    */
     function quoteLayerZeroFee(
         uint16 _remoteChainId,
         uint8 _type,
@@ -45,6 +96,30 @@ contract OCPBridge is LzApp, IOCPBridge {
         return lzEndpoint.estimateFees(_remoteChainId, address(this), abi.encodePacked(address(this)), useLzToken, _txParams);
     }
 
+    /**
+        * @dev build tx params
+
+        * `gasLookup` is a helper function to estimate the fees for minting a token on a remote chain.
+
+        * `_type` is the type of minting operation to be performed on the remote chain.
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, then `_userPayload` is the payload to be sent to the remote chain.
+
+        * `_userPayload` is the payload to be sent to the remote chain.
+
+        * Requirements:
+
+            * - _chainId must be valid
+
+            * - _type must be valid
+
+            * - _lzTxParams must be valid
+
+        * @param _chainId remote chain id
+        * @param _type mint type
+        * @param _lzTxParams layer zero tx params
+        * @return lzTxParam layer zero tx params
+    */
     function _txParamBuilder(uint16 _chainId, uint8 _type, Structs.LzTxObj memory _lzTxParams) internal view returns (bytes memory) {
         bytes memory lzTxParam;
         address dstNativeAddr;
@@ -65,6 +140,32 @@ contract OCPBridge is LzApp, IOCPBridge {
         return lzTxParam;
     }
 
+    /**
+        * @dev receive token from remote chain
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, then `_userPayload` is the payload to be sent to the remote chain.
+
+        * `_userPayload` is the payload to be sent to the remote chain.
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, it will invoke `omniMintRemote` on the router contract.
+
+        * Requirements:
+
+            * - onlyRouter
+
+            * - _srcChainId must be valid
+
+            * - _srcAddress must be valid
+
+            * - _nonce must be valid
+
+            * - _payload must be valid
+
+        * @param _srcChainId remote chain id
+        * @param _srcAddress address to refund
+        * @param _nonce nonce
+        * @param _payload user payload
+    */
     function _blockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
         uint8 _type;
         assembly {
@@ -82,6 +183,27 @@ contract OCPBridge is LzApp, IOCPBridge {
         }
     }
 
+    /**
+        * @dev update gas lookup
+
+        * `updateGasLookup` is a helper function to update the gas lookup table.
+
+        * `_chainIds` is the chain ids to be updated.
+
+        * `_types` is the types to be updated.
+
+        * The length of `_chainIds`, `_types` and `_gas` must be the same.
+
+        * Requirements:
+
+            * - onlyOwner
+
+            * - _chainIds, _types, _gas must be valid
+
+        * @param _chainIds remote chain ids
+        * @param _types mint types
+        * @param _gas gas
+    */
     function updateGasLookup(uint16[] memory _chainIds, uint8[] memory _types, uint256[] memory _gas) external onlyOwner {
         require(_chainIds.length == _types.length && _chainIds.length == _gas.length, "OCPBridge: invalid params");
         for (uint256 i = 0; i < _chainIds.length; i++) {
@@ -89,6 +211,21 @@ contract OCPBridge is LzApp, IOCPBridge {
         }
     }
 
+    /**
+        * @dev update router
+
+        * `updateRouter` is a helper function to update the router contract.
+
+        * `_router` is the new router contract address.
+
+        * Requirements:
+
+            * - onlyOwner
+
+            * - _router must be valid
+
+        * @param _router router address
+    */
     function updateRouter(address _router) external onlyOwner {
         router = IOCPRouter(_router);
     }
