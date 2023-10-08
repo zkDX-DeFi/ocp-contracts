@@ -175,6 +175,28 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         return bridge.quoteLayerZeroFee(_remoteChainId, _type, _userPayload, _lzTxParams);
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * Requirements:
+
+            * - `_token` cannot be the zero address.
+
+            * - `_to` cannot be the zero address.
+
+            * - `_amountIn` must be greater than 0.
+
+            * - only the bridge can call this function.
+
+        * @param _srcChainId The chain id of the sender.
+        * @param _srcAddress The address of the sender.
+        * @param _nonce The nonce of the transaction.
+        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _mintParams The mint parameters.
+        * @param _lzEndpoint The layer zero endpoint.
+        * @param _dstGasForCall The gas for the call.
+        * @param _payload The payload to send to the receiver.
+    */
     function omniMintRemote(
         uint16 _srcChainId,
         bytes memory _srcAddress,
@@ -200,6 +222,15 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         }
     }
 
+    /**
+        * @dev update the bridge address.
+
+        * Requirements:
+
+            * - only the owner can call this function.
+
+        * @param _bridge The address of the bridge contract.
+    */
     function updateBridge(address _bridge) external onlyOwner {
         bridge = IOCPBridge(_bridge);
     }
