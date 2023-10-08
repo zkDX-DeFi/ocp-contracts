@@ -24,6 +24,14 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     mapping(uint16 => mapping(bytes => mapping(uint256 => Structs.CachedMint))) public cachedMintLookup; // chainId -> src -> nonce -> cache
     event CachedMint(uint16 chainId, bytes srcAddress, uint256 nonce, address token, uint256 amount, address to, bytes payload, bytes reason);
 
+    /**
+        * @dev Initializes the contract setting the deployer as the initial owner.
+
+        * @param _poolFactory The address of the pool factory contract.
+        * @param _tokenManager The address of the token manager contract.
+        * @param _bridge The address of the bridge contract.
+        * @param _weth The address of the WETH contract.
+    */
     constructor(address _poolFactory, address _tokenManager, address _bridge, address _weth) {
         poolFactory = IOCPoolFactory(_poolFactory);
         tokenManager = IOCPOmniTokenManager(_tokenManager);
@@ -36,6 +44,34 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         _;
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * If the `getPool` is not deployed, it will be deployed.
+
+        * If the `getPool` is deployed, it will be used.
+
+        * `_token` cannot be the zero address and it will be transferred from sender to receiver.
+
+        * `_omniMint` will be called to mint the token on the receiver chain.
+
+        * Requirements:
+
+        * - `_token` cannot be the zero address.
+
+        * - `_to` cannot be the zero address.
+
+        * - `_amountIn` must be greater than 0.
+
+        * @param _remoteChainId The chain id of the receiver.
+        * @param _token The address of the token to transfer.
+        * @param _amountIn The amount of tokens to transfer.
+        * @param _to The address of the receiver.
+        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _refundAddress The address to refund the fee to.
+        * @param _payload The payload to send to the receiver.
+        * @param _lzTxParams The layer zero transaction parameters.
+    */
     function omniMint(
         uint16 _remoteChainId,
         address _token,
@@ -57,6 +93,31 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         _omniMint(_token, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value);
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * If the `_needDeploy` is true, the token will be deployed on the receiver chain and `type` will be `TYPE_DEPLOY_AND_MINT`.
+
+        * If the `_needDeploy` is false, the token will not be deployed on the receiver chain and `type` will be `TYPE_MINT`.
+
+        * Requirements:
+
+            * - `_token` cannot be the zero address.
+
+            * - `_to` cannot be the zero address.
+
+            * - `_amountIn` must be greater than 0.
+
+        * @param _token The address of the token to transfer.
+        * @param _remoteChainId The chain id of the receiver.
+        * @param _amountIn The amount of tokens to transfer.
+        * @param _to The address of the receiver.
+        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _refundAddress The address to refund the fee to.
+        * @param _payload The payload to send to the receiver.
+        * @param _lzTxParams The layer zero transaction parameters.
+        * @param _msgFee The fee to send to the bridge.
+    */
     function _omniMint(
         address _token,
         uint16 _remoteChainId,
@@ -81,12 +142,30 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bridge.omniMint{value: _msgFee}(_remoteChainId, _refundAddress, _type, mintParams, _payload, _lzTxParams);
     }
 
+    /**
+        * @dev return the amount of token for the given amount of token on the other chain.
+
+        * @param _token The address of the token.
+        * @param _amount The amount of token.
+        * @return The amount of token on the other chain.
+    */
     function _amountD18(address _token, uint256 _amount) internal view returns (uint256) {
         uint256 decimals = IERC20Metadata(_token).decimals();
         if (decimals == 18) return _amount;
         return _amount * (10 ** (18 - decimals));
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * Invoke the `bridge` to get quote for the fee and amount of token on the other chain.
+
+        * @param _remoteChainId The chain id of the receiver.
+        * @param _type The type of the transaction.
+        * @param _userPayload The payload to send to the receiver.
+        * @param _lzTxParams The layer zero transaction parameters.
+        * @return The amount of token on the other chain and the fee to send to the bridge.
+    */
     function quoteLayerZeroFee(
         uint16 _remoteChainId,
         uint8 _type,
@@ -96,6 +175,28 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         return bridge.quoteLayerZeroFee(_remoteChainId, _type, _userPayload, _lzTxParams);
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * Requirements:
+
+            * - `_token` cannot be the zero address.
+
+            * - `_to` cannot be the zero address.
+
+            * - `_amountIn` must be greater than 0.
+
+            * - only the bridge can call this function.
+
+        * @param _srcChainId The chain id of the sender.
+        * @param _srcAddress The address of the sender.
+        * @param _nonce The nonce of the transaction.
+        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _mintParams The mint parameters.
+        * @param _lzEndpoint The layer zero endpoint.
+        * @param _dstGasForCall The gas for the call.
+        * @param _payload The payload to send to the receiver.
+    */
     function omniMintRemote(
         uint16 _srcChainId,
         bytes memory _srcAddress,
@@ -121,6 +222,15 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         }
     }
 
+    /**
+        * @dev update the bridge address.
+
+        * Requirements:
+
+            * - only the owner can call this function.
+
+        * @param _bridge The address of the bridge contract.
+    */
     function updateBridge(address _bridge) external onlyOwner {
         bridge = IOCPBridge(_bridge);
     }
