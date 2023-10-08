@@ -5,12 +5,32 @@ import "./libraries/Structs.sol";
 import "./entity/OmniToken.sol";
 
 /**
-    @title OCPOmniTokenManager
-    @author Muller
-    @dev This contract is used to manage the OmniTokens
-    @dev It is used by the router to create OmniTokens and mint/burn tokens
+    * @title OCPOmniTokenManager
+    * @author Muller
+    * @dev This contract is used to manage the OmniTokens
+    * @dev It is used by the router to create OmniTokens and mint/burn tokens
 
+    * @notice This contract is deployed on the source chain
+    * @notice It is used by the router to create OmniTokens and mint/burn tokens
+    * @notice It is also used by the timelock to add source tokens and update the router
 
+    * createOmniToken: create a new OmniToken
+
+    * omniMint: mint OmniTokens
+
+    * omniBurn: burn OmniTokens
+
+    * @notice the settings can only be updated by the timelock
+
+    * @notice the timelock can call the following functions:
+
+    * requestAddSourceTokens: add a source token
+
+    * approveSourceTokens: approve a source token
+
+    * updateRouter: update the router
+
+    * updateTimeLock: update the timelock
 */
 
 contract OCPOmniTokenManager is IOCPOmniTokenManager {
@@ -128,7 +148,23 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         //todo: v0.3: TYPES=3
     }
 
-    //DAO
+    /**
+        * @dev Add a source token
+
+        * Requirements:
+
+            * `_srcToken` cannot be the zero address
+
+            * `_srcChainId` cannot be the zero address
+
+            * `_omniToken` cannot be the zero address
+
+            * only the timelock can call this function
+
+        * @param _srcTokens The address of the source token
+        * @param _srcChainIds The source chain id
+        * @param _omniToken The address of the OmniToken
+    */
     function requestAddSourceTokens(
         address[] calldata _srcTokens,
         uint16[] calldata _srcChainIds,
@@ -140,6 +176,24 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
             sourceTokens[_srcTokens[i]][_srcChainIds[i]] = _omniToken;
         }
     }
+
+    /**
+        * @dev Approve a source token
+
+        * Requirements:
+
+            * `_omniTokens` cannot be the zero address
+
+            * `_srcChainId` cannot be the zero address
+
+            * `_srcTokens` cannot be the zero address
+
+            * only the timelock can call this function
+
+        * @param _omniTokens The address of the OmniToken
+        * @param _srcChainId The source chain id
+        * @param _srcTokens The address of the source token
+    */
     function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external onlyTimeLock {
         // TODO: alternative to addSourceToken -- 2
         require(_omniTokens.length == _srcTokens.length, "OCPTokenManager: invalid input");
@@ -147,9 +201,33 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
             sourceTokens[_omniTokens[i]][_srcChainId] = _srcTokens[i];
         }
     }
+
+    /**
+        * @dev Update the router
+
+        * Requirements:
+
+            * `_router` cannot be the zero address
+
+            * only the timelock can call this function
+
+        * @param _router The address of the router
+    */
     function updateRouter(address _router) external onlyTimeLock {
         router = _router;
     }
+
+    /**
+        * @dev Update the timelock
+
+        * Requirements:
+
+            * `_timeLock` cannot be the zero address
+
+            * only the timelock can call this function
+
+        * @param _timeLock The address of the timelock
+    */
     function updateTimeLock(address _timeLock) external onlyTimeLock {
         timeLock = _timeLock;
     }
