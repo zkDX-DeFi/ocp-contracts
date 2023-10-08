@@ -155,6 +155,17 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         return _amount * (10 ** (18 - decimals));
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * Invoke the `bridge` to get quote for the fee and amount of token on the other chain.
+
+        * @param _remoteChainId The chain id of the receiver.
+        * @param _type The type of the transaction.
+        * @param _userPayload The payload to send to the receiver.
+        * @param _lzTxParams The layer zero transaction parameters.
+        * @return The amount of token on the other chain and the fee to send to the bridge.
+    */
     function quoteLayerZeroFee(
         uint16 _remoteChainId,
         uint8 _type,
