@@ -80,10 +80,50 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         sourceTokens[token][_srcChainId] = _mintParams.srcToken;
         emit TokenCreated(_mintParams.srcToken, _srcChainId, token);
     }
+
+    /**
+        * @dev Mint OmniTokens
+
+        * Requirements:
+
+            * `_srcToken` cannot be the zero address
+
+            * `_dstChainId` cannot be the zero address
+
+            * `_amount` cannot be the zero address
+
+            * `_to` cannot be the zero address
+
+            * only the router can call this function
+
+        * @param _srcToken The address of the source token
+        * @param _dstChainId The destination chain id
+        * @param _amount The amount to mint
+        * @param _to The address to mint to
+        * @return token The address of the new OmniToken
+    */
     function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
         //todo: v0.2: TYPES=2
         return address(0x0);
     }
+
+    /**
+        * @dev Burn OmniTokens
+
+        * Requirements:
+
+            * `_omniToken` cannot be the zero address
+
+            * `_amount` cannot be the zero address
+
+            * `_from` cannot be the zero address
+
+            * only the router can call this function
+
+        * @param _omniToken The address of the OmniToken
+        * @param _amount The amount to burn
+        * @param _from The address to burn from
+    */
     function omniBurn(address _omniToken, uint256 _amount, address _from) external onlyRouter override {
         //todo: v0.3: TYPES=3
     }
