@@ -1,5 +1,12 @@
 import {deployments, ethers, run} from "hardhat";
-import {CHAIN_ID_LOCAL, CHAIN_ID_LOCAL2} from "./constants";
+import {
+    CHAIN_ID_BASE_TEST,
+    CHAIN_ID_GOERLI,
+    CHAIN_ID_LOCAL,
+    CHAIN_ID_LOCAL2,
+    ENDPOINT_BASE_TESTNET,
+    ENDPOINT_GOERLI
+} from "./constants";
 
 export async function deployFixture() {
 
@@ -14,15 +21,15 @@ export async function deployFixture() {
     const contracts = {
         poolFactory: await ethers.getContract("OCPoolFactory"),
         tokenManager: await ethers.getContract("OCPOmniTokenManager"),
-        bridge : await ethers.getContract("OCPBridge"),
-        router : await ethers.getContract("OCPRouter"),
-        lzEndpoint : await ethers.getContract("LZEndpoint"),
+        bridge: await ethers.getContract("OCPBridge"),
+        router: await ethers.getContract("OCPRouter"),
+        lzEndpoint: await ethers.getContract("LZEndpoint"),
 
         poolFactory2: await ethers.getContract("OCPoolFactory2"),
         tokenManager2: await ethers.getContract("OCPOmniTokenManager2"),
-        bridge2 : await ethers.getContract("OCPBridge2"),
-        router2 : await ethers.getContract("OCPRouter2"),
-        lzEndpoint2 : await ethers.getContract("LZEndpoint2"),
+        bridge2: await ethers.getContract("OCPBridge2"),
+        router2: await ethers.getContract("OCPRouter2"),
+        lzEndpoint2: await ethers.getContract("LZEndpoint2"),
     }
 
     return {...users, ...contracts};
@@ -45,6 +52,10 @@ export async function getLzEndPointByChainId(chainId: any) {
             args: [chainId],
             log: true
         });
+    } else if (chainId == CHAIN_ID_GOERLI) {
+        return ENDPOINT_GOERLI;
+    } else if (chainId == CHAIN_ID_BASE_TEST) {
+        return ENDPOINT_BASE_TESTNET;
     }
     if (!endpoint)
         throw new Error("lzEndpoint not found on network " + chainId);
@@ -52,21 +63,26 @@ export async function getLzEndPointByChainId(chainId: any) {
 }
 
 export async function getWethByChainId(chainId: any) {
-    let endpoint: any;
-    if (chainId == CHAIN_ID_LOCAL || chainId == CHAIN_ID_LOCAL2) {
-        let contractName = chainId == CHAIN_ID_LOCAL ? "WETH" : "WETH2";
-        const {deploy} = deployments;
-        const owner = await ethers.getNamedSigner("owner");
-        endpoint = await deploy(contractName, {
-            contract: "Token",
+    let weth: any;
+    const {deploy} = deployments;
+    const owner = await ethers.getNamedSigner("owner");
+    if (chainId == CHAIN_ID_LOCAL || chainId == CHAIN_ID_GOERLI || chainId == CHAIN_ID_BASE_TEST) {
+        weth = await deploy("Token", {
             from: owner.address,
             args: ["WETH", 18, 0, 0, 0],
             log: true
         });
+    } else if (chainId == CHAIN_ID_LOCAL2) {
+        weth = await deploy("WETH2", {
+            contract: "Token",
+            from: owner.address,
+            args: ["WETH2", 18, 0, 0, 0],
+            log: true
+        });
     }
-    if (!endpoint)
+    if (!weth)
         throw new Error("Weth not found on network " + chainId);
-    return endpoint.address;
+    return weth.address;
 }
 
 export function newWallet() {

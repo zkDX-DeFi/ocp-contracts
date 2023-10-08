@@ -70,7 +70,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     ) internal {
         Structs.MintObj memory mintParams;
         mintParams.srcToken = _token;
-        mintParams.amount = _amountIn;
+        mintParams.amount = _amountD18(_token, _amountIn);
         mintParams.to = _to;
         if (_needDeploy) {
             mintParams.name = IERC20Metadata(_token).name();
@@ -79,6 +79,12 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
 
         uint8 _type = _needDeploy ? Types.TYPE_DEPLOY_AND_MINT : Types.TYPE_MINT;
         bridge.omniMint{value: _msgFee}(_remoteChainId, _refundAddress, _type, mintParams, _payload, _lzTxParams);
+    }
+
+    function _amountD18(address _token, uint256 _amount) internal view returns (uint256) {
+        uint256 decimals = IERC20Metadata(_token).decimals();
+        if (decimals == 18) return _amount;
+        return _amount * (10 ** (18 - decimals));
     }
 
     function quoteLayerZeroFee(

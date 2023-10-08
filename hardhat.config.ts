@@ -9,8 +9,7 @@ import {task} from "hardhat/config";
 import "hardhat-contract-sizer";
 import 'solidity-docgen';
 
-import "./tasks/setups";
-import "./tasks/setRemote";
+import "./tasks/setupBridge";
 
 const secret = require("./secret.json");
 
@@ -44,6 +43,10 @@ const config: HardhatUserConfig = {
     networks: {
         goerli: {
             url: secret.url_goerli,
+            accounts: [secret.key_dev]
+        },
+        base_testnet: {
+            url: secret.url_base_testnet,
             accounts: [secret.key_dev]
         },
     },
