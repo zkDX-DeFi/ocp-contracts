@@ -142,6 +142,13 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bridge.omniMint{value: _msgFee}(_remoteChainId, _refundAddress, _type, mintParams, _payload, _lzTxParams);
     }
 
+    /**
+        * @dev return the amount of token for the given amount of token on the other chain.
+
+        * @param _token The address of the token.
+        * @param _amount The amount of token.
+        * @return The amount of token on the other chain.
+    */
     function _amountD18(address _token, uint256 _amount) internal view returns (uint256) {
         uint256 decimals = IERC20Metadata(_token).decimals();
         if (decimals == 18) return _amount;
