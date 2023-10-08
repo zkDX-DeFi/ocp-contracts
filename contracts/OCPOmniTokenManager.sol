@@ -33,24 +33,31 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
     }
 
     /**
-        @dev Create a new OmniToken
+        * @dev Create a new OmniToken
 
         * Requirements:
+
             * `_mintParams.srcToken` cannot be the zero address
+
             * `_mintParams.srcChainId` cannot be the zero address
+
             * `_mintParams.name` cannot be the zero address
+
             * `_mintParams.symbol` cannot be the zero address
+
             * `_mintParams.amount` cannot be the zero address
+
             * `_mintParams.to` cannot be the zero address
+
             * `_lzEndpoint` cannot be the zero address
+
             * `_srcChainId` cannot be the zero address
 
 
-
-        @param _mintParams The mint parameters
-        @param _lzEndpoint The endpoint of the Lazynode
-        @param _srcChainId The source chain id
-        @return token The address of the new OmniToken
+        * @param _mintParams The mint parameters
+        * @param _lzEndpoint The endpoint of the Lazynode
+        * @param _srcChainId The source chain id
+        * @return token The address of the new OmniToken
     */
     function createOmniToken(
         Structs.MintObj memory _mintParams,
