@@ -54,6 +54,32 @@ contract OCPBridge is LzApp, IOCPBridge {
         _lzSend(_remoteChainId, payload, _refundAddress, address(this), _txParamBuilder(_remoteChainId, _type, _lzTxParams), msg.value);
     }
 
+    /**
+        * @dev quote mint token on remote chain
+
+        * `quoteLayerZeroFee` is a helper function to estimate the fees for minting a token on a remote chain.
+
+        * `_type` is the type of minting operation to be performed on the remote chain.
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, then `_userPayload` is the payload to be sent to the remote chain.
+
+        * `_userPayload` is the payload to be sent to the remote chain.
+
+        * Requirements:
+
+            * - _remoteChainId must be valid
+
+            * - _type must be valid
+
+            * - _lzTxParams must be valid
+
+            * - _payload must be valid
+
+        * @param _remoteChainId remote chain id
+        * @param _type mint type
+        * @param _userPayload user payload
+        * @param _lzTxParams layer zero tx params
+    */
     function quoteLayerZeroFee(
         uint16 _remoteChainId,
         uint8 _type,
