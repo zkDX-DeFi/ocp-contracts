@@ -11,7 +11,7 @@
     "coverage": "yarn compile && npx hardhat coverage",
 
     "deploy-goerli": "hardhat deployOCP --network goerli",
-    "deploy-base-testnet": "hardhat deployOCP --network base_testnet",
+    "deploy-base-test": "hardhat deployOCP --network base_testnet",
     "setup1": "hardhat setupBridge --network goerli --target-network base_testnet",
     "setup2": "hardhat setupBridge --network base_testnet --target-network goerli"
   },

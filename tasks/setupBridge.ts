@@ -38,5 +38,5 @@ task("setupBridge").addParam("targetNetwork").setAction(async function (taskArgs
     }
 
     // set gasLookup
-    await localContract.updateGasLookup([remoteLzChainId, remoteLzChainId, remoteLzChainId], [1, 2, 3], [5000000, 300000, 300000]);
+    await localContract.updateGasLookup([remoteLzChainId, remoteLzChainId, remoteLzChainId], [1, 2, 3], [4500000, 300000, 300000]);
 });

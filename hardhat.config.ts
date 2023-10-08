@@ -9,6 +9,7 @@ import {task} from "hardhat/config";
 import "hardhat-contract-sizer";
 import 'solidity-docgen';
 
+import "./tasks/deployOCP";
 import "./tasks/setupBridge";
 
 const secret = require("./secret.json");
@@ -51,7 +52,7 @@ const config: HardhatUserConfig = {
         },
     },
     contractSizer: {
-        runOnCompile: true
+        runOnCompile: false
     },
     docgen: {
         pages: 'files',
