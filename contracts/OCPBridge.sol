@@ -183,6 +183,27 @@ contract OCPBridge is LzApp, IOCPBridge {
         }
     }
 
+    /**
+        * @dev update gas lookup
+
+        * `updateGasLookup` is a helper function to update the gas lookup table.
+
+        * `_chainIds` is the chain ids to be updated.
+
+        * `_types` is the types to be updated.
+
+        * The length of `_chainIds`, `_types` and `_gas` must be the same.
+
+        * Requirements:
+
+            * - onlyOwner
+
+            * - _chainIds, _types, _gas must be valid
+
+        * @param _chainIds remote chain ids
+        * @param _types mint types
+        * @param _gas gas
+    */
     function updateGasLookup(uint16[] memory _chainIds, uint8[] memory _types, uint256[] memory _gas) external onlyOwner {
         require(_chainIds.length == _types.length && _chainIds.length == _gas.length, "OCPBridge: invalid params");
         for (uint256 i = 0; i < _chainIds.length; i++) {
