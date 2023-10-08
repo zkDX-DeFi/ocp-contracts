@@ -14,7 +14,8 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     await deploy('OCPBridge', {
         from: owner,
         args: [lzEndpoint],
-        log: true
+        log: true,
+        waitConfirmations: 1,
     });
 };
 export default func;

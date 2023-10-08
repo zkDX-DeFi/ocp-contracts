@@ -13,7 +13,12 @@
     "deploy-goerli": "hardhat deployOCP --network goerli",
     "deploy-base-test": "hardhat deployOCP --network base_testnet",
     "setup1": "hardhat setupBridge --network goerli --target-network base_testnet",
-    "setup2": "hardhat setupBridge --network base_testnet --target-network goerli"
+    "setup2": "hardhat setupBridge --network base_testnet --target-network goerli",
+    "deploy-all": "yarn deploy-goerli && yarn deploy-base-test && yarn setup1 && yarn setup2",
+
+    "clean-deployments": "rm -rf deployments/base_testnet && rm -rf deployments/goerli",
+
+    "omniMint": "hardhat run scripts/omniMint.ts --network goerli"
   },
   "keywords": [],
   "author": "",

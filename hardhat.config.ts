@@ -11,6 +11,7 @@ import 'solidity-docgen';
 
 import "./tasks/deployOCP";
 import "./tasks/setupBridge";
+import {parseUnits} from "ethers/lib/utils";
 
 const secret = require("./secret.json");
 
@@ -48,7 +49,8 @@ const config: HardhatUserConfig = {
         },
         base_testnet: {
             url: secret.url_base_testnet,
-            accounts: [secret.key_dev]
+            accounts: [secret.key_dev],
+            gasPrice: parseUnits("0.10001", "gwei").toNumber()
         },
     },
     contractSizer: {

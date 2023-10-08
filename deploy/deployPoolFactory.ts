@@ -10,7 +10,8 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     await deploy('OCPoolFactory', {
         from: owner,
         args: [],
-        log: true
+        log: true,
+        waitConfirmations: 1,
     });
 
 };

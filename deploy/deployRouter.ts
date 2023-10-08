@@ -19,7 +19,8 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     const OCPRouter = await deploy('OCPRouter', {
         from: owner,
         args: [OCPPoolFactory.address, OCPTokenManager.address, OCPBridge.address, AddressZero],
-        log: true
+        log: true,
+        waitConfirmations: 1,
     });
 
     await execute('OCPBridge', {from: owner, log: true}, "updateRouter", OCPRouter.address);

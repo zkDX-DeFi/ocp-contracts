@@ -93,7 +93,7 @@ contract OCPBridge is LzApp, IOCPBridge {
         } else revert("OCPBridge: invalid quote type");
 
         bytes memory _txParams = _txParamBuilder(_remoteChainId, _type, _lzTxParams);
-        return lzEndpoint.estimateFees(_remoteChainId, address(this), abi.encodePacked(address(this)), useLzToken, _txParams);
+        return lzEndpoint.estimateFees(_remoteChainId, address(this), payload, useLzToken, _txParams);
     }
 
     /**
