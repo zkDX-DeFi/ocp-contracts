@@ -140,6 +140,32 @@ contract OCPBridge is LzApp, IOCPBridge {
         return lzTxParam;
     }
 
+    /**
+        * @dev receive token from remote chain
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, then `_userPayload` is the payload to be sent to the remote chain.
+
+        * `_userPayload` is the payload to be sent to the remote chain.
+
+        * If `_type` is `TYPE_DEPLOY_AND_MINT`, it will invoke `omniMintRemote` on the router contract.
+
+        * Requirements:
+
+            * - onlyRouter
+
+            * - _srcChainId must be valid
+
+            * - _srcAddress must be valid
+
+            * - _nonce must be valid
+
+            * - _payload must be valid
+
+        * @param _srcChainId remote chain id
+        * @param _srcAddress address to refund
+        * @param _nonce nonce
+        * @param _payload user payload
+    */
     function _blockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
         uint8 _type;
         assembly {
