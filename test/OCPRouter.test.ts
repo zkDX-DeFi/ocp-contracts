@@ -10,7 +10,13 @@ import {
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
-import {ONE_HUNDRED_E_18, ONE_THOUSAND_E_18, POINT_ONE_E_18} from "../helpers/constantsTest";
+import {
+    ONE_HUNDRED_E_18,
+    ONE_HUNDRED_E_6,
+    ONE_THOUSAND_E_18,
+    ONE_THOUSAND_E_6,
+    POINT_ONE_E_18
+} from "../helpers/constantsTest";
 
 describe("OCPR", async () => {
 
@@ -194,5 +200,52 @@ describe("OCPR", async () => {
             _payload)).to.be.revertedWith("OCPRouter: caller is not the bridge");
     });
 
+    it("check OCPR.FUNC => _amountD18()", async () => {
+        const r = router;
 
+        const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
+
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _token = usdcD6;
+        let _amount = ONE_HUNDRED_E_6;
+        let _toAddress = user1.address;
+        let _needDeploy = true;
+        let _refundAddress = user1.address;
+        let _payload = "0x";
+        let _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: AddressZero,
+        };
+        let _value = POINT_ONE_E_18;
+
+
+        await _token.mint(owner.address, ONE_THOUSAND_E_6);
+        await _token.approve(r.address, ONE_THOUSAND_E_6);
+
+        await r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        );
+
+        _needDeploy = false;
+        await r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        );
+    });
 });
