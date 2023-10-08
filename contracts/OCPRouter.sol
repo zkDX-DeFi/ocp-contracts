@@ -93,6 +93,31 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         _omniMint(_token, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value);
     }
 
+    /**
+        * @dev Transfers tokens from sender to receiver on the same chain.
+
+        * If the `_needDeploy` is true, the token will be deployed on the receiver chain and `type` will be `TYPE_DEPLOY_AND_MINT`.
+
+        * If the `_needDeploy` is false, the token will not be deployed on the receiver chain and `type` will be `TYPE_MINT`.
+
+        * Requirements:
+
+            * - `_token` cannot be the zero address.
+
+            * - `_to` cannot be the zero address.
+
+            * - `_amountIn` must be greater than 0.
+
+        * @param _token The address of the token to transfer.
+        * @param _remoteChainId The chain id of the receiver.
+        * @param _amountIn The amount of tokens to transfer.
+        * @param _to The address of the receiver.
+        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _refundAddress The address to refund the fee to.
+        * @param _payload The payload to send to the receiver.
+        * @param _lzTxParams The layer zero transaction parameters.
+        * @param _msgFee The fee to send to the bridge.
+    */
     function _omniMint(
         address _token,
         uint16 _remoteChainId,
