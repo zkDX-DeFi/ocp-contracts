@@ -9,12 +9,11 @@ describe("OT", async () => {
     let user1: any,
         owner: any,
         usdc: any,
-        ocpTokenManager: any,
         ot : any,
         op : any
 
     beforeEach(async () => {
-        ({owner,user1, ocpTokenManager} = await deployFixture());
+        ({owner,user1} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
 
         const _amount = OT_MINT_AMOUNT;
