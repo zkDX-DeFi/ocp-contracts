@@ -276,4 +276,21 @@ describe("OCPB", async () => {
             .updateRouter(bridge2.address))
             .to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
     });
+
+    it("check OCPB.FUNC => updateTrustedRemotes()", async() => {
+        const b = bridge;
+
+        const _remoteChainIds = [CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL3];
+        const _paths = ["0x", "0x"];
+        const _invalidUser = user1;
+        await expect(b.connect(_invalidUser)
+            .updateTrustedRemotes(_remoteChainIds, _paths))
+            .revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
+
+        const _invalidPaths = ["0x", "0x", "0x"];
+        await expect(b.updateTrustedRemotes(_remoteChainIds, _invalidPaths))
+            .revertedWith("OCPBridge: invalid params");
+
+        await b.updateTrustedRemotes(_remoteChainIds, _paths);
+    });
 });
