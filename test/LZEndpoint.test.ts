@@ -39,11 +39,13 @@ describe("LZEndpoint", async () => {
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
 
-    it("omni deploy and mint suc", async () => {
+    it("check LZ.FUNC => VARIABLES", async () => {
         const lz = lzEndpoint;
         const lz2 = lzEndpoint2;
 
-
+        expect(lz.address).not.eq(AddressZero);
+        expect(lz2.address).not.eq(AddressZero);
+        expect(await lz.mockChainId()).eq(CHAIN_ID_LOCAL);
+        expect(await lz2.mockChainId()).eq(CHAIN_ID_LOCAL2);
     });
-
 });
