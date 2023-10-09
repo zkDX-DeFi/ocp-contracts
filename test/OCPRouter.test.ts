@@ -19,6 +19,36 @@ import {
 } from "../helpers/constantsTest";
 import {ethers} from "hardhat";
 
+async function router_omni_mint(usdc: any, USER: any, R: any) {
+    let _remoteChainId = CHAIN_ID_LOCAL2;
+    let _token = usdc;
+    let _amountIn = ONE_THOUSAND_E_18;
+    let _toAddress = USER.address;
+    let _needDeploy = true;
+    let _refundAddress = USER.address;
+
+    let _userPayload =
+        ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+    let _lzTxObj = {
+        dstGasForCall: 600000,
+        dstNativeAmount: 0,
+        dstNativeAddr: '0x',
+    };
+    await _token.mint(USER.address, _amountIn);
+    await _token.connect(USER).approve(R.address, _amountIn);
+    await R.connect(USER).omniMint(
+        _remoteChainId,
+        _token.address,
+        _amountIn,
+        _toAddress,
+        _needDeploy,
+        _refundAddress,
+        _userPayload,
+        _lzTxObj,
+        {value: POINT_ONE_E_18}
+    );
+}
+
 describe("OCPR", async () => {
 
     let user1: any,
@@ -559,35 +589,6 @@ describe("OCPR", async () => {
     it("check R.FUNC => omniMint()", async() => {
         const R = router;
         const USER = user1;
-        let _remoteChainId = CHAIN_ID_LOCAL2;
-        let _token = usdc;
-        let _amountIn = ONE_THOUSAND_E_18;
-        let _toAddress = USER.address;
-        let _needDeploy = true;
-        let _refundAddress = USER.address;
-
-        let _userPayload =
-            ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
-        let _lzTxObj = {
-            dstGasForCall: 600000,
-            dstNativeAmount: 0,
-            dstNativeAddr: '0x',
-        };
-
-        await _token.mint(USER.address, _amountIn);
-        await _token.connect(USER).approve(R.address, _amountIn);
-
-
-        await R.connect(USER).omniMint(
-            _remoteChainId,
-            _token.address,
-            _amountIn,
-            _toAddress,
-            _needDeploy,
-            _refundAddress,
-            _userPayload,
-            _lzTxObj,
-            {value: POINT_ONE_E_18}
-        );
-    })
+        await router_omni_mint(usdc, USER, R);
+    });
 });
