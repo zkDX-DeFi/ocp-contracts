@@ -587,8 +587,13 @@ describe("OCPR", async () => {
     });
 
     it("check R.FUNC => omniMint()", async() => {
-        const R = router;
-        const USER = user1;
-        await router_omni_mint(usdc, USER, R);
+        const f = poolFactory;
+        const usdc2 = await deployNew("Token", ["USDC2", 6, 0, 0, 0]);
+
+        expect(await f.getPool(usdc.address)).eq(AddressZero);
+        expect(await f.getPool(usdc2.address)).eq(AddressZero);
+        await router_omni_mint(usdc2, user1, router);
+        expect(await f.getPool(usdc.address)).eq(AddressZero);
+        expect(await f.getPool(usdc2.address)).not.eq(AddressZero);
     });
 });
