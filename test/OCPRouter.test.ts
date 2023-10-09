@@ -477,7 +477,7 @@ describe("OCPR", async () => {
         expect(await r2.weth()).eq(AddressZero);
     });
 
-    it("check OCPR.FUNC => quoteLayerZeroFee", async() => {
+    it("check Router.FUNC => quoteLayerZeroFee", async() => {
         const r = router;
         let _user = user1;
         let _remoteChainId = CHAIN_ID_LOCAL2;
@@ -513,6 +513,48 @@ describe("OCPR", async () => {
             _lzTxObj
         );
         console.log(`msgFee:, ${formatEther(msgFee[0])}`);
+    });
 
+    it("check R2.FUNC => quoteLayerZeroFee()", async() => {
+        const r = router;
+        const r2 = router2;
+
+        let _user = user2;
+        let _remoteChainId = CHAIN_ID_LOCAL;
+        let _type = TYPE_DEPLOY_AND_MINT;
+        let _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+        console.log(`_userPayload:, ${_userPayload}`);
+
+        let _lzTxObj = {
+            dstGasForCall: 300000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        };
+
+        let msgFee = await r2.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`${formatEther(msgFee[0])}`);
+
+        _type = TYPE_MINT;
+        await expect(r2.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        )).to.be.revertedWith("OCPBridge: invalid quote type");
+
+        _type = TYPE_DEPLOY_AND_MINT;
+        msgFee = await r2.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`${formatEther(msgFee[0])}`);
     });
 });
