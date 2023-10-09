@@ -172,7 +172,8 @@ contract OCPBridge is LzApp, IOCPBridge {
             _type := mload(add(_payload, 32))
         }
         // routing types
-        if (_type == Types.TYPE_DEPLOY_AND_MINT) {
+//        if (_type == Types.TYPE_DEPLOY_AND_MINT)
+        {
             (, Structs.MintObj memory _mintParams,
                 bytes memory payload,
                 uint256 _dstGasForCall

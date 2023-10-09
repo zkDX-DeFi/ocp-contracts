@@ -17,6 +17,7 @@ import {
     ONE_THOUSAND_E_6,
     POINT_ONE_E_18
 } from "../helpers/constantsTest";
+import {ethers} from "hardhat";
 
 describe("OCPR", async () => {
 
@@ -29,11 +30,12 @@ describe("OCPR", async () => {
         router : any,
         router2 : any,
         tokenManager: any,
+        tokenManager2: any,
         poolFactory: any
 
 
     beforeEach(async () => {
-        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, poolFactory} = await deployFixture());
+        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2, poolFactory} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPR.VARIABLES => bridge()", async () => {
@@ -246,6 +248,210 @@ describe("OCPR", async () => {
             _payload,
             _lzTxObj,
             {value: _value}
+        );
+    });
+
+    it("check OCPR.FUNC => omniMint()", async () => {
+        const r = router;
+        const usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
+
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _token = usdc;
+        let _amount = ONE_HUNDRED_E_18;
+        let _toAddress = user1.address;
+        let _needDeploy = true;
+        let _refundAddress = user1.address;
+        let _payload = AddressZero;
+        let _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: AddressZero,
+        };
+        let _value = POINT_ONE_E_18;
+
+
+        await _token.mint(owner.address, ONE_THOUSAND_E_18);
+        await _token.approve(r.address, ONE_THOUSAND_E_18);
+
+        _needDeploy = false;
+        await r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        );
+    });
+
+    it("check OCPR.FUNC => omniMint() v2", async () => {
+        let receiverContract = await deployNew("ReceiverContract", [router2.address]);
+        let amountIn = ONE_THOUSAND_E_18;
+        const _token = usdc;
+        const _user = user1;
+
+        await _token.mint(_user.address, amountIn);
+        await _token.connect(_user).approve(router.address, amountIn);
+        let _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _type = TYPE_DEPLOY_AND_MINT;
+        const _lzTxObj = {
+            dstGasForCall: 300000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        }
+
+        let msgFee = await router.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+
+        console.log("DeployMint Fee:", formatEther(msgFee[0]));
+
+        await router.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            ONE_THOUSAND_E_18,
+            receiverContract.address,
+            true,
+            _user.address,
+            _userPayload,
+            _lzTxObj,
+            {value: msgFee[0]}
+        );
+
+
+    });
+
+    it("check OCPR.FUNC => omniMint() v3", async () => {
+        let receiverContract = await deployNew("ReceiverContract2", [router2.address]);
+        let amountIn = ONE_THOUSAND_E_18;
+        const _token = usdc;
+        const _user = user1;
+
+        await _token.mint(_user.address, amountIn);
+        await _token.connect(_user).approve(router.address, amountIn);
+        let _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _type = TYPE_DEPLOY_AND_MINT;
+        const _lzTxObj = {
+            dstGasForCall: 300000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        }
+
+        let msgFee = await router.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+
+        console.log("DeployMint Fee:", formatEther(msgFee[0]));
+
+        await router.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            ONE_HUNDRED_E_18,
+            receiverContract.address,
+            true,
+            _user.address,
+            _userPayload,
+            _lzTxObj,
+            {value: msgFee[0]}
+        );
+
+        await router.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            ONE_HUNDRED_E_18,
+            receiverContract.address,
+            true,
+            _user.address,
+            _userPayload,
+            _lzTxObj,
+            {value: msgFee[0]}
+        );
+
+        await router.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            ONE_HUNDRED_E_18,
+            receiverContract.address,
+            false,
+            _user.address,
+            _userPayload,
+            _lzTxObj,
+            {value: msgFee[0]}
+        );
+
+        await router.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            ONE_HUNDRED_E_18,
+            receiverContract.address,
+            false,
+            _user.address,
+            _userPayload,
+            _lzTxObj,
+            {value: msgFee[0]}
+        );
+    });
+
+    it("check OCPR.FUNC => omniMint() v4", async () => {
+        let receiverContract = await deployNew("ReceiverContract2", [router2.address]);
+        let amountIn = ONE_THOUSAND_E_18;
+        const _token = usdc;
+        const _user = user1;
+
+        await _token.mint(_user.address, amountIn);
+        await _token.connect(_user).approve(router.address, amountIn);
+        let _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _type = TYPE_DEPLOY_AND_MINT;
+        const _lzTxObj = {
+            dstGasForCall: 300000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        }
+
+        let msgFee = await router.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+
+        await router.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            ONE_HUNDRED_E_18,
+            receiverContract.address,
+            false,
+            _user.address,
+            _userPayload,
+            _lzTxObj,
+            {value: msgFee[0]}
+        );
+
+        await router.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            ONE_HUNDRED_E_18,
+            receiverContract.address,
+            false,
+            _user.address,
+            _userPayload,
+            _lzTxObj,
+            {value: msgFee[0]}
         );
     });
 });
