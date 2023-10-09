@@ -28,7 +28,6 @@ task("setupBridge").addParam("targetNetworks").setAction(async function (taskArg
 
     // update gasLookups
     let gasParams = buildGasParams(chainIds);
-    console.log(gasParams)
     await bridge.updateGasLookups(gasParams.chainIds, gasParams.types, gasParams.gases);
 });
 

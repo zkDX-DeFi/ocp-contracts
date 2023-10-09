@@ -45,8 +45,8 @@ describe("LZEndpoint", async () => {
 
         expect(lz.address).not.eq(AddressZero);
         expect(lz2.address).not.eq(AddressZero);
-        expect(await lz.mockChainId()).eq(CHAIN_ID_LOCAL);
-        expect(await lz2.mockChainId()).eq(CHAIN_ID_LOCAL2);
+        expect(await lz.mockChainId()).eq(parseInt(CHAIN_ID_LOCAL));
+        expect(await lz2.mockChainId()).eq(parseInt(CHAIN_ID_LOCAL2));
     });
 
     it("check lz.func => blockNextMsg()", async () => {
