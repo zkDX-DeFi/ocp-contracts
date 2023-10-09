@@ -19,6 +19,36 @@ import {
 } from "../helpers/constantsTest";
 import {ethers} from "hardhat";
 
+async function router_omni_mint(usdc: any, USER: any, R: any) {
+    let _remoteChainId = CHAIN_ID_LOCAL2;
+    let _token = usdc;
+    let _amountIn = ONE_THOUSAND_E_18;
+    let _toAddress = USER.address;
+    let _needDeploy = true;
+    let _refundAddress = USER.address;
+
+    let _userPayload =
+        ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+    let _lzTxObj = {
+        dstGasForCall: 600000,
+        dstNativeAmount: 0,
+        dstNativeAddr: '0x',
+    };
+    await _token.mint(USER.address, _amountIn);
+    await _token.connect(USER).approve(R.address, _amountIn);
+    await R.connect(USER).omniMint(
+        _remoteChainId,
+        _token.address,
+        _amountIn,
+        _toAddress,
+        _needDeploy,
+        _refundAddress,
+        _userPayload,
+        _lzTxObj,
+        {value: POINT_ONE_E_18}
+    );
+}
+
 describe("OCPR", async () => {
 
     let user1: any,
@@ -31,11 +61,12 @@ describe("OCPR", async () => {
         router2 : any,
         tokenManager: any,
         tokenManager2: any,
-        poolFactory: any
+        poolFactory: any,
+        poolFactory2: any
 
 
     beforeEach(async () => {
-        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2, poolFactory} = await deployFixture());
+        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2, poolFactory,poolFactory2} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPR.VARIABLES => bridge()", async () => {
@@ -453,5 +484,125 @@ describe("OCPR", async () => {
             _lzTxObj,
             {value: msgFee[0]}
         );
+    });
+
+    it("check OCPR.VARIABLES => poolFactory", async() => {
+        const r = router;
+        const r2 = router2;
+        const f = poolFactory;
+        const f2 = poolFactory2;
+        const tm = tokenManager;
+        const tm2 = tokenManager2;
+        const b = bridge;
+        const b2 = bridge2;
+
+        expect(await r.poolFactory()).eq(f.address);
+        expect(await r2.poolFactory()).eq(f2.address);
+        expect(await r.tokenManager()).eq(tm.address);
+        expect(await r2.tokenManager()).eq(tm2.address);
+        expect(await r.bridge()).eq(b.address);
+        expect(await r2.bridge()).eq(b2.address);
+
+        expect(await r.weth()).eq(AddressZero);
+        expect(await r2.weth()).eq(AddressZero);
+    });
+    it("check Router.FUNC => quoteLayerZeroFee", async() => {
+        const r = router;
+        let _user = user1;
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _type = TYPE_DEPLOY_AND_MINT;
+        let _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+        let _lzTxObj = {
+            dstGasForCall: 300000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        }
+        let msgFee = await router.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`msgFee:, ${formatEther(msgFee[0])}`);
+
+        _user = user2;
+        _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+
+        _lzTxObj = {
+            dstGasForCall: 600000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        }
+        msgFee = await r.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`msgFee:, ${formatEther(msgFee[0])}`);
+    });
+    it("check R2.FUNC => quoteLayerZeroFee()", async() => {
+        const r = router;
+        const r2 = router2;
+
+        let _user = user2;
+        let _remoteChainId = CHAIN_ID_LOCAL;
+        let _type = TYPE_DEPLOY_AND_MINT;
+        let _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+        console.log(`_userPayload:, ${_userPayload}`);
+
+        let _lzTxObj = {
+            dstGasForCall: 300000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        };
+
+        let msgFee = await r2.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`${formatEther(msgFee[0])}`);
+
+        _type = TYPE_MINT;
+        await expect(r2.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        )).to.be.revertedWith("OCPBridge: invalid quote type");
+
+        _type = TYPE_DEPLOY_AND_MINT;
+        msgFee = await r2.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`${formatEther(msgFee[0])}`);
+    });
+
+    it("check R.FUNC => omniMint()", async() => {
+        const f = poolFactory;
+        const usdc2 = await deployNew("Token", ["USDC2", 6, 0, 0, 0]);
+
+        expect(await f.getPool(usdc.address)).eq(AddressZero);
+        expect(await f.getPool(usdc2.address)).eq(AddressZero);
+        await router_omni_mint(usdc2, user1, router);
+        expect(await f.getPool(usdc.address)).eq(AddressZero);
+        expect(await f.getPool(usdc2.address)).not.eq(AddressZero);
+
+        const pool = await f.getPool(usdc2.address);
+        console.log(`usdc2.balanceOf(user1.address): ${formatEther(await usdc2.balanceOf(user1.address))}`);
+        console.log(`usdc2.totalSupply(): ${formatEther(await usdc2.totalSupply())}`);
+        console.log(`usdc2.balanceOf(pool): ${formatEther(await usdc2.balanceOf(pool))}`);
+
+        await router_omni_mint(usdc2, user1, router);
+        console.log(`usdc2.totalSupply(): ${formatEther(await usdc2.totalSupply())}`);
+        console.log(`usdc2.balanceOf(pool): ${formatEther(await usdc2.balanceOf(pool))}`);
     });
 });
