@@ -476,4 +476,43 @@ describe("OCPR", async () => {
         expect(await r.weth()).eq(AddressZero);
         expect(await r2.weth()).eq(AddressZero);
     });
+
+    it("check OCPR.FUNC => quoteLayerZeroFee", async() => {
+        const r = router;
+        let _user = user1;
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _type = TYPE_DEPLOY_AND_MINT;
+        let _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+        let _lzTxObj = {
+            dstGasForCall: 300000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        }
+        let msgFee = await router.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`msgFee:, ${formatEther(msgFee[0])}`);
+
+        _user = user2;
+        _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [_user.address]);
+
+        _lzTxObj = {
+            dstGasForCall: 600000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        }
+        msgFee = await r.quoteLayerZeroFee(
+            _remoteChainId,
+            _type,
+            _userPayload,
+            _lzTxObj
+        );
+        console.log(`msgFee:, ${formatEther(msgFee[0])}`);
+
+    });
 });
