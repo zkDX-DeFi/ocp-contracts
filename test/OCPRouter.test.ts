@@ -476,7 +476,6 @@ describe("OCPR", async () => {
         expect(await r.weth()).eq(AddressZero);
         expect(await r2.weth()).eq(AddressZero);
     });
-
     it("check Router.FUNC => quoteLayerZeroFee", async() => {
         const r = router;
         let _user = user1;
@@ -514,7 +513,6 @@ describe("OCPR", async () => {
         );
         console.log(`msgFee:, ${formatEther(msgFee[0])}`);
     });
-
     it("check R2.FUNC => quoteLayerZeroFee()", async() => {
         const r = router;
         const r2 = router2;
@@ -557,4 +555,39 @@ describe("OCPR", async () => {
         );
         console.log(`${formatEther(msgFee[0])}`);
     });
+
+    it("check R.FUNC => omniMint()", async() => {
+        const R = router;
+        const USER = user1;
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _token = usdc;
+        let _amountIn = ONE_THOUSAND_E_18;
+        let _toAddress = USER.address;
+        let _needDeploy = true;
+        let _refundAddress = USER.address;
+
+        let _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+        let _lzTxObj = {
+            dstGasForCall: 600000,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        };
+
+        await _token.mint(USER.address, _amountIn);
+        await _token.connect(USER).approve(R.address, _amountIn);
+
+
+        await R.connect(USER).omniMint(
+            _remoteChainId,
+            _token.address,
+            _amountIn,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _userPayload,
+            _lzTxObj,
+            {value: POINT_ONE_E_18}
+        );
+    })
 });
