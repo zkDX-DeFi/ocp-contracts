@@ -44,6 +44,17 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
 
     // set remote
     await run("setupBridge", {targetNetwork: "local_chain1"});
+
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+    console.log(`HELLO WORLD`);
+
     await run("setupBridge", {targetNetwork: "local_chain2"});
 
     // set dest endpoint (only local)
