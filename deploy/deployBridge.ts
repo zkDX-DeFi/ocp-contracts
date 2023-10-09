@@ -1,13 +1,9 @@
 import {DeployFunction} from 'hardhat-deploy/types';
 import {getLzEndPointByChainId} from "../helpers/utils";
-import {AddressZero} from "../helpers/constants";
-
 const func: DeployFunction = async function ({deployments, getNamedAccounts, network, getChainId}) {
-
-    const {deploy, get, execute} = deployments;
+    const {deploy} = deployments;
     const {owner} = await getNamedAccounts();
     const chainId = await getChainId();
-
     console.log(`>> deploying OCPBridge...`);
 
     const lzEndpoint = await getLzEndPointByChainId(chainId);
