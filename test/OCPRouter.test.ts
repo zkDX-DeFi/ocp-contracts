@@ -597,12 +597,16 @@ describe("OCPR", async () => {
         expect(await f.getPool(usdc2.address)).not.eq(AddressZero);
 
         const pool = await f.getPool(usdc2.address);
-        console.log(`usdc2.balanceOf(user1.address): ${formatEther(await usdc2.balanceOf(user1.address))}`);
-        console.log(`usdc2.totalSupply(): ${formatEther(await usdc2.totalSupply())}`);
-        console.log(`usdc2.balanceOf(pool): ${formatEther(await usdc2.balanceOf(pool))}`);
+        expect(await usdc2.totalSupply()).eq(await usdc2.balanceOf(pool));
+        expect(await usdc2.totalSupply()).eq(ONE_THOUSAND_E_18);
 
         await router_omni_mint(usdc2, user1, router);
-        console.log(`usdc2.totalSupply(): ${formatEther(await usdc2.totalSupply())}`);
-        console.log(`usdc2.balanceOf(pool): ${formatEther(await usdc2.balanceOf(pool))}`);
+        expect(await usdc2.totalSupply()).eq(await usdc2.balanceOf(pool));
+        expect(await usdc2.totalSupply()).eq(ONE_THOUSAND_E_18.mul(2));
+
+        expect(await f.getPool(usdc.address)).eq(AddressZero);
+        await router_omni_mint(usdc, user1, router);
+        expect(await f.getPool(usdc.address)).not.eq(AddressZero);
+        expect(await f.getPool(usdc.address)).not.eq(await f.getPool(usdc2.address));
     });
 });
