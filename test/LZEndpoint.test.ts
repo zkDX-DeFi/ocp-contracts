@@ -48,4 +48,16 @@ describe("LZEndpoint", async () => {
         expect(await lz.mockChainId()).eq(CHAIN_ID_LOCAL);
         expect(await lz2.mockChainId()).eq(CHAIN_ID_LOCAL2);
     });
+
+    it("check lz.func => blockNextMsg()", async () => {
+        const lz = lzEndpoint;
+        expect(await lz.nextMsgBlocked()).false;
+        await lz.blockNextMsg();
+        expect(await lz.nextMsgBlocked()).true;
+
+        const lz2 = lzEndpoint2;
+        expect(await lz2.nextMsgBlocked()).false;
+        await lz2.blockNextMsg();
+        expect(await lz2.nextMsgBlocked()).true;
+    });
 });
