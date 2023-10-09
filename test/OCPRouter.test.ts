@@ -248,4 +248,40 @@ describe("OCPR", async () => {
             {value: _value}
         );
     });
+
+    it("check OCPR.FUNC => omniMint()", async () => {
+        const r = router;
+        const usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
+
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _token = usdc;
+        let _amount = ONE_HUNDRED_E_18;
+        let _toAddress = user1.address;
+        let _needDeploy = true;
+        let _refundAddress = user1.address;
+        let _payload = AddressZero;
+        let _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: AddressZero,
+        };
+        let _value = POINT_ONE_E_18;
+
+
+        await _token.mint(owner.address, ONE_THOUSAND_E_18);
+        await _token.approve(r.address, ONE_THOUSAND_E_18);
+
+        _needDeploy = false;
+        await r.omniMint(
+            _remoteChainId,
+            _token.address,
+            _amount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _payload,
+            _lzTxObj,
+            {value: _value}
+        );
+    });
 });
