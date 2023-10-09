@@ -609,4 +609,23 @@ describe("OCPR", async () => {
         expect(await f.getPool(usdc.address)).not.eq(AddressZero);
         expect(await f.getPool(usdc.address)).not.eq(await f.getPool(usdc2.address));
     });
+
+    it("check R.FUNC => omniMint() => tm", async() => {
+        const b = bridge;
+        const b2 = bridge2;
+        const tm = tokenManager;
+        const tm2 = tokenManager2;
+
+        console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
+        console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL2)}`);
+        console.log(`${await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
+        console.log(`${await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL2)}`);
+
+        await router_omni_mint(usdc, user1, router);
+
+        console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
+        console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL2)}`);
+        console.log(`${await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
+        console.log(`${await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL2)}`);
+    });
 });
