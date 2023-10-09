@@ -31,11 +31,12 @@ describe("OCPR", async () => {
         router2 : any,
         tokenManager: any,
         tokenManager2: any,
-        poolFactory: any
+        poolFactory: any,
+        poolFactory2: any
 
 
     beforeEach(async () => {
-        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2, poolFactory} = await deployFixture());
+        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2, poolFactory,poolFactory2} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPR.VARIABLES => bridge()", async () => {
@@ -453,5 +454,26 @@ describe("OCPR", async () => {
             _lzTxObj,
             {value: msgFee[0]}
         );
+    });
+
+    it("check OCPR.VARIABLES => poolFactory", async() => {
+        const r = router;
+        const r2 = router2;
+        const f = poolFactory;
+        const f2 = poolFactory2;
+        const tm = tokenManager;
+        const tm2 = tokenManager2;
+        const b = bridge;
+        const b2 = bridge2;
+
+        expect(await r.poolFactory()).eq(f.address);
+        expect(await r2.poolFactory()).eq(f2.address);
+        expect(await r.tokenManager()).eq(tm.address);
+        expect(await r2.tokenManager()).eq(tm2.address);
+        expect(await r.bridge()).eq(b.address);
+        expect(await r2.bridge()).eq(b2.address);
+
+        expect(await r.weth()).eq(AddressZero);
+        expect(await r2.weth()).eq(AddressZero);
     });
 });
