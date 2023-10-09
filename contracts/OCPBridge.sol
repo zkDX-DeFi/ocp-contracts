@@ -183,10 +183,17 @@ contract OCPBridge is LzApp, IOCPBridge {
         }
     }
 
+    function updateTrustRemotes(uint16[] calldata _remoteChainIds, bytes[] calldata _paths) external onlyOwner {
+        require(_remoteChainIds.length == _paths.length, "OCPBridge: invalid params");
+        for (uint256 i = 0; i < _remoteChainIds.length; i++) {
+            trustedRemoteLookup[_remoteChainIds[i]] = _paths[i];
+        }
+    }
+
     /**
         * @dev update gas lookup
 
-        * `updateGasLookup` is a helper function to update the gas lookup table.
+        * `updateGasLookups` is a helper function to update the gas lookup table.
 
         * `_chainIds` is the chain ids to be updated.
 
@@ -204,7 +211,7 @@ contract OCPBridge is LzApp, IOCPBridge {
         * @param _types mint types
         * @param _gas gas
     */
-    function updateGasLookup(uint16[] memory _chainIds, uint8[] memory _types, uint256[] memory _gas) external onlyOwner {
+    function updateGasLookups(uint16[] memory _chainIds, uint8[] memory _types, uint256[] memory _gas) external onlyOwner {
         require(_chainIds.length == _types.length && _chainIds.length == _gas.length, "OCPBridge: invalid params");
         for (uint256 i = 0; i < _chainIds.length; i++) {
             gasLookup[_chainIds[i]][_types[i]] = _gas[i];

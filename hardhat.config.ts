@@ -8,6 +8,7 @@ import 'solidity-coverage';
 import {task} from "hardhat/config";
 import "hardhat-contract-sizer";
 import 'solidity-docgen';
+import "@matterlabs/hardhat-zksync-solc";
 
 import "./tasks/deployOCP";
 import "./tasks/setupBridge";
@@ -52,6 +53,11 @@ const config: HardhatUserConfig = {
             accounts: [secret.key_dev],
             gasPrice: parseUnits("0.10001", "gwei").toNumber()
         },
+        zksync_testnet: {
+            zksync: true,
+            url: secret.url_zksync_testnet,
+            accounts: [secret.key_dev]
+        }
     },
     contractSizer: {
         runOnCompile: false

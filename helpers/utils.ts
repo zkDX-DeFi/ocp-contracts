@@ -3,9 +3,9 @@ import {
     CHAIN_ID_BASE_TEST,
     CHAIN_ID_GOERLI,
     CHAIN_ID_LOCAL,
-    CHAIN_ID_LOCAL2,
+    CHAIN_ID_LOCAL2, CHAIN_ID_ZKSYNC_TESTNET,
     ENDPOINT_BASE_TESTNET,
-    ENDPOINT_GOERLI
+    ENDPOINT_GOERLI, ENDPOINT_ZKSYNC_TESTNET
 } from "./constants";
 
 export async function deployFixture() {
@@ -56,6 +56,8 @@ export async function getLzEndPointByChainId(chainId: any) {
         return ENDPOINT_GOERLI;
     } else if (chainId == CHAIN_ID_BASE_TEST) {
         return ENDPOINT_BASE_TESTNET;
+    } else if (chainId == CHAIN_ID_ZKSYNC_TESTNET) {
+        return ENDPOINT_ZKSYNC_TESTNET;
     }
     if (!endpoint)
         throw new Error("lzEndpoint not found on network " + chainId);
@@ -66,17 +68,17 @@ export async function getWethByChainId(chainId: any) {
     let weth: any;
     const {deploy} = deployments;
     const owner = await ethers.getNamedSigner("owner");
-    if (chainId == CHAIN_ID_LOCAL || chainId == CHAIN_ID_GOERLI || chainId == CHAIN_ID_BASE_TEST) {
-        weth = await deploy("Token", {
-            from: owner.address,
-            args: ["WETH", 18, 0, 0, 0],
-            log: true
-        });
-    } else if (chainId == CHAIN_ID_LOCAL2) {
+    if (chainId == CHAIN_ID_LOCAL2) {
         weth = await deploy("WETH2", {
             contract: "Token",
             from: owner.address,
             args: ["WETH2", 18, 0, 0, 0],
+            log: true
+        });
+    } else {
+        weth = await deploy("Token", {
+            from: owner.address,
+            args: ["WETH", 18, 0, 0, 0],
             log: true
         });
     }

@@ -79,7 +79,7 @@ describe("OCPB", async () => {
             _lzTxObj,_value
         )).to.be.reverted;
 
-        await b.updateGasLookup([CHAIN_ID_LOCAL2], [0], [300000]);
+        await b.updateGasLookups([CHAIN_ID_LOCAL2], [0], [300000]);
 
         await b.omniMint(
             _remoteChainId,
@@ -178,7 +178,7 @@ describe("OCPB", async () => {
         );
     });
 
-    it("check OCPB.FUNC => updateGasLookup()", async() => {
+    it("check OCPB.FUNC => updateGasLookups()", async() => {
         const b = bridge;
         const invalidUser = user1;
 
@@ -190,16 +190,16 @@ describe("OCPB", async () => {
 
         const _gasLookup = [1000,2000];
 
-        await expect(b.connect(invalidUser).updateGasLookup(
+        await expect(b.connect(invalidUser).updateGasLookups(
             _chainIds,
             _types,
             _gasLookup
         )).to.be.revertedWith(OWNABLE_CALLER_IS_NOT_THE_OWNER);
 
-        await b.updateGasLookup(_chainIds, _types, _gasLookup);
+        await b.updateGasLookups(_chainIds, _types, _gasLookup);
 
         const invalidChainIds = [CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL3, CHAIN_ID_LOCAL];
-        await expect(b.updateGasLookup(
+        await expect(b.updateGasLookups(
             invalidChainIds,
             _types,
             _gasLookup

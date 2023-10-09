@@ -1,12 +1,21 @@
 import {DeployFunction} from 'hardhat-deploy/types';
-import {AddressZero, CHAIN_ID_LOCAL2} from "../../helpers/constants";
-import {getLzEndPointByChainId, getWethByChainId} from "../../helpers/utils";
-import {ethers, run} from "hardhat";
+import {
+    AddressZero,
+    CHAIN_ID_LOCAL,
+    CHAIN_ID_LOCAL2,
+    DEFAULT_GAS_LIMIT_1,
+    DEFAULT_GAS_LIMIT_2,
+    DEFAULT_GAS_LIMIT_3
+} from "../../helpers/constants";
+import {getLzEndPointByChainId} from "../../helpers/utils";
+import {ethers} from "hardhat";
 
 const func: DeployFunction = async function ({deployments, getNamedAccounts, network, getChainId}) {
 
     const {deploy, execute, get} = deployments;
     const {owner} = await getNamedAccounts();
+    const OCPBridge = await get("OCPBridge");
+    const lzEndpoint1 = await get("LZEndpoint");
 
     console.log(`>> deploying same on local chain 2 (test only) ...`);
 
@@ -43,23 +52,18 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     await execute('OCPBridge2', {from: owner, log: true}, "updateRouter", OCPRouter2.address);
 
     // set remote
-    await run("setupBridge", {targetNetwork: "local_chain1"});
+    let path1 = ethers.utils.solidityPack(['address', 'address'], [OCPBridge2.address, OCPBridge.address])
+    let path2 = ethers.utils.solidityPack(['address', 'address'], [OCPBridge.address, OCPBridge2.address])
+    await execute('OCPBridge', {from: owner}, "setTrustedRemote", CHAIN_ID_LOCAL2, path1);
+    await execute('OCPBridge2', {from: owner}, "setTrustedRemote", CHAIN_ID_LOCAL, path2);
 
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-    console.log(`HELLO WORLD`);
-
-    await run("setupBridge", {targetNetwork: "local_chain2"});
+    // update gasLookups
+    await execute('OCPBridge', {from: owner}, "updateGasLookups", [CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2],
+        [1, 2, 3], [DEFAULT_GAS_LIMIT_1, DEFAULT_GAS_LIMIT_2, DEFAULT_GAS_LIMIT_3]);
+    await execute('OCPBridge2', {from: owner}, "updateGasLookups", [CHAIN_ID_LOCAL, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL],
+        [1, 2, 3], [DEFAULT_GAS_LIMIT_1, DEFAULT_GAS_LIMIT_2, DEFAULT_GAS_LIMIT_3]);
 
     // set dest endpoint (only local)
-    let OCPBridge = await get("OCPBridge");
-    let lzEndpoint1 = await get("LZEndpoint");
     await execute('LZEndpoint', {from: owner}, "setDestLzEndpoint", OCPBridge2.address, lzEndpoint2Addr);
     await execute('LZEndpoint2', {from: owner,}, "setDestLzEndpoint", OCPBridge.address, lzEndpoint1.address);
 };

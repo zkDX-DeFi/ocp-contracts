@@ -14,3 +14,5 @@ secret.json
 .idea
 /typechain-types/
 /docs/
+/artifacts-zk/
+/cache-zk/
