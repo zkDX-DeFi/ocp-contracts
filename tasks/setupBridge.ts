@@ -20,7 +20,18 @@ task("setupBridge").addParam("targetNetwork").setAction(async function (taskArgs
 
     // set trusted remote
     let remoteLzChainId = getLzChainIdByNetworkName(targetNetwork);
+
+    console.log(`remoteLzChainId: ${remoteLzChainId}`);
+    console.log(`remoteLzChainId: ${remoteLzChainId}`);
+    console.log(`remoteLzChainId: ${remoteLzChainId}`);
+
+
     let remoteAndLocal = hre.ethers.utils.solidityPack(['address', 'address'], [remoteAddress, localContract.address])
+
+    console.log(`remoteAndLocal: ${remoteAndLocal}`);
+    console.log(`remoteAndLocal: ${remoteAndLocal}`);
+    console.log(`remoteAndLocal: ${remoteAndLocal}`);
+
     let isTrustedRemoteSet = await localContract.isTrustedRemote(remoteLzChainId, remoteAndLocal);
     if (!isTrustedRemoteSet) {
         try {
