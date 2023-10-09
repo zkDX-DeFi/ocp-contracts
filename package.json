@@ -11,15 +11,16 @@
     "coverage": "yarn compile && npx hardhat coverage",
 
 
+    "deploy-zksync-test": "hardhat deployOCP --network zksync_testnet",
     "deploy-goerli": "hardhat deployOCP --network goerli",
     "deploy-base-test": "hardhat deployOCP --network base_testnet",
-    "deploy-zksync-test": "hardhat deployOCP --network zksync_testnet",
-    "setup1": "hardhat setupBridge --network goerli --target-networks base_testnet,zksync_testnet",
-    "setup2": "hardhat setupBridge --network base_testnet --target-networks goerli",
+    "setup1": "hardhat setupBridge --network zksync_testnet --target-networks goerli,base_testnet",
+    "setup2": "hardhat setupBridge --network goerli --target-networks base_testnet,zksync_testnet",
+    "setup3": "hardhat setupBridge --network base_testnet --target-networks goerli,zksync_testnet",
 
+    "omniMint": "hardhat run scripts/omniMint.ts --network zksync_testnet",
 
-    "clean-deployments": "rm -rf deployments/base_testnet && rm -rf deployments/goerli",
-    "omniMint": "hardhat run scripts/omniMint.ts --network goerli"
+    "clean-deployments": "rm -rf deployments"
   },
   "keywords": [],
   "author": "",

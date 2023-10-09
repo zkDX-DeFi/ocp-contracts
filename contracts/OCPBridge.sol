@@ -184,10 +184,11 @@ contract OCPBridge is LzApp, IOCPBridge {
         }
     }
 
-    function updateTrustRemotes(uint16[] calldata _remoteChainIds, bytes[] calldata _paths) external onlyOwner {
+    function updateTrustedRemotes(uint16[] calldata _remoteChainIds, bytes[] calldata _paths) external onlyOwner {
         require(_remoteChainIds.length == _paths.length, "OCPBridge: invalid params");
         for (uint256 i = 0; i < _remoteChainIds.length; i++) {
             trustedRemoteLookup[_remoteChainIds[i]] = _paths[i];
+            emit SetTrustedRemote(_remoteChainIds[i], _paths[i]);
         }
     }
 

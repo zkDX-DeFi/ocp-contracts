@@ -27,8 +27,9 @@ async function main() {
     if (balance.lt(amountIn)) await usdc.faucet();
 
     const router = await ethers.getContract("OCPRouter");
+    const factory = await ethers.getContract("OCPoolFactory");
 
-    let remoteLzChainId = getLzChainIdByNetworkName("base_testnet");
+    let remoteLzChainId = getLzChainIdByNetworkName("goerli");
     let allowance = await usdc.allowance(owner, router.address);
     if (allowance.lt(amountIn)){
         console.log("approving...");
@@ -64,7 +65,10 @@ async function main() {
         {value: msgFee[0]}
     );
     console.log(`omniMint tx: ${tx.hash}`);
-    // https://testnet.layerzeroscan.com/10121/address/0x1a763e0ee00944edcd45d9bd318b7d56ddddb75c/message/10160/address/0x19ba7df61960ecb07a24e5abd5227374eca9ce2d/nonce/1
+    // https://testnet.layerzeroscan.com/10165/address/0x31f88af2ef8d6bdf93b670ee12b1cbc4febf2be9/message/10121/address/0xb162d66707442bd48489be84eae4dd8dfc30c9db/nonce/1
+
+    let pool = await factory.getPool(usdc.address);
+    console.log(`pool address: ${pool}`);
 }
 
 main().then(() => process.exit(0))
