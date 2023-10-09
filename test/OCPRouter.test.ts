@@ -595,5 +595,10 @@ describe("OCPR", async () => {
         await router_omni_mint(usdc2, user1, router);
         expect(await f.getPool(usdc.address)).eq(AddressZero);
         expect(await f.getPool(usdc2.address)).not.eq(AddressZero);
+
+        const pool = await f.getPool(usdc2.address);
+        console.log(`usdc2.balanceOf(user1.address): ${formatEther(await usdc2.balanceOf(user1.address))}`);
+        console.log(`usdc2.totalSupply(): ${formatEther(await usdc2.totalSupply())}`);
+        console.log(`usdc2.balanceOf(pool): ${formatEther(await usdc2.balanceOf(pool))}`);
     });
 });
