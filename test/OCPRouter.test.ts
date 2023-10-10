@@ -640,6 +640,9 @@ describe("OCPR", async () => {
     });
 
     it("check R.FUNC => omniMint() => tm v2", async() => {
+        let _USER = user1;
+        console.log(`_USER: ${_USER.address}`);
+
         const r = router;
         const r2 = router2;
         const b = bridge;
@@ -654,11 +657,43 @@ describe("OCPR", async () => {
         console.log(`tm: ${tm.address}`);
         console.log(`tm2: ${tm2.address}`);
 
-        await router_omni_mint(usdc, user1, router);
+
+        await router_omni_mint(usdc, _USER, router);
 
         console.log(`------------------------- splitter --------------`);
         console.log(`------------------------- splitter --------------`);
 
-        await router_omni_mint(usdc, user1, router, false);
+
+        let _remoteChainId = CHAIN_ID_LOCAL2;
+        let _token = usdc;
+        let _amountIn = ONE_THOUSAND_E_18;
+        let _toAddress = _USER.address;
+        let _refundAddress = _USER.address;
+        let _needDeploy = false;
+
+        let _userPayload =
+            ethers.utils.defaultAbiCoder.encode(['address'], [_USER.address]);
+        let _lzTxObj = {
+            dstGasForCall: 0,
+            dstNativeAmount: 0,
+            dstNativeAddr: '0x',
+        };
+
+        await _token.mint(_USER.address, _amountIn);
+        await _token.connect(_USER).approve(r.address, _amountIn);
+
+        const _mintAmount = ONE_HUNDRED_E_18;
+        console.log(`_token: ${_token.address}`)
+        await r.connect(_USER).omniMint(
+            _remoteChainId,
+            _token.address,
+            _mintAmount,
+            _toAddress,
+            _needDeploy,
+            _refundAddress,
+            _userPayload,
+            _lzTxObj,
+            {value: POINT_ONE_E_18}
+        );
     });
 });

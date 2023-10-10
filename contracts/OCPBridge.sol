@@ -54,6 +54,8 @@ contract OCPBridge is LzApp, IOCPBridge {
 
         console.log("# BRIDGE.address: ", address(this));
         console.log("# BRIDGE.omniMint() => _mintParams.srcToken: ", _mintParams.srcToken);
+        console.log("# BRIDGE.omniMint() => _remoteChainId: ", _remoteChainId);
+        console.log("# BRIDGE.omniMint() => _type: ", _type);
         _lzSend(_remoteChainId, payload, _refundAddress, address(this), _txParamBuilder(_remoteChainId, _type, _lzTxParams), msg.value);
     }
 
@@ -176,6 +178,8 @@ contract OCPBridge is LzApp, IOCPBridge {
         assembly {
             _type := mload(add(_payload, 32))
         }
+
+        console.log("# Bridge._blockingLzReceive => _type", _type);
         // routing types
 //        if (_type == Types.TYPE_DEPLOY_AND_MINT)
         {

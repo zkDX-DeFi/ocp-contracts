@@ -100,6 +100,8 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         console.log("# OCPOTM.createOmniToken => _mintParams.srcToken: ", _mintParams.srcToken);
         console.log("# OCPOTM.createOmniToken => _srcChainId: ", _srcChainId);
         console.log("# OCPOTM.createOmniToken => token: ", token);
+        console.log("# OCPOTM.createOmniToken => _mintParams.amount", _mintParams.amount);
+        console.log("# OCPOTM.createOmniToken => _mintParams.to", _mintParams.to);
 
         omniTokens[_mintParams.srcToken][_srcChainId] = token;
         sourceTokens[token][_srcChainId] = _mintParams.srcToken;
