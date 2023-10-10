@@ -674,7 +674,7 @@ describe("OCPR", async () => {
         let _userPayload =
             ethers.utils.defaultAbiCoder.encode(['address'], [_USER.address]);
         let _lzTxObj = {
-            dstGasForCall: 0,
+            dstGasForCall: 3,
             dstNativeAmount: 0,
             dstNativeAddr: '0x',
         };
