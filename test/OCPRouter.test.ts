@@ -19,12 +19,12 @@ import {
 } from "../helpers/constantsTest";
 import {ethers} from "hardhat";
 
-async function router_omni_mint(usdc: any, USER: any, R: any) {
+async function router_omni_mint(usdc: any, USER: any, R: any, _needDeploy: any = true) {
     let _remoteChainId = CHAIN_ID_LOCAL2;
     let _token = usdc;
     let _amountIn = ONE_THOUSAND_E_18;
     let _toAddress = USER.address;
-    let _needDeploy = true;
+    // let _needDeploy = true;
     let _refundAddress = USER.address;
 
     let _userPayload =
@@ -655,5 +655,10 @@ describe("OCPR", async () => {
         console.log(`tm2: ${tm2.address}`);
 
         await router_omni_mint(usdc, user1, router);
+
+        console.log(`------------------------- splitter --------------`);
+        console.log(`------------------------- splitter --------------`);
+
+        await router_omni_mint(usdc, user1, router, false);
     });
 });

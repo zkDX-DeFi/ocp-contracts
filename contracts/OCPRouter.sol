@@ -217,10 +217,10 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
             token = tokenManager.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
         // else token = tokenManager.omniMint(_mintParams.srcToken, _mintParams.dstChainId, _mintParams.amount, _mintParams.to);
         if (_payload.length > 0) {
+            console.log("# OCPR.omniMintRemote => _payload.length>0");
             try IOCPReceiver(_mintParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce, token,
                 _mintParams.amount, _payload){} catch (bytes memory reason) {
-                console.logBytes(reason);
-                // save failed payload to cache
+                console.log("OCPR.omniMintRemote => catch(bytes memory reason)");
                 cachedMintLookup[_srcChainId][_srcAddress][_nonce] = Structs.CachedMint(token, _mintParams.amount, _mintParams.to, _payload);
                 emit CachedMint(_srcChainId, _srcAddress, _nonce, token, _mintParams.amount, _mintParams.to, _payload, reason);
             }
