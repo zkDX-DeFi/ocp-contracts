@@ -3,7 +3,7 @@ pragma solidity ^0.8.17;
 import "./interfaces/IOCPOmniTokenManager.sol";
 import "./libraries/Structs.sol";
 import "./entity/OmniToken.sol";
-
+import "hardhat/console.sol";
 /**
     * @title OCPOmniTokenManager
     * @author Muller
@@ -96,7 +96,13 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         );
         token = address(newToken);
 
+        console.log("# OCPOTM.address: ", address(this));
+        console.log("# OCPOTM._mintParams.srcToken: ", _mintParams.srcToken);
+        console.log("# OCPOTM._srcChainId: ", _srcChainId);
+
         omniTokens[_mintParams.srcToken][_srcChainId] = token;
+
+        console.log("# OCPOTM.omniTokens[_mintParams.srcToken][_srcChainId]: ", omniTokens[_mintParams.srcToken][_srcChainId]);
         sourceTokens[token][_srcChainId] = _mintParams.srcToken;
         emit TokenCreated(_mintParams.srcToken, _srcChainId, token);
     }

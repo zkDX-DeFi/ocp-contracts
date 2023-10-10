@@ -51,6 +51,9 @@ contract OCPBridge is LzApp, IOCPBridge {
         Structs.LzTxObj memory _lzTxParams
     ) external payable { // TODO: onlyRouter
         bytes memory payload = abi.encode(_type, _mintParams, _payload, _lzTxParams.dstGasForCall);
+
+        console.log("# BRIDGE.address: ", address(this));
+        console.log("# BRIDGE._mintParams.srcToken: ", _mintParams.srcToken);
         _lzSend(_remoteChainId, payload, _refundAddress, address(this), _txParamBuilder(_remoteChainId, _type, _lzTxParams), msg.value);
     }
 
@@ -167,6 +170,8 @@ contract OCPBridge is LzApp, IOCPBridge {
         * @param _payload user payload
     */
     function _blockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
+        console.log("# Bridge.address: ", address(this));
+        console.log("# Bridge.func => _blockingLzReceive");
         uint8 _type;
         assembly {
             _type := mload(add(_payload, 32))
@@ -178,7 +183,8 @@ contract OCPBridge is LzApp, IOCPBridge {
                 bytes memory payload,
                 uint256 _dstGasForCall
             ) = abi.decode(_payload, (uint8, Structs.MintObj, bytes, uint256));
-            console.log("# Type1 Received Suc, Deploy Token:", _mintParams.name);
+//            console.log("# Type1 Received Suc, Deploy Token:", _mintParams.name);
+            console.log("# Bridge._mintParams.srcToken:", _mintParams.srcToken);
             router.omniMintRemote(_srcChainId, _srcAddress, _nonce, _type == Types.TYPE_DEPLOY_AND_MINT, _mintParams,
                 address(lzEndpoint), _dstGasForCall, payload);
         }

@@ -208,6 +208,8 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bytes memory _payload
     ) external onlyBridge {
         address token;
+        console.log("# OCPR.address: ", address(this));
+        console.log("# OCPR.omniMintRemote => _mintParams.srcToken: ", _mintParams.srcToken);
         if (_needDeploy)
             token = tokenManager.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
         // else token = tokenManager.omniMint(_mintParams.srcToken, _mintParams.dstChainId, _mintParams.amount, _mintParams.to);

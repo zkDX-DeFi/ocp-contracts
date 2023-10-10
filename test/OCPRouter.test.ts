@@ -36,6 +36,8 @@ async function router_omni_mint(usdc: any, USER: any, R: any) {
     };
     await _token.mint(USER.address, _amountIn);
     await _token.connect(USER).approve(R.address, _amountIn);
+
+    console.log(`_token: ${_token.address}`)
     await R.connect(USER).omniMint(
         _remoteChainId,
         _token.address,
@@ -616,6 +618,12 @@ describe("OCPR", async () => {
         const tm = tokenManager;
         const tm2 = tokenManager2;
 
+        console.log(`tm: ${tm.address}`);
+        console.log(`tm2: ${tm2.address}`);
+
+        console.log(`b: ${b.address}`);
+        console.log(`b2: ${b2.address}`);
+
         console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
         console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL2)}`);
         console.log(`${await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
@@ -625,7 +633,30 @@ describe("OCPR", async () => {
 
         console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
         console.log(`${await tm.omniTokens(usdc.address, CHAIN_ID_LOCAL2)}`);
-        console.log(`${await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL)}`);
+        console.log(`${await tm2.omniTokens(usdc.address,CHAIN_ID_LOCAL)}`);
         console.log(`${await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL2)}`);
+
+        await router_omni_mint(usdc, user1, router);
+    });
+
+    it("check R.FUNC => omniMint() => tm v2", async() => {
+        const r = router;
+        const r2 = router2;
+        const tm = tokenManager;
+        const tm2 = tokenManager2;
+        const b = bridge;
+        const b2 = bridge2;
+
+        console.log(`r: ${r.address}`);
+        console.log(`r2: ${r2.address}`);
+
+        console.log(`tm: ${tm.address}`);
+        console.log(`tm2: ${tm2.address}`);
+
+        console.log(`b: ${b.address}`);
+        console.log(`b2: ${b2.address}`);
+
+
+        await router_omni_mint(usdc, user1, router);
     });
 });
