@@ -1,6 +1,6 @@
 {
   "name": "hardhat-template",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,17 +9,13 @@
     "docs-clean": "rm -rf docs",
     "docs-gen": "hardhat docgen",
     "coverage": "yarn compile && npx hardhat coverage",
-
-
     "deploy-zksync-test": "hardhat deployOCP --network zksync_testnet",
     "deploy-goerli": "hardhat deployOCP --network goerli",
     "deploy-base-test": "hardhat deployOCP --network base_testnet",
     "setup1": "hardhat setupBridge --network zksync_testnet --target-networks goerli,base_testnet",
     "setup2": "hardhat setupBridge --network goerli --target-networks base_testnet,zksync_testnet",
     "setup3": "hardhat setupBridge --network base_testnet --target-networks goerli,zksync_testnet",
-
     "omniMint": "hardhat run scripts/omniMint.ts --network zksync_testnet",
-
     "clean-deployments": "rm -rf deployments"
   },
   "keywords": [],
