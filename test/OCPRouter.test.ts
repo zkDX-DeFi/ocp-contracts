@@ -642,20 +642,17 @@ describe("OCPR", async () => {
     it("check R.FUNC => omniMint() => tm v2", async() => {
         const r = router;
         const r2 = router2;
-        const tm = tokenManager;
-        const tm2 = tokenManager2;
         const b = bridge;
         const b2 = bridge2;
+        const tm = tokenManager;
+        const tm2 = tokenManager2;
 
         console.log(`r: ${r.address}`);
         console.log(`r2: ${r2.address}`);
-
-        console.log(`tm: ${tm.address}`);
-        console.log(`tm2: ${tm2.address}`);
-
         console.log(`b: ${b.address}`);
         console.log(`b2: ${b2.address}`);
-
+        console.log(`tm: ${tm.address}`);
+        console.log(`tm2: ${tm2.address}`);
 
         await router_omni_mint(usdc, user1, router);
     });

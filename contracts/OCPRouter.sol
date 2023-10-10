@@ -82,6 +82,9 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
     ) external override payable {
+        console.log("# OCPR.address: ", address(this));
+        console.log("# OCPR.omniMint => _token: ", _token);
+
         require(_token != address(0), "OCPRouter: token invalid");
         require(_to != address(0), "OCPRouter: receiver invalid");
         require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
