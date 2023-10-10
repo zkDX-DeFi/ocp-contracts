@@ -27,8 +27,9 @@ async function router_omni_mint(usdc: any, USER: any, R: any, _needDeploy: any =
     // let _needDeploy = true;
     let _refundAddress = USER.address;
 
-    let _userPayload =
-        ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+    // let _userPayload =
+    //     ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+    let _userPayload = "0x";
     let _lzTxObj = {
         dstGasForCall: 600000,
         dstNativeAmount: 0,
@@ -662,6 +663,11 @@ describe("OCPR", async () => {
 
         console.log(`------------------------- splitter --------------`);
         console.log(`------------------------- splitter --------------`);
+
+        expect(await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL)).not.eq(AddressZero);
+        const _omniTokenAddress = await tm2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
+        expect(await tm2.sourceTokens(_omniTokenAddress, CHAIN_ID_LOCAL)).eq(usdc.address);
+
 
 
         let _remoteChainId = CHAIN_ID_LOCAL2;
