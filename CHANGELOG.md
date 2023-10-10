@@ -1,5 +1,66 @@
 # Changelog
 
+## [1.3.1](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.3.0...v1.3.1) (2023-10-10)
+
+
+### Bug Fixes
+
+* add console log in SOL ([40b5a35](https://github.com/zkDX-DeFi/ocp-contracts/commit/40b5a35a26f7186be3c24c416e105cb0388a2aa3))
+* add console.log code in sol ([e310b47](https://github.com/zkDX-DeFi/ocp-contracts/commit/e310b47a4493a6dee4ca74190b5cab0fd92346af))
+* add console.log in sol file ([6f3db5f](https://github.com/zkDX-DeFi/ocp-contracts/commit/6f3db5f6d308c5cd50bd2c496a3bee7b744dc8a2))
+* add console.log in sol file ([c3059cd](https://github.com/zkDX-DeFi/ocp-contracts/commit/c3059cd83cea99404e42e0345b18002d662eecd3))
+* add console.log in sol file ([bfed294](https://github.com/zkDX-DeFi/ocp-contracts/commit/bfed294640dd2f9a05d80d03cb2f3e5f08221469))
+* code coverage = 100% ([1663790](https://github.com/zkDX-DeFi/ocp-contracts/commit/1663790bb8445c9188846d9006d3ceb52b759ff7))
+* ReceiverContract2.sol ([3ce973a](https://github.com/zkDX-DeFi/ocp-contracts/commit/3ce973ac1a1846bb33e99d4e1d087feee52374bb))
+* removed MOCKTM.SOL ([d99cbbf](https://github.com/zkDX-DeFi/ocp-contracts/commit/d99cbbf8515410fba3890691e61be2a9ac8fc596))
+* tuning log code ([a233d23](https://github.com/zkDX-DeFi/ocp-contracts/commit/a233d23c20377966577cc84dee12647c0a66aae2))
+
+
+### Code Refactoring
+
+* removed unused code ([4700f78](https://github.com/zkDX-DeFi/ocp-contracts/commit/4700f788ab7ccb8354f8fc5b393b404cf2045950))
+* rename OCPR.TEST =&gt; OCPS.TEST ([afa34bd](https://github.com/zkDX-DeFi/ocp-contracts/commit/afa34bd16f81911b0aed8be61a1de3daa4a3dc1e))
+
+
+### Performance Improvements
+
+* update setup bridge scripts ([55db66f](https://github.com/zkDX-DeFi/ocp-contracts/commit/55db66fb5809804e55af70a3a64a8d9e628698db))
+
+
+### Tests
+
+* add new test scenario ([601fc81](https://github.com/zkDX-DeFi/ocp-contracts/commit/601fc81d7b7d31a9523075ef28be02f0a75843a9))
+* check f.getPool ([8127b7d](https://github.com/zkDX-DeFi/ocp-contracts/commit/8127b7ddb357d82e41e79a7b775887ee0f56f2cd))
+* check lz.func =&gt; blockNextMsg() ([4b52f5d](https://github.com/zkDX-DeFi/ocp-contracts/commit/4b52f5dd64a4d454ee36aa3c6ddd7592ce06dcbf))
+* check LZ.FUNC =&gt; VARIABLES ([feeaee6](https://github.com/zkDX-DeFi/ocp-contracts/commit/feeaee65f3b3c81561efad5bd56197a446a92950))
+* check OCPB.FUNC =&gt; updateTrustedRemotes() ([2061b13](https://github.com/zkDX-DeFi/ocp-contracts/commit/2061b139f9cf92811fe66e997990441b565a7a98))
+* check OCPR.FUNC =&gt; omniMint() ([69ca2aa](https://github.com/zkDX-DeFi/ocp-contracts/commit/69ca2aa65ac96d6bfa9a2ad2b5929b325846c052))
+* check OCPR.FUNC =&gt; quoteLayerZeroFee ([cbf77f9](https://github.com/zkDX-DeFi/ocp-contracts/commit/cbf77f9ebb7f391e6e7ec323c32c49f2b1e029d2))
+* check OCPR.VARIABLES =&gt; poolFactory ([69ebdb7](https://github.com/zkDX-DeFi/ocp-contracts/commit/69ebdb790e2c941e6d801f4a6142b8c85ee47e11))
+* check R.FUNC =&gt; omniMint() ([5af3602](https://github.com/zkDX-DeFi/ocp-contracts/commit/5af3602bc6ac757bd12c146b642cd3a590edbb2f))
+* check R.FUNC =&gt; omniMint() ([73d8085](https://github.com/zkDX-DeFi/ocp-contracts/commit/73d8085084920e1fbcd2b39412b9fed3bd75cf1d))
+* check R.FUNC =&gt; omniMint() => tm ([bd3cb13](https://github.com/zkDX-DeFi/ocp-contracts/commit/bd3cb13dc658f40900e6b263a048ac09dbe7dafe))
+* check R2.FUNC =&gt; quoteLayerZeroFee() ([9b63dcb](https://github.com/zkDX-DeFi/ocp-contracts/commit/9b63dcb2037689f67bba44816d4a1f5f537cd367))
+* code coverage = All files                  |      100 |    98.48 |      100 |      100 |                | ([44972c2](https://github.com/zkDX-DeFi/ocp-contracts/commit/44972c243c07b7118464e922a9c235019d01927b))
+* create LZE.TEST.TS ([3d6f3df](https://github.com/zkDX-DeFi/ocp-contracts/commit/3d6f3df1ed9fcfb178e527493bd90e791dd9f9ce))
+* create OCPR2.TEST.TS && CODE COVERAGE = 100% ([89ed127](https://github.com/zkDX-DeFi/ocp-contracts/commit/89ed127b05eb793d8db5146cfe609d5ad5a3ae6a))
+* tuning failed test cases && code coverage = 100% ([a4de6f8](https://github.com/zkDX-DeFi/ocp-contracts/commit/a4de6f80672f07e1e3c09af43c6939efa584742b))
+* tuning test cases ([ed08ef4](https://github.com/zkDX-DeFi/ocp-contracts/commit/ed08ef48f177c6ec5b59fff126f0733e9a3b7724))
+* tuning test cases ([16e9521](https://github.com/zkDX-DeFi/ocp-contracts/commit/16e9521d5bc500c2a8c6fb678c6e6b3d1f2b98e1))
+* tuning test scripts ([11e601f](https://github.com/zkDX-DeFi/ocp-contracts/commit/11e601f92bb7b4e93458de613d4cc2ee206b6f9a))
+
+
+### CI
+
+* deploy zk/goerli/base 1009 ([84bc9c6](https://github.com/zkDX-DeFi/ocp-contracts/commit/84bc9c6e38b6ebbde3432e4b11a36366f9c4025b))
+* deployBridge.ts ([d33a9e8](https://github.com/zkDX-DeFi/ocp-contracts/commit/d33a9e8d43e17662b16cbe5f7a3cba4fc88d287e))
+* refactor code & reformat code ([a7d86ed](https://github.com/zkDX-DeFi/ocp-contracts/commit/a7d86ede0eb20e1eb1b510d6b3cb9a007d8788b8))
+* refactor deploy scripts ([3e8a866](https://github.com/zkDX-DeFi/ocp-contracts/commit/3e8a86665bf133906af2414932a7b3b3dbfd2481))
+* refactor package.json ([d357956](https://github.com/zkDX-DeFi/ocp-contracts/commit/d35795688e459a77ec1b0eec76f8ad7fda2fa43f))
+* refactor scripts ([26cff46](https://github.com/zkDX-DeFi/ocp-contracts/commit/26cff46e689b52ab004f07703347779b3d1928c0))
+* reformat deploy scripts ([8e78d92](https://github.com/zkDX-DeFi/ocp-contracts/commit/8e78d92ef0789f514a24b3ddf703139708dd2d44))
+* tuning deploy scripts ([08a687b](https://github.com/zkDX-DeFi/ocp-contracts/commit/08a687b00f3f238463a62b7a0d00fc201a2c5e56))
+
 ## [1.3.0](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.2.0...v1.3.0) (2023-10-08)
 
 
