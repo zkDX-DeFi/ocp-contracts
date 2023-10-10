@@ -683,7 +683,7 @@ describe("OCPR", async () => {
         await _token.connect(_USER).approve(r.address, _amountIn);
 
         const _mintAmount = ONE_HUNDRED_E_18;
-        console.log(`_token: ${_token.address}`)
+        console.log(`_token: ${_token.address}`);
         await r.connect(_USER).omniMint(
             _remoteChainId,
             _token.address,

@@ -137,8 +137,6 @@ contract OCPBridge is LzApp, IOCPBridge {
 
 
         uint256 totalGas = gasLookup[_chainId][_type] + _lzTxParams.dstGasForCall;
-
-        console.log("# BRIDGE.address: ", address(this));
         console.log("# BRIDGE._txParamBuilder => _chainId: ", _chainId);
         console.log("# BRIDGE._txParamBuilder => _type: ", _type);
         console.log("# BRIDGE._txParamBuilder => totalGas ", totalGas);
