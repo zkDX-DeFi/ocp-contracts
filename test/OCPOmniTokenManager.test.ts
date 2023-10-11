@@ -50,18 +50,16 @@ describe("OCPOTM", async () => {
     it("check OCPTM.FUNC => omniMint", async () => {
         const tm = tokenManager;
 
-        const _srcToken = usdc;
-        const _dstChainId = 0;
-        const _amount = 1000;
-        const _to = user1;
+        const _mintParams = [usdc.address, 1000, user1.address, "", ""];
+        const _srcChainId = 0;
 
         await expect(
-            tm.omniMint(_srcToken.address, _dstChainId, _amount, _to.address)
+            tm.omniMint(_mintParams, _srcChainId)
         ).to.be.revertedWith("OCPTokenManager: caller is not the router");
 
         await tm.updateRouter(owner.address);
         await expect(
-            tm.omniMint(_srcToken.address, _dstChainId, _amount, _to.address))
+            tm.omniMint(_mintParams, _srcChainId))
             .to.be.ok;
     });
     it("check OCPTM.FUNC => omniBurn", async () => {

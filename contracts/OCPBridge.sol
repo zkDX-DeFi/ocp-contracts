@@ -92,7 +92,7 @@ contract OCPBridge is LzApp, IOCPBridge {
         Structs.LzTxObj memory _lzTxParams
     ) external view returns (uint256, uint256) {
         bytes memory payload;
-        if (_type == Types.TYPE_DEPLOY_AND_MINT) {
+        if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {
             Structs.MintObj memory mintParams = Structs.MintObj(address(0x1), 1, address(0x1), "Name", "Symbol");
             payload = abi.encode(_type, mintParams, _userPayload, _lzTxParams.dstGasForCall);
         } else revert("OCPBridge: invalid quote type");
