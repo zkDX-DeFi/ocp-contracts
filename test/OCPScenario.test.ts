@@ -215,4 +215,22 @@ describe("OCPR", async () => {
         expect(await _omniToken.balanceOf(user1.address)).to.be.equal(0);
         expect(await _omniToken.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
     });
+
+    it("check STEST => S5 => omniMint => _payLoad is not 0x", async() => {
+        const USER = user1;
+        const tm2 = tokenManager2;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+
+        await router_omniMint(router, user1, usdc, true, _userPayload);
+        expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
+        await router_omniMint(router, user2, usdc, true, _userPayload);
+        expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
+
+
+        await router_omniMint(router, user1, usdc, false, _userPayload);
+        expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
+        await router_omniMint(router, user2, usdc, false, _userPayload);
+        expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
+    });
 });
