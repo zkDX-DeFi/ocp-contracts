@@ -690,6 +690,19 @@ describe("OCPR", async () => {
 
         const _mintAmount = ONE_HUNDRED_E_18;
         console.log(`_token: ${_token.address}`);
+
+        await expect(r.connect(_USER).omniMint(
+            _remoteChainId,
+            _token.address,
+            _mintAmount,
+            _toAddress,
+            3,
+            _refundAddress,
+            _userPayload,
+            _lzTxObj,
+            {value: POINT_ONE_E_18}
+        )).to.be.reverted;
+
         await r.connect(_USER).omniMint(
             _remoteChainId,
             _token.address,
