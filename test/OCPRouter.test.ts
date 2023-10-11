@@ -5,7 +5,7 @@ import {
     CHAIN_ID_LOCAL,
     CHAIN_ID_LOCAL2,
     CHAIN_ID_LOCAL3,
-    TYPE_DEPLOY_AND_MINT, TYPE_MINT
+    TYPE_DEPLOY_AND_MINT, TYPE_MINT, TYPE_REDEEM
 } from "../helpers/constants";
 import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
@@ -571,7 +571,7 @@ describe("OCPR", async () => {
         );
         console.log(`${formatEther(msgFee[0])}`);
 
-        _type = TYPE_MINT;
+        _type = TYPE_REDEEM;
         await expect(r2.quoteLayerZeroFee(
             _remoteChainId,
             _type,
