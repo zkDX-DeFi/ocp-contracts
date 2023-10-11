@@ -36,8 +36,9 @@ describe("OCPOTM", async () => {
     });
     it("check OCPTM.FUNC => updateRouter", async () => {
         const tm = tokenManager;
+        const r = router;
 
-        expect(await tm.router()).eq(AddressZero);
+        expect(await tm.router()).eq(r.address);
         const invalidUser = user1;
         const validValue = owner.address;
         await expect(tm.connect(invalidUser)
