@@ -19,12 +19,12 @@ import {
 } from "../helpers/constantsTest";
 import {ethers} from "hardhat";
 
-async function router_omni_mint(usdc: any, USER: any, R: any, _needDeploy: any = true) {
+async function router_omni_mint(usdc: any, USER: any, R: any, _type: any = 1) {
     let _remoteChainId = CHAIN_ID_LOCAL2;
     let _token = usdc;
     let _amountIn = ONE_THOUSAND_E_18;
     let _toAddress = USER.address;
-    // let _needDeploy = true;
+    // let _type = 1;
     let _refundAddress = USER.address;
 
     // let _userPayload =
@@ -44,7 +44,7 @@ async function router_omni_mint(usdc: any, USER: any, R: any, _needDeploy: any =
         _token.address,
         _amountIn,
         _toAddress,
-        _needDeploy,
+        _type,
         _refundAddress,
         _userPayload,
         _lzTxObj,
@@ -89,7 +89,7 @@ describe("OCPR", async () => {
         let _token = usdc;
         let _amount = ONE_HUNDRED_E_18;
         let _toAddress = user1.address;
-        let _needDeploy = true;
+        let _type = 1;
         let _refundAddress = user1.address;
         let _payload = "0x";
         let _lzTxObj = {
@@ -108,7 +108,7 @@ describe("OCPR", async () => {
             _token.address,
             _amount,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
@@ -121,7 +121,7 @@ describe("OCPR", async () => {
                 AddressZero,
                 _amount,
                 _toAddress,
-                _needDeploy,
+                _type,
                 _refundAddress,
                 _payload,
                 _lzTxObj,
@@ -134,7 +134,7 @@ describe("OCPR", async () => {
             _token.address,
             0,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
@@ -146,7 +146,7 @@ describe("OCPR", async () => {
             _token.address,
             _amount,
             AddressZero,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
@@ -158,21 +158,21 @@ describe("OCPR", async () => {
             _token.address,
             _amount,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
             {value: _value}
         );
 
-        _needDeploy = false;
+        _type = 2;
 
         await r.omniMint(
             _remoteChainId,
             _token.address,
             _amount,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
@@ -213,7 +213,7 @@ describe("OCPR", async () => {
         const _srcChainId = CHAIN_ID_LOCAL;
         const _srcAddress = user1.address;
         const _nonce = 0;
-        const _needDeploy = true;
+        const _type = 1;
         const _mintParams = {
             srcToken: usdc.address,
             amount: 0,
@@ -229,7 +229,7 @@ describe("OCPR", async () => {
             _srcChainId,
             _srcAddress,
             _nonce,
-            _needDeploy,
+            _type,
             _mintParams,
             _lzEndPoint,
             _dstGasForCall,
@@ -245,7 +245,7 @@ describe("OCPR", async () => {
         let _token = usdcD6;
         let _amount = ONE_HUNDRED_E_6;
         let _toAddress = user1.address;
-        let _needDeploy = true;
+        let _type = 1;
         let _refundAddress = user1.address;
         let _payload = "0x";
         let _lzTxObj = {
@@ -264,20 +264,20 @@ describe("OCPR", async () => {
             _token.address,
             _amount,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
             {value: _value}
         );
 
-        _needDeploy = false;
+        _type = 2;
         await r.omniMint(
             _remoteChainId,
             _token.address,
             _amount,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
@@ -293,7 +293,7 @@ describe("OCPR", async () => {
         let _token = usdc;
         let _amount = ONE_HUNDRED_E_18;
         let _toAddress = user1.address;
-        let _needDeploy = true;
+        let _type = 1;
         let _refundAddress = user1.address;
         let _payload = AddressZero;
         let _lzTxObj = {
@@ -307,13 +307,13 @@ describe("OCPR", async () => {
         await _token.mint(owner.address, ONE_THOUSAND_E_18);
         await _token.approve(r.address, ONE_THOUSAND_E_18);
 
-        _needDeploy = false;
+        _type = 2;
         await r.omniMint(
             _remoteChainId,
             _token.address,
             _amount,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _payload,
             _lzTxObj,
@@ -353,7 +353,7 @@ describe("OCPR", async () => {
             _token.address,
             ONE_THOUSAND_E_18,
             receiverContract.address,
-            true,
+            1,
             _user.address,
             _userPayload,
             _lzTxObj,
@@ -395,7 +395,7 @@ describe("OCPR", async () => {
             _token.address,
             ONE_HUNDRED_E_18,
             receiverContract.address,
-            true,
+            1,
             _user.address,
             _userPayload,
             _lzTxObj,
@@ -407,7 +407,7 @@ describe("OCPR", async () => {
             _token.address,
             ONE_HUNDRED_E_18,
             receiverContract.address,
-            true,
+            1,
             _user.address,
             _userPayload,
             _lzTxObj,
@@ -419,7 +419,7 @@ describe("OCPR", async () => {
             _token.address,
             ONE_HUNDRED_E_18,
             receiverContract.address,
-            false,
+            2,
             _user.address,
             _userPayload,
             _lzTxObj,
@@ -431,7 +431,7 @@ describe("OCPR", async () => {
             _token.address,
             ONE_HUNDRED_E_18,
             receiverContract.address,
-            false,
+            2,
             _user.address,
             _userPayload,
             _lzTxObj,
@@ -469,7 +469,7 @@ describe("OCPR", async () => {
             _token.address,
             ONE_HUNDRED_E_18,
             receiverContract.address,
-            false,
+            2,
             _user.address,
             _userPayload,
             _lzTxObj,
@@ -481,7 +481,7 @@ describe("OCPR", async () => {
             _token.address,
             ONE_HUNDRED_E_18,
             receiverContract.address,
-            false,
+            2,
             _user.address,
             _userPayload,
             _lzTxObj,
@@ -675,7 +675,7 @@ describe("OCPR", async () => {
         let _amountIn = ONE_THOUSAND_E_18;
         let _toAddress = _USER.address;
         let _refundAddress = _USER.address;
-        let _needDeploy = false;
+        let _type = 2;
 
         let _userPayload =
             ethers.utils.defaultAbiCoder.encode(['address'], [_USER.address]);
@@ -695,7 +695,7 @@ describe("OCPR", async () => {
             _token.address,
             _mintAmount,
             _toAddress,
-            _needDeploy,
+            _type,
             _refundAddress,
             _userPayload,
             _lzTxObj,

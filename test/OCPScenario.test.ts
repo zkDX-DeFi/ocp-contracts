@@ -23,7 +23,7 @@ async function router_omniMint(
     router: any,
     user: any,
     token: any,
-    _needDeploy : any = false,
+    _type : any = 2,
     _payload : any = "0x",
     _to : any = user.address,
     _amountIn : any = ONE_HUNDRED_E_18,
@@ -43,14 +43,14 @@ async function router_omniMint(
         token.address,
         _amountIn,
         _to,
-        _needDeploy,
+        _type,
         _refundAddress,
         _payload,
         _lzTxObj,
         {value: POINT_ONE_E_18});
 }
 
-describe("OCPR", async () => {
+describe("OCPScenario", async () => {
 
     let user1: any,
         user2: any,
@@ -71,7 +71,7 @@ describe("OCPR", async () => {
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
 
-    it("check ScenarioTest => S1 => omniMint && _needDeploy = true", async() => {
+    it("check ScenarioTest => S1 => omniMint && _type = 1", async() => {
          const r = router;
          const r2 = router2;
          const tm2 = tokenManager2;
@@ -88,7 +88,7 @@ describe("OCPR", async () => {
          const _remoteChainId = CHAIN_ID_LOCAL2;
          const _omniMintAmount = ONE_HUNDRED_E_18;
          const _to = _user.address;
-         const _needDeploy = true;
+         const _type = 1;
          const _refundAddress = _user.address;
          const _userPayload = "0x";
          const _lzTxObj = {
@@ -102,7 +102,7 @@ describe("OCPR", async () => {
                 _token.address,
                 _omniMintAmount,
                 _to,
-                _needDeploy,
+                _type,
                 _refundAddress,
                 _userPayload,
                 _lzTxObj,
@@ -123,7 +123,7 @@ describe("OCPR", async () => {
             _token.address,
             _omniMintAmount,
             _to,
-            _needDeploy,
+            _type,
             _refundAddress,
             _userPayload,
             _lzTxObj,
@@ -135,7 +135,7 @@ describe("OCPR", async () => {
         console.log(`_omniToken.totalSupply(): ${formatEther(await _omniToken.totalSupply())}`);
         console.log(`_omniToken.balanceOf(_user.address): ${formatEther(await _omniToken.balanceOf(_user.address))}`);
     });
-    it("check ScenarioTest => S2 => omniMint && _needDeploy = false", async() => {
+    it("check ScenarioTest => S2 => omniMint && _type = 2", async() => {
         const r = router;
         const r2 = router;
         const tm2 = tokenManager2;
@@ -146,7 +146,7 @@ describe("OCPR", async () => {
         const _token = usdc;
         const _amountIn = ONE_HUNDRED_E_18;
         const _to = _user.address;
-        const _needDeploy = false;
+        const _type = 2;
         const _refundAddress = _user.address;
         const _userPayload = "0x";
         const _lzTxObj = {
@@ -164,7 +164,7 @@ describe("OCPR", async () => {
             _token.address,
             _omniMintAmount,
             _to,
-            _needDeploy,
+            _type,
             _refundAddress,
             _userPayload,
             _lzTxObj,
@@ -219,15 +219,15 @@ describe("OCPR", async () => {
         const _srcChainId = CHAIN_ID_LOCAL;
         const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
 
-        await router_omniMint(router, user1, usdc, true, _userPayload);
+        await router_omniMint(router, user1, usdc, 1, _userPayload);
         expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
-        await router_omniMint(router, user2, usdc, true, _userPayload);
+        await router_omniMint(router, user2, usdc, 1, _userPayload);
         expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
 
 
-        await router_omniMint(router, user1, usdc, false, _userPayload);
+        await router_omniMint(router, user1, usdc, 2, _userPayload);
         expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
-        await router_omniMint(router, user2, usdc, false, _userPayload);
+        await router_omniMint(router, user2, usdc, 2, _userPayload);
         expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
     });
 
@@ -238,22 +238,22 @@ describe("OCPR", async () => {
     //     const receiverContract = await deployNew("ReceiverContract", [router2.address]);
     //     const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
     //
-    //     await router_omniMint(router, user1, usdc, true, _userPayload, receiverContract.address);
+    //     await router_omniMint(router, user1, usdc, 1, _userPayload, receiverContract.address);
     //
     //     const _omniTokenAddress = await tm2.omniTokens(usdc.address, _srcChainId);
     //     const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
     //     expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
     //     expect(await _omniToken.balanceOf(receiverContract.address)).to.be.eq(ONE_HUNDRED_E_18);
     //
-    //     await router_omniMint(router, user1, usdc, true, _userPayload, receiverContract.address);
+    //     await router_omniMint(router, user1, usdc, 1, _userPayload, receiverContract.address);
     //     expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
     //     expect(await _omniToken.balanceOf(receiverContract.address)).to.be.eq(ONE_HUNDRED_E_18);
     //
-    //     await router_omniMint(router, user1, usdc, false, _userPayload, receiverContract.address);
+    //     await router_omniMint(router, user1, usdc, 2, _userPayload, receiverContract.address);
     //     expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
     //     expect(await _omniToken.balanceOf(receiverContract.address)).to.be.eq(ONE_HUNDRED_E_18);
     //
-    //     await router_omniMint(router, user1, usdc, false, _userPayload, receiverContract.address);
+    //     await router_omniMint(router, user1, usdc, 2, _userPayload, receiverContract.address);
     //     expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
     // });
 
@@ -264,7 +264,7 @@ describe("OCPR", async () => {
         const rc = await deployNew("ReceiverContract", [router2.address]);
         const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
 
-        await router_omniMint(router, user1, usdc, true,
+        await router_omniMint(router, user1, usdc, 1,
             _userPayload,
             rc.address,
             ONE_THOUSAND_E_18
@@ -276,7 +276,7 @@ describe("OCPR", async () => {
         expect(await _omniToken.balanceOf(rc.address)).to.be.eq(ONE_THOUSAND_E_18);
 
         await router_omniMint(
-            router, user1, usdc, true,
+            router, user1, usdc, 1,
             _userPayload,
             rc.address,
             ONE_THOUSAND_E_18.mul(3),
@@ -297,26 +297,26 @@ describe("OCPR", async () => {
         const rc = await deployNew("ReceiverContract", [router2.address]);
         const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
 
-        await router_omniMint(router, USER, token, true,
+        await router_omniMint(router, USER, token, 1,
             _userPayload,
             USER.address,
             ONE_THOUSAND_E_18
         );
         console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
 
-        // await router_omniMint(router, USER, token, false,
+        // await router_omniMint(router, USER, token, 2,
         //     _userPayload,
         //     USER.address,
         //     ONE_THOUSAND_E_18);
         // console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
         //
-        // await router_omniMint(router, USER, token, false,
+        // await router_omniMint(router, USER, token, 2,
         //     _userPayload,
         //     rc.address,
         //     ONE_THOUSAND_E_18);
         // console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
 
-        await router_omniMint(router, USER, token, true,
+        await router_omniMint(router, USER, token, 1,
             _userPayload,
             rc.address,
             ONE_THOUSAND_E_18);
@@ -333,8 +333,8 @@ describe("OCPR", async () => {
     it("check STEST => S4 => omniMint => _payLoad is 0x", async() => {
         const _srcChainId = CHAIN_ID_LOCAL;
 
-        await router_omniMint(router, user1, usdc, false);
-        await router_omniMint(router, user1, usdc, true);
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 1);
 
 
         console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);

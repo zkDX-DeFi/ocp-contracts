@@ -74,7 +74,7 @@ describe("Router", async () => {
             usdc.address,
             amountIn,
             user2.address,
-            true,
+            1,
             refund.address,
             "0x",
             ({
@@ -131,7 +131,7 @@ describe("Router", async () => {
             usdc.address,
             parseEther("1000"),
             receiverContract.address,
-            true,
+            1,
             user1.address,
             payload,
             ({
@@ -163,7 +163,7 @@ describe("Router", async () => {
             usdc.address,
             amountIn,
             user2.address,
-            true,
+            1,
             user1.address,
             "0x",
             ({
@@ -191,7 +191,7 @@ describe("Router", async () => {
             usdc.address,
             amountIn,
             user2.address,
-            false,
+            2,
             user1.address,
             "0x",
             ({
@@ -229,7 +229,7 @@ describe("Router", async () => {
             usdc.address,
             amountIn,
             user2.address,
-            false,
+            2,
             user1.address,
             "0x",
             ({
@@ -250,7 +250,7 @@ describe("Router", async () => {
             usdc.address,
             amountIn,
             user2.address,
-            true,
+            1,
             user1.address,
             "0x",
             ({

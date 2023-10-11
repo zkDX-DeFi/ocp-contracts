@@ -193,7 +193,7 @@ contract OCPBridge is LzApp, IOCPBridge {
                 uint256 _dstGasForCall
             ) = abi.decode(_payload, (uint8, Structs.MintObj, bytes, uint256));
             console.log("# Bridge._blockingLzReceive => _mintParams.srcToken:", _mintParams.srcToken);
-            router.omniMintRemote(_srcChainId, _srcAddress, _nonce, _type == Types.TYPE_DEPLOY_AND_MINT, _mintParams,
+            router.omniMintRemote(_srcChainId, _srcAddress, _nonce, _type, _mintParams,
                 address(lzEndpoint), _dstGasForCall, payload);
         }
     }

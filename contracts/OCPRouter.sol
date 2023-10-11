@@ -67,7 +67,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         * @param _token The address of the token to transfer.
         * @param _amountIn The amount of tokens to transfer.
         * @param _to The address of the receiver.
-        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _type The type of the transaction.
         * @param _refundAddress The address to refund the fee to.
         * @param _payload The payload to send to the receiver.
         * @param _lzTxParams The layer zero transaction parameters.
@@ -82,7 +82,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
     ) external override payable {
-        require(_type == 1 || _type == 2, "invalid type");
+        require(_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT, "OCPRouter: invalid type");
         console.log("# OCPR.address: ", address(this));
         console.log("# OCPR.omniMint => _token: ", _token);
 
@@ -94,7 +94,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         if (_pool == address(0)) _pool = poolFactory.createPool(_token);
         IERC20(_token).safeTransferFrom(msg.sender, _pool, _amountIn);
 
-        _omniMint(_token, _remoteChainId, _amountIn, _to, _needDeploy, _refundAddress, _payload, _lzTxParams, msg.value);
+        _omniMint(_token, _remoteChainId, _amountIn, _to, _type, _refundAddress, _payload, _lzTxParams, msg.value);
     }
 
     /**
@@ -116,7 +116,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         * @param _remoteChainId The chain id of the receiver.
         * @param _amountIn The amount of tokens to transfer.
         * @param _to The address of the receiver.
-        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _type The type of the transaction.
         * @param _refundAddress The address to refund the fee to.
         * @param _payload The payload to send to the receiver.
         * @param _lzTxParams The layer zero transaction parameters.
@@ -127,7 +127,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         uint16 _remoteChainId,
         uint256 _amountIn,
         address _to,
-        bool _needDeploy,
+        uint8 _type,
         address payable _refundAddress,
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams,
@@ -137,12 +137,11 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         mintParams.srcToken = _token;
         mintParams.amount = _amountD18(_token, _amountIn);
         mintParams.to = _to;
-        if (_needDeploy) {
+        if (_type == Types.TYPE_DEPLOY_AND_MINT) {
             mintParams.name = IERC20Metadata(_token).name();
             mintParams.symbol = IERC20Metadata(_token).symbol();
         }
 
-        uint8 _type = _needDeploy ? Types.TYPE_DEPLOY_AND_MINT : Types.TYPE_MINT;
         bridge.omniMint{value: _msgFee}(_remoteChainId, _refundAddress, _type, mintParams, _payload, _lzTxParams);
     }
 
@@ -195,7 +194,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         * @param _srcChainId The chain id of the sender.
         * @param _srcAddress The address of the sender.
         * @param _nonce The nonce of the transaction.
-        * @param _needDeploy Whether the token needs to be deployed on the receiver chain.
+        * @param _type The type of the transaction.
         * @param _mintParams The mint parameters.
         * @param _lzEndpoint The layer zero endpoint.
         * @param _dstGasForCall The gas for the call.
@@ -205,7 +204,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         uint16 _srcChainId,
         bytes memory _srcAddress,
         uint256 _nonce,
-        bool _needDeploy,
+        uint8 _type,
         Structs.MintObj memory _mintParams,
         address _lzEndpoint,
         uint256 _dstGasForCall,
@@ -214,8 +213,8 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         address token;
         console.log("# OCPR.address: ", address(this));
         console.log("# OCPR.omniMintRemote => _mintParams.srcToken: ", _mintParams.srcToken);
-        console.log("# OCPR.omniMintRemote => _needDeploy: ", _needDeploy);
-        if (_needDeploy)
+        console.log("# OCPR.omniMintRemote => _needDeploy: ", _type);
+        if (_type == Types.TYPE_DEPLOY_AND_MINT)
             token = tokenManager.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
         else
             token = tokenManager.omniMint(_mintParams, _srcChainId);
@@ -225,6 +224,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
             try IOCPReceiver(_mintParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce, token,
                 _mintParams.amount, _payload){} catch (bytes memory reason) {
                 console.log("OCPR.omniMintRemote => catch(bytes memory reason)");
+                console.logBytes(reason);
                 cachedMintLookup[_srcChainId][_srcAddress][_nonce] = Structs.CachedMint(token, _mintParams.amount, _mintParams.to, _payload);
                 emit CachedMint(_srcChainId, _srcAddress, _nonce, token, _mintParams.amount, _mintParams.to, _payload, reason);
             }
