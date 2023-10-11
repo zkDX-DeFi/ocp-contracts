@@ -211,8 +211,9 @@ describe("OCPOTM", async () => {
 
     it("check OCPOTM.FUNC => createOmniToken", async() => {
         const tm = tokenManager;
+        const r = router;
 
-        expect(await tm.router()).eq(AddressZero);
+        expect(await tm.router()).eq(r.address);
         expect(await tm.timeLock()).eq(owner.address);
 
         const _mintParams = {
@@ -225,7 +226,7 @@ describe("OCPOTM", async () => {
         const _lzEndpoint = AddressZero;
         const _srcChainId = CHAIN_ID_LOCAL2;
         expect(await tm.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
-
+        //
         await tm.createOmniToken(
             _mintParams,
             _lzEndpoint,
