@@ -76,5 +76,65 @@ describe("OCPR", async () => {
     it("check ScenarioTest => S1", async() => {
          const r = router;
          const r2 = router2;
+         const tm2 = tokenManager2;
+         console.log(`r.address: ${r.address}`);
+         console.log(`r2.address: ${r2.address}`);
+
+         const _token = usdc;
+         console.log(`_token.address: ${_token.address}`);
+         const _user = user1;
+         const _amountIn = ONE_THOUSAND_E_18;
+         await _token.mint(_user.address, _amountIn);
+         await _token.connect(_user).approve(r.address, _amountIn);
+
+         const _remoteChainId = CHAIN_ID_LOCAL2;
+         const _omniMintAmount = ONE_HUNDRED_E_18;
+         const _to = _user.address;
+         const _needDeploy = true;
+         const _refundAddress = _user.address;
+         const _userPayload = "0x";
+         const _lzTxObj = {
+                dstGasForCall: 600000,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x',
+         };
+
+         await r.connect(_user).omniMint(
+                _remoteChainId,
+                _token.address,
+                _omniMintAmount,
+                _to,
+                _needDeploy,
+                _refundAddress,
+                _userPayload,
+                _lzTxObj,
+                {value: POINT_ONE_E_18}
+         );
+
+         const _srcChainId = CHAIN_ID_LOCAL;
+         console.log(`${await tm2.omniTokens(_token.address, _srcChainId)}`);
+         const _omniTokenAddress = await tm2.omniTokens(_token.address, _srcChainId);
+
+         const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+         console.log(`_omniToken.address: ${_omniToken.address}`);
+         console.log(`_omniToken.totalSupply(): ${formatEther(await _omniToken.totalSupply())}`);
+         console.log(`_omniToken.balanceOf(_user.address): ${formatEther(await _omniToken.balanceOf(_user.address))}`);
+
+        await r.connect(_user).omniMint(
+            _remoteChainId,
+            _token.address,
+            _omniMintAmount,
+            _to,
+            _needDeploy,
+            _refundAddress,
+            _userPayload,
+            _lzTxObj,
+            {value: POINT_ONE_E_18}
+        );
+
+        console.log(`${await tm2.omniTokens(_token.address, _srcChainId)}`);
+
+        console.log(`_omniToken.totalSupply(): ${formatEther(await _omniToken.totalSupply())}`);
+        console.log(`_omniToken.balanceOf(_user.address): ${formatEther(await _omniToken.balanceOf(_user.address))}`);
     });
 });
