@@ -18,6 +18,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
         waitConfirmations: 1,
     });
     await execute('OCPBridge', {from: owner, log: true}, "updateRouter", OCPRouter.address);
+    await execute('OCPOmniTokenManager', {from: owner, log: true}, "updateRouter", OCPRouter.address);
 };
 
 export default func;

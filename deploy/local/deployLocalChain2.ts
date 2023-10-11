@@ -50,6 +50,7 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     });
 
     await execute('OCPBridge2', {from: owner, log: true}, "updateRouter", OCPRouter2.address);
+    await execute('OCPOmniTokenManager2', {from: owner, log: true}, "updateRouter", OCPRouter2.address);
 
     // set remote
     let path1 = ethers.utils.solidityPack(['address', 'address'], [OCPBridge2.address, OCPBridge.address])

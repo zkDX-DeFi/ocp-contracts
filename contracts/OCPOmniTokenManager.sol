@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
+
 import "./interfaces/IOCPOmniTokenManager.sol";
+import "./interfaces/IOmniToken.sol";
 import "./libraries/Structs.sol";
 import "./entity/OmniToken.sol";
 import "hardhat/console.sol";
@@ -84,7 +86,7 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         address _lzEndpoint,
         uint16 _srcChainId
     ) external returns (address token) {  // TODO: onlyRouter
-        token  = omniTokens[_mintParams.srcToken][_srcChainId];
+        token = omniTokens[_mintParams.srcToken][_srcChainId];
         if (token != address(0x0)) return token;
 
         OmniToken newToken = new OmniToken{salt: keccak256(abi.encodePacked(_mintParams.srcToken))}(
@@ -113,25 +115,28 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
 
         * Requirements:
 
-            * `_srcToken` cannot be the zero address
+            * `srcToken` cannot be the zero address
 
-            * `_dstChainId` cannot be the zero address
+            * `_srcChainId` cannot be the zero
 
-            * `_amount` cannot be the zero address
+            * `amount` cannot be the zero
 
-            * `_to` cannot be the zero address
+            * `to` cannot be the zero address
 
             * only the router can call this function
 
-        * @param _srcToken The address of the source token
-        * @param _dstChainId The destination chain id
-        * @param _amount The amount to mint
-        * @param _to The address to mint to
-        * @return token The address of the new OmniToken
+        * @param _mintParams The mint parameters
+        * @param _srcChainId The source chain id
+
+        * @return token The address of the OmniToken
     */
-    function omniMint(address _srcToken, uint16 _dstChainId, uint256 _amount, address _to) external onlyRouter override returns (address token) {
-        //todo: v0.2: TYPES=2
-        return address(0x0);
+    function omniMint(
+        Structs.MintObj memory _mintParams,
+        uint16 _srcChainId
+    ) external onlyRouter override returns (address token) {
+        token = omniTokens[_mintParams.srcToken][_srcChainId];
+        require(token != address(0x0), "OCPTokenManager: omni token is not deployed yet");
+        IOmniToken(token).mint(_mintParams.to, _mintParams.amount);
     }
 
     /**
