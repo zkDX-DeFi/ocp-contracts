@@ -195,4 +195,19 @@ describe("OCPR", async () => {
         expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
         expect(await _omniToken.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18);
     });
+
+    it("check STEST => S4 => omniMint => _payLoad is 0x => V2", async() => {
+        await router_omniMint(router, user2, usdc, true);
+
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _omniTokenAddress = await tokenManager2.omniTokens(usdc.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
+        expect(await _omniToken.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, user1, usdc, true);
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
+        expect(await _omniToken.balanceOf(user1.address)).to.be.equal(0);
+        expect(await _omniToken.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
+    });
 });
