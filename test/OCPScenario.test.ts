@@ -26,8 +26,10 @@ async function router_omniMint(
     _needDeploy : any = false,
     _payload : any = "0x",
     _to : any = user.address,
-    _remoteChainId: any = CHAIN_ID_LOCAL2,
     _amountIn : any = ONE_HUNDRED_E_18,
+    _mintAmount : any = ONE_THOUSAND_E_18,
+    _remoteChainId: any = CHAIN_ID_LOCAL2,
+
 
 
     _lzTxObj : any = {
@@ -40,9 +42,8 @@ async function router_omniMint(
     const r = router;
     // const USER = user;
     // const _token = token;
+    // const _mintAmount = ONE_THOUSAND_E_18;
 
-
-    const _mintAmount = ONE_THOUSAND_E_18;
     await token.mint(user.address, _mintAmount);
     await token.connect(user).approve(router.address, _mintAmount);
     await router.connect(user).omniMint(
@@ -259,5 +260,34 @@ describe("OCPR", async () => {
 
         await router_omniMint(router, user1, usdc, false, _userPayload, receiverContract.address);
         expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
+    });
+
+    it("check OCPR.FUNC => omniMint() v3", async () => {
+        const USER = user1;
+        const tm2 = tokenManager2;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const rc = await deployNew("ReceiverContract", [router2.address]);
+        const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+
+        await router_omniMint(router, user1, usdc, true,
+            _userPayload,
+            rc.address,
+            ONE_THOUSAND_E_18
+        );
+
+        const _omniTokenAddress = await tm2.omniTokens(usdc.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_THOUSAND_E_18);
+        expect(await _omniToken.balanceOf(rc.address)).to.be.eq(ONE_THOUSAND_E_18);
+
+        await router_omniMint(
+            router, user1, usdc, true,
+            _userPayload,
+            rc.address,
+            ONE_THOUSAND_E_18.mul(3),
+            ONE_THOUSAND_E_18.mul(3),
+        );
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_THOUSAND_E_18);
+        expect(await usdc.totalSupply()).to.be.equal(ONE_THOUSAND_E_18.mul(4));
     });
 });
