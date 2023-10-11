@@ -135,6 +135,9 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         uint16 _srcChainId
     ) external onlyRouter override returns (address token) {
         token = omniTokens[_mintParams.srcToken][_srcChainId];
+        console.log("# OCPOTM.address: ", address(this));
+        console.log("# OCPOTM.omniMint => token: ", address(token));
+
         require(token != address(0x0), "OCPTokenManager: omni token is not deployed yet");
         IOmniToken(token).mint(_mintParams.to, _mintParams.amount);
     }

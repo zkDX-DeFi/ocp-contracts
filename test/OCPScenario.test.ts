@@ -29,21 +29,13 @@ async function router_omniMint(
     _amountIn : any = ONE_HUNDRED_E_18,
     _mintAmount : any = ONE_THOUSAND_E_18,
     _remoteChainId: any = CHAIN_ID_LOCAL2,
-
-
-
     _lzTxObj : any = {
-        dstGasForCall: 600000,
+        dstGasForCall: 0,
         dstNativeAmount: 0,
         dstNativeAddr: '0x',
     },
     _refundAddress : any = user.address
 ) {
-    const r = router;
-    // const USER = user;
-    // const _token = token;
-    // const _mintAmount = ONE_THOUSAND_E_18;
-
     await token.mint(user.address, _mintAmount);
     await token.connect(user).approve(router.address, _mintAmount);
     await router.connect(user).omniMint(
@@ -186,12 +178,15 @@ describe("OCPR", async () => {
     it("check STEST => S3 => omniMint => _payLoad is 0x", async() => {
         const _srcChainId = CHAIN_ID_LOCAL;
 
-        await router_omniMint(router, user1, usdc);
-        expect(await tokenManager2.omniTokens(usdc.address, _srcChainId)).to.be.equal(AddressZero);
-
         await router_omniMint(router, user1, usdc, true);
-        expect(await tokenManager2.omniTokens(usdc.address, _srcChainId)).to.be.not.equal(AddressZero);
+        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+        expect(await tokenManager2.omniTokens(usdc.address, _srcChainId)).to.not.eq(AddressZero);
 
+        await router_omniMint(router, user1, usdc, false);
+        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+
+        expect(await tokenManager2.omniTokens(usdc.address, _srcChainId)).to.be.not.equal(AddressZero);
+        //
         const _omniTokenAddress = await tokenManager2.omniTokens(usdc.address, _srcChainId);
         const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
         expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);

@@ -213,6 +213,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         address token;
         console.log("# OCPR.address: ", address(this));
         console.log("# OCPR.omniMintRemote => _mintParams.srcToken: ", _mintParams.srcToken);
+        console.log("# OCPR.omniMintRemote => _needDeploy: ", _needDeploy);
         if (_needDeploy)
             token = tokenManager.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
         else
