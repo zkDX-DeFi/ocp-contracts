@@ -25,9 +25,10 @@ async function router_omniMint(
     token: any,
     _needDeploy : any = false,
     _payload : any = "0x",
+    _to : any = user.address,
     _remoteChainId: any = CHAIN_ID_LOCAL2,
     _amountIn : any = ONE_HUNDRED_E_18,
-    _to : any = user.address,
+
 
     _lzTxObj : any = {
         dstGasForCall: 600000,
@@ -232,5 +233,24 @@ describe("OCPR", async () => {
         expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
         await router_omniMint(router, user2, usdc, false, _userPayload);
         expect(await tm2.omniTokens(usdc.address, _srcChainId)).eq(AddressZero);
+    });
+
+    it("check OCPR.FUNC => omniMint() v2", async () => {
+        const USER = user1;
+        const tm2 = tokenManager2;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const receiverContract = await deployNew("ReceiverContract", [router2.address]);
+        const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+
+        await router_omniMint(router, user1, usdc, true, _userPayload, receiverContract.address);
+
+        const _omniTokenAddress = await tm2.omniTokens(usdc.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
+        expect(await _omniToken.balanceOf(receiverContract.address)).to.be.eq(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, user1, usdc, true, _userPayload, receiverContract.address);
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
+        expect(await _omniToken.balanceOf(receiverContract.address)).to.be.eq(ONE_HUNDRED_E_18);
     });
 });
