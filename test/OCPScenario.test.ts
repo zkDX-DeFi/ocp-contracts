@@ -293,4 +293,45 @@ describe("OCPR", async () => {
         console.log(`usdc.totalSupply(): ${formatEther(await usdc.totalSupply())}`);
         console.log(`_omniToken.totalSupply(): ${formatEther(await _omniToken.totalSupply())}`);
     });
+
+    it("check OCPR.FUNC => omniMint() v4", async () => {
+        const USER = user1;
+        const token = usdc;
+        const tm2 = tokenManager2;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const rc = await deployNew("ReceiverContract", [router2.address]);
+        const _userPayload = ethers.utils.defaultAbiCoder.encode(['address'], [USER.address]);
+
+        await router_omniMint(router, USER, token, true,
+            _userPayload,
+            USER.address,
+            ONE_THOUSAND_E_18
+        );
+        console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
+
+        // await router_omniMint(router, USER, token, false,
+        //     _userPayload,
+        //     USER.address,
+        //     ONE_THOUSAND_E_18);
+        // console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
+        //
+        // await router_omniMint(router, USER, token, false,
+        //     _userPayload,
+        //     rc.address,
+        //     ONE_THOUSAND_E_18);
+        // console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
+
+        await router_omniMint(router, USER, token, true,
+            _userPayload,
+            rc.address,
+            ONE_THOUSAND_E_18);
+        console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
+        console.log(`${formatEther(await token.totalSupply())}`);
+
+        const _omniTokenAddress = await tm2.omniTokens(token.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+        // console.log(`${formatEther(await _omniToken.totalSupply())}`);
+
+        console.log(`${_omniTokenAddress}`);
+    });
 });
