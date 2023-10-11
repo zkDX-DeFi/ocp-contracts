@@ -18,11 +18,12 @@ describe("OCPOTM", async () => {
         owner: any,
         usdc: any,
         router: any,
+        router2 : any,
         tokenManager: any,
         poolFactory: any
 
     beforeEach(async () => {
-        ({owner, user1, user2, router, tokenManager, poolFactory} = await deployFixture());
+        ({owner, user1, user2, router, router2, tokenManager, poolFactory} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPTM.FUNC => createToken", async () => {
@@ -139,7 +140,8 @@ describe("OCPOTM", async () => {
     it("check OCPTM.VARIABLES => updateRouter", async () => {
         const tm = tokenManager;
         const r = router;
-        expect(await tm.router()).eq(AddressZero);
+        const r2 = router2;
+        expect(await tm.router()).eq(r.address);
 
         const invalidUser = user1;
         const validUser = owner;
@@ -149,10 +151,10 @@ describe("OCPOTM", async () => {
             .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
         await expect(tm
             .connect(validUser)
-            .updateRouter(r.address))
+            .updateRouter(r2.address))
             .to.be.ok;
 
-        expect (await tm.router()).eq(r.address);
+        expect (await tm.router()).eq(r2.address);
     });
 
     it("check OCPTM.FUNC => approveSourceTokens()", async() => {
