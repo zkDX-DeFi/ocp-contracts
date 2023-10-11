@@ -252,5 +252,12 @@ describe("OCPR", async () => {
         await router_omniMint(router, user1, usdc, true, _userPayload, receiverContract.address);
         expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
         expect(await _omniToken.balanceOf(receiverContract.address)).to.be.eq(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, user1, usdc, false, _userPayload, receiverContract.address);
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
+        expect(await _omniToken.balanceOf(receiverContract.address)).to.be.eq(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, user1, usdc, false, _userPayload, receiverContract.address);
+        expect(await _omniToken.totalSupply()).to.be.equal(ONE_HUNDRED_E_18);
     });
 });
