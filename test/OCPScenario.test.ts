@@ -289,5 +289,8 @@ describe("OCPR", async () => {
         );
         expect(await _omniToken.totalSupply()).to.be.equal(ONE_THOUSAND_E_18);
         expect(await usdc.totalSupply()).to.be.equal(ONE_THOUSAND_E_18.mul(4));
+
+        console.log(`usdc.totalSupply(): ${formatEther(await usdc.totalSupply())}`);
+        console.log(`_omniToken.totalSupply(): ${formatEther(await _omniToken.totalSupply())}`);
     });
 });
