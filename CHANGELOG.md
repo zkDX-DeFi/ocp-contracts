@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.4.0](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.3.1...v1.4.0) (2023-10-11)
+
+
+### Features
+
+* add mint type 2 ([a326d13](https://github.com/zkDX-DeFi/ocp-contracts/commit/a326d1316bfb160495a27f36814ef295fff44f26))
+
+
+### Bug Fixes
+
+* tuning failed test cases ([bb35443](https://github.com/zkDX-DeFi/ocp-contracts/commit/bb3544335e932cce3b8eb1da31c2e97342e41d2d))
+* update testcase ([989c613](https://github.com/zkDX-DeFi/ocp-contracts/commit/989c6135390b1e4b509c268012978eeb6491cf16))
+
+
+### Code Refactoring
+
+* change _needDeploy to _type ([2be87b4](https://github.com/zkDX-DeFi/ocp-contracts/commit/2be87b44afe470556b620be54ca1b1ebd2283fcb))
+
+
+### Tests
+
+* check OCPR.FUNC =&gt; omniMint() v2 ([cb65829](https://github.com/zkDX-DeFi/ocp-contracts/commit/cb6582990083090bfe2895859cf58d30f9ff8749))
+* check OCPR.FUNC =&gt; omniMint() v2 ([7316006](https://github.com/zkDX-DeFi/ocp-contracts/commit/7316006441b2b1879d23d955138c39d7f7c9517f))
+* check OCPR.FUNC =&gt; omniMint() v3 ([5ec5c17](https://github.com/zkDX-DeFi/ocp-contracts/commit/5ec5c17c5a39792d36f0abfaf6b8279da64a7c3e))
+* check ScenarioTest =&gt; S1 ([7a3520c](https://github.com/zkDX-DeFi/ocp-contracts/commit/7a3520c8d342b3768e00f7547fba157c9b8e2f35))
+* check ScenarioTest =&gt; S2 => omniMint && _needDeploy = false ([5556392](https://github.com/zkDX-DeFi/ocp-contracts/commit/555639204ead7e2ad62db1381032297370563f6b))
+* check STEST =&gt; S3 => omniMint => _payLoad is 0x ([68bdf30](https://github.com/zkDX-DeFi/ocp-contracts/commit/68bdf305453deae877f130aeade884e054112ca7))
+* check STEST =&gt; S4 => omniMint => _payLoad is 0x => V2 ([917963e](https://github.com/zkDX-DeFi/ocp-contracts/commit/917963ee499bc97c0347ffa5777f52224734b5ed))
+* check STEST =&gt; S5 => omniMint => _payLoad is not 0x ([1e58a17](https://github.com/zkDX-DeFi/ocp-contracts/commit/1e58a1755e5a7dee220395db2b7764079793619b))
+* code coverage = 100% ([28cd442](https://github.com/zkDX-DeFi/ocp-contracts/commit/28cd44295e5e2c0faf002d63e2f65c9e8fbb9ee5))
+* code coverage = 100% ([9b2bf24](https://github.com/zkDX-DeFi/ocp-contracts/commit/9b2bf24588c031348626a6594e6d654581c483b1))
+* code coverage = 100% ([3850878](https://github.com/zkDX-DeFi/ocp-contracts/commit/3850878206bfccbe7c3f345f0113614a5657ab2c))
+* code coverage = 100% ([94d225b](https://github.com/zkDX-DeFi/ocp-contracts/commit/94d225bd8688cfc12f26e8d3197ac1de29db8654))
+* code coverage = 100% ([f5f2346](https://github.com/zkDX-DeFi/ocp-contracts/commit/f5f2346fb1e8d0bf49929370cc592405c98c0455))
+* tuning failed test cases ([b75bda4](https://github.com/zkDX-DeFi/ocp-contracts/commit/b75bda45be56a4834b6ad9741ae13df04b86fbbf))
+* tuning failed test cases ([fad4db5](https://github.com/zkDX-DeFi/ocp-contracts/commit/fad4db51c6fe11f4d6990b5c3b42bfb0ead3338f))
+* tuning failed test cases ([73bf291](https://github.com/zkDX-DeFi/ocp-contracts/commit/73bf29190f962f590da8470db0c156a8e3fa9d5d))
+* tuning failed test cases ([20b00fc](https://github.com/zkDX-DeFi/ocp-contracts/commit/20b00fcc44a498d64d0d3b7dda8fb1040f709332))
+* tuning failed test cases ([2f55aac](https://github.com/zkDX-DeFi/ocp-contracts/commit/2f55aacf5b5c8de5e04bec28820847239c787b1c))
+
 ## [1.3.1](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.3.0...v1.3.1) (2023-10-10)
 
 
