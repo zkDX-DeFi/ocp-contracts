@@ -77,11 +77,12 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         address _token,
         uint256 _amountIn,
         address _to,
-        bool _needDeploy,
+        uint8 _type,
         address payable _refundAddress,
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
     ) external override payable {
+        require(_type == 1 || _type == 2, "invalid type");
         console.log("# OCPR.address: ", address(this));
         console.log("# OCPR.omniMint => _token: ", _token);
 
