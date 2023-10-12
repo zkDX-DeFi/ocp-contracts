@@ -277,7 +277,7 @@ export async function router_omniMint(
 ) {
     await token.mint(user.address, _mintAmount);
     await token.connect(user).approve(router.address, _mintAmount);
-    await router.connect(user).omniMint(
+    return await router.connect(user).omniMint(
         _remoteChainId,
         token.address,
         _amountIn,
