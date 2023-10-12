@@ -1,18 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "@layerzerolabs/solidity-examples/contracts/lzApp/LzApp.sol";
+import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
 import "./interfaces/IOCPBridge.sol";
 import "./interfaces/IOCPRouter.sol";
 import "./libraries/Structs.sol";
 import "./libraries/Types.sol";
 import "hardhat/console.sol";
 
-contract OCPBridge is LzApp, IOCPBridge {
+contract OCPBridge is NonblockingLzApp, IOCPBridge {
     IOCPRouter public router;
     mapping(uint16 => mapping(uint8 => uint256)) public gasLookup; // chainId -> type -> gas
     bool public useLzToken;
-    constructor(address _lzEndpoint) LzApp(_lzEndpoint) {}
+    constructor(address _lzEndpoint) NonblockingLzApp(_lzEndpoint) {}
+
+    event RevertMessageSuccess(uint16 _srcChainId, bytes _srcAddress, uint64 _nonce, bytes32 _payloadHash);
 
     /**
         * @dev mint token on remote chain
@@ -176,7 +178,7 @@ contract OCPBridge is LzApp, IOCPBridge {
         * @param _nonce nonce
         * @param _payload user payload
     */
-    function _blockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
+    function _nonblockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
         console.log("# Bridge.address: ", address(this));
 
         uint8 _type;
@@ -184,7 +186,7 @@ contract OCPBridge is LzApp, IOCPBridge {
             _type := mload(add(_payload, 32))
         }
 
-        console.log("# Bridge._blockingLzReceive => _type", _type);
+        console.log("# Bridge._nonblockingLzReceive => _type", _type);
         // routing types
 //        if (_type == Types.TYPE_DEPLOY_AND_MINT)
         {
@@ -192,11 +194,23 @@ contract OCPBridge is LzApp, IOCPBridge {
                 bytes memory payload,
                 uint256 _dstGasForCall
             ) = abi.decode(_payload, (uint8, Structs.MintObj, bytes, uint256));
-            console.log("# Bridge._blockingLzReceive => _mintParams.srcToken:", _mintParams.srcToken);
+            console.log("# Bridge._nonblockingLzReceive => _mintParams.srcToken:", _mintParams.srcToken);
             router.omniMintRemote(_srcChainId, _srcAddress, _nonce, _type, _mintParams,
                 address(lzEndpoint), _dstGasForCall, payload);
         }
     }
+
+    // TODO: revert it on src chain
+//    function revertMessage(uint16 _srcChainId, bytes calldata _srcAddress, uint64 _nonce, bytes calldata _payload) public payable virtual {
+//        // assert there is message to retry
+//        bytes32 payloadHash = failedMessages[_srcChainId][_srcAddress][_nonce];
+//        require(payloadHash != bytes32(0), "OCPBridge: no stored message");
+//        require(keccak256(_payload) == payloadHash, "OCPBridge: invalid payload");
+//        // clear the stored message
+//        failedMessages[_srcChainId][_srcAddress][_nonce] = bytes32(0);
+//        // revert it ...
+//        emit RevertMessageSuccess(_srcChainId, _srcAddress, _nonce, payloadHash);
+//    }
 
     function updateTrustedRemotes(uint16[] calldata _remoteChainIds, bytes[] calldata _paths) external onlyOwner {
         require(_remoteChainIds.length == _paths.length, "OCPBridge: invalid params");

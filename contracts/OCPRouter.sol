@@ -16,13 +16,12 @@ import "./libraries/Types.sol";
 import "hardhat/console.sol";
 
 contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
+
     using SafeERC20 for IERC20;
     IOCPoolFactory public poolFactory;
     IOCPOmniTokenManager public tokenManager;
     IOCPBridge public bridge;
     address public weth;
-    mapping(uint16 => mapping(bytes => mapping(uint256 => Structs.CachedMint))) public cachedMintLookup; // chainId -> src -> nonce -> cache
-    event CachedMint(uint16 chainId, bytes srcAddress, uint256 nonce, address token, uint256 amount, address to, bytes payload, bytes reason);
 
     /**
         * @dev Initializes the contract setting the deployer as the initial owner.
@@ -221,13 +220,8 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
 
         if (_payload.length > 0) {
             console.log("# OCPR.omniMintRemote => _payload.length>0");
-            try IOCPReceiver(_mintParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce, token,
-                _mintParams.amount, _payload){} catch (bytes memory reason) {
-                console.log("OCPR.omniMintRemote => catch(bytes memory reason)");
-                console.logBytes(reason);
-                cachedMintLookup[_srcChainId][_srcAddress][_nonce] = Structs.CachedMint(token, _mintParams.amount, _mintParams.to, _payload);
-                emit CachedMint(_srcChainId, _srcAddress, _nonce, token, _mintParams.amount, _mintParams.to, _payload, reason);
-            }
+            IOCPReceiver(_mintParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce, token,
+                _mintParams.amount, _payload);
         }
     }
 

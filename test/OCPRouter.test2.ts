@@ -4,7 +4,7 @@ import {
     AddressZero,
     ApproveAmount,
     CHAIN_ID_LOCAL,
-    CHAIN_ID_LOCAL2,
+    CHAIN_ID_LOCAL2, HASH_256_ZERO,
     TYPE_DEPLOY_AND_MINT,
     TYPE_MINT
 } from "../helpers/constants";
@@ -34,6 +34,11 @@ describe("Router", async () => {
         } = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
+
+    async function isNonceSuc(nonce: number) {
+        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
+        return HASH_256_ZERO == await bridge2.failedMessages(CHAIN_ID_LOCAL, path, nonce);
+    }
 
     it("print deploy pool & token gas estimated", async () => {
         const poolFactory = await ethers.getContractFactory("OCPool");
@@ -69,7 +74,7 @@ describe("Router", async () => {
 
         await usdc.mint(user1.address, amountIn);
         await usdc.connect(user1).approve(router.address, amountIn);
-        await router.connect(user1).omniMint(
+        let tx = await router.connect(user1).omniMint(
             CHAIN_ID_LOCAL2,
             usdc.address,
             amountIn,
@@ -92,9 +97,8 @@ describe("Router", async () => {
         expect(await pool.token()).to.equal(usdc.address);
         expect(await usdc.balanceOf(poolAddr)).to.equal(amountIn);
 
-        // check bridge suc
-        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
-        expect(await lzEndpoint2.hasStoredPayload(CHAIN_ID_LOCAL, path)).to.be.false;
+        // check tx suc
+        expect(await isNonceSuc(1)).to.equal(true);
 
         // check token
         let usdc2Addr = await tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
@@ -206,9 +210,9 @@ describe("Router", async () => {
         let poolAddr = await poolFactory.getPool(usdc.address);
         expect(await usdc.balanceOf(poolAddr)).to.equal(amountIn.mul(2));
 
-        // check bridge suc
-        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
-        expect(await lzEndpoint2.hasStoredPayload(CHAIN_ID_LOCAL, path)).to.be.false;
+        // check tx suc
+        expect(await isNonceSuc(1)).to.eq(true);
+        expect(await isNonceSuc(2)).to.eq(true);
 
         // check balances
         let usdc2Addr = await tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
@@ -217,64 +221,4 @@ describe("Router", async () => {
         expect(await usdc2.totalSupply()).to.equal(amountIn.mul(2));
     });
 
-    it("omni mint fail and force resume - type 2", async () => {
-
-        let amountIn = parseEther("1000");
-        await usdc.mint(user1.address, amountIn.mul(2));
-        await usdc.connect(user1).approve(router.address, ApproveAmount);
-
-        // mint only
-        await router.connect(user1).omniMint(
-            CHAIN_ID_LOCAL2,
-            usdc.address,
-            amountIn,
-            user2.address,
-            2,
-            user1.address,
-            "0x",
-            ({
-                dstGasForCall: 0,
-                dstNativeAmount: 0,
-                dstNativeAddr: '0x'
-            }),
-            {value: parseEther("0.05")}
-        )
-
-        // check bridge fail
-        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
-        expect(await lzEndpoint2.hasStoredPayload(CHAIN_ID_LOCAL, path)).to.be.true;
-
-        // deploy and mint - queued
-        await router.connect(user1).omniMint(
-            CHAIN_ID_LOCAL2,
-            usdc.address,
-            amountIn,
-            user2.address,
-            1,
-            user1.address,
-            "0x",
-            ({
-                dstGasForCall: 0,
-                dstNativeAmount: 0,
-                dstNativeAddr: '0x'
-            }),
-            {value: parseEther("0.1")}
-        )
-
-        // check queue length = 1
-        expect(await lzEndpoint2.getLengthOfQueue(CHAIN_ID_LOCAL, path)).to.eq(1);
-
-        // force resume
-        await bridge2.forceResumeReceive(CHAIN_ID_LOCAL, path);
-
-        // check store payload & queue cleared
-        expect(await lzEndpoint2.hasStoredPayload(CHAIN_ID_LOCAL, path)).to.be.false;
-        expect(await lzEndpoint2.getLengthOfQueue(CHAIN_ID_LOCAL, path)).to.eq(0);
-
-        // check deploy and mint suc
-        let usdc2Addr = await tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
-        let usdc2 = await ethers.getContractAt("OmniToken", usdc2Addr);
-        expect(await usdc2.balanceOf(user2.address)).to.equal(amountIn);
-        expect(await usdc2.totalSupply()).to.equal(amountIn);
-    });
 });

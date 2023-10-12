@@ -1,22 +1,8 @@
 import {deployFixture, deployNew} from "../helpers/utils";
 import {expect} from "chai";
-import {
-    AddressZero,
-    CHAIN_ID_LOCAL,
-    CHAIN_ID_LOCAL2,
-    CHAIN_ID_LOCAL3,
-    TYPE_DEPLOY_AND_MINT, TYPE_MINT
-} from "../helpers/constants";
-import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
-import {formatEther, parseEther} from "ethers/lib/utils";
-import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
-import {
-    ONE_HUNDRED_E_18,
-    ONE_HUNDRED_E_6,
-    ONE_THOUSAND_E_18,
-    ONE_THOUSAND_E_6,
-    POINT_ONE_E_18
-} from "../helpers/constantsTest";
+import {AddressZero, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL2} from "../helpers/constants";
+import {formatEther} from "ethers/lib/utils";
+import {ONE_HUNDRED_E_18, ONE_THOUSAND_E_18, POINT_ONE_E_18} from "../helpers/constantsTest";
 import {ethers} from "hardhat";
 
 async function router_omniMint(
@@ -38,7 +24,7 @@ async function router_omniMint(
 ) {
     await token.mint(user.address, _mintAmount);
     await token.connect(user).approve(router.address, _mintAmount);
-    await router.connect(user).omniMint(
+    return await router.connect(user).omniMint(
         _remoteChainId,
         token.address,
         _amountIn,
@@ -356,13 +342,23 @@ describe("OCPScenario", async () => {
         const _payload = ethers.utils.defaultAbiCoder
             .encode(['address'], [user1.address]);
 
-        await router_omniMint(router, user1, usdc, 1, _payload);
-        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+        let tx = await router_omniMint(router, user1, usdc, 1, _payload);
+        console.log(`1: ${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
 
         await router_omniMint(router, user1, usdc, 1);
-        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+        console.log(`2: ${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
 
         await router_omniMint(router, user1, usdc, 1);
-        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+        console.log(`3: ${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+
+        // retry by user
+        const txReceipt = await ethers.provider.getTransactionReceipt(tx.hash);
+        const event = bridge2.interface.parseLog(txReceipt.logs[2]);
+        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
+        await expect(b2.retryMessage(_srcChainId, path, 1, event.args._payload))
+            .to.be.revertedWith("Transaction reverted: function call to a non-contract account");
+
+        // TODO: revert it on src chain by user
+        // await b2.revertMessage(_srcChainId, path, 1, event.args._payload)...
     });
 });

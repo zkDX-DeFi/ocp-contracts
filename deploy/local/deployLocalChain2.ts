@@ -60,9 +60,9 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
 
     // update gasLookups
     await execute('OCPBridge', {from: owner}, "updateGasLookups", [CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2, CHAIN_ID_LOCAL2],
-        [1, 2, 3], [DEFAULT_GAS_LIMIT_1, DEFAULT_GAS_LIMIT_2, DEFAULT_GAS_LIMIT_3]);
+        [1, 2, 3], [5000000, DEFAULT_GAS_LIMIT_2, DEFAULT_GAS_LIMIT_3]);
     await execute('OCPBridge2', {from: owner}, "updateGasLookups", [CHAIN_ID_LOCAL, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL],
-        [1, 2, 3], [DEFAULT_GAS_LIMIT_1, DEFAULT_GAS_LIMIT_2, DEFAULT_GAS_LIMIT_3]);
+        [1, 2, 3], [5000000, DEFAULT_GAS_LIMIT_2, DEFAULT_GAS_LIMIT_3]);
 
     // set dest endpoint (only local)
     await execute('LZEndpoint', {from: owner}, "setDestLzEndpoint", OCPBridge2.address, lzEndpoint2Addr);

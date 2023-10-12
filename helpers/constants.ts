@@ -1,6 +1,7 @@
 import {ethers} from "ethers";
 
 export const {AddressZero, MaxInt256: ApproveAmount} = ethers.constants
+export const HASH_256_ZERO = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 // ChainIds
 export const CHAIN_ID_LOCAL = "31337"
