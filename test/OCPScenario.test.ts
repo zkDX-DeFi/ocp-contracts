@@ -446,4 +446,24 @@ describe("OCPScenario", async () => {
         expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(2));
         expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
     });
+
+    it("check ST => s10 => omniMint => _type = 122 => _payload = 0x => user2", async() => {
+        await router_omniMint(router, user1, usdc, 1);
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 2);
+
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+
+        await router_omniMint(router, user2, usdc, 1);
+        await router_omniMint(router, user2, usdc, 2);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(4));
+        expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+    });
+
+    it("check ST => s11 => omniMint => _type = 122 => _payload = 0x => usdcD6", async() => {
+
+    })
 });
