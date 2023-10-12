@@ -25,12 +25,6 @@ import {
 } from "../helpers/constantsTest";
 import {ethers} from "hardhat";
 
-// async function getOmniToken(tokenManager2: any, usdc: any) {
-//     const _srcChainId = CHAIN_ID_LOCAL;
-//     const _omniTokenAddress = await tokenManager2.omniTokens(usdc.address, _srcChainId);
-//     const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
-// }
-
 describe("OCPScenario", async () => {
 
     let user1: any,
@@ -479,7 +473,16 @@ describe("OCPScenario", async () => {
         expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
     });
 
-    it("check ST => s11 => omniMint => _type = 122 => _payload = 0x => usdcD6", async() => {
+    it("check ST => s11 => omniMint =>  user1(122) => usdcD6", async() => {
+        const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
 
-    })
+        await router_omniMint(router, user1, usdcD6, 1,
+            "0x", user1.address,
+            ONE_HUNDRED_E_6, ONE_HUNDRED_E_6);
+
+        const ot = await getOmniToken(tokenManager2, usdcD6);
+
+
+        console.log(`${formatEther(await ot.totalSupply())}`);
+    });
 });
