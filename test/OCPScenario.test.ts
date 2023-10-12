@@ -197,18 +197,6 @@ describe("OCPScenario", async () => {
         );
         console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
 
-        // await router_omniMint(router, USER, token, 2,
-        //     _userPayload,
-        //     USER.address,
-        //     ONE_THOUSAND_E_18);
-        // console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
-        //
-        // await router_omniMint(router, USER, token, 2,
-        //     _userPayload,
-        //     rc.address,
-        //     ONE_THOUSAND_E_18);
-        // console.log(`${await tm2.omniTokens(token.address, _srcChainId)}`);
-
         await router_omniMint(router, USER, token, 1,
             _userPayload,
             rc.address,
@@ -294,22 +282,31 @@ describe("OCPScenario", async () => {
             _token,
             1,
             _payload,
-            _refundAddress
+            _refundAddress,
+            ONE_THOUSAND_E_18,
+            ONE_THOUSAND_E_18,
+            CHAIN_ID_LOCAL2,
+            {
+                dstGasForCall: 600000,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x'
+            }
         );
         console.log(`${_token.address}`);
         console.log(`${_srcChainId}`);
 
         const _omniTokenAddress = await tokenManager2.omniTokens(_token.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
         console.log(`tm2: ${tm2.address}`);
         console.log(`${_omniTokenAddress}`);
-        console.log(await isNonceSuc(1))
+        console.log(await isNonceSuc(1));
 
-        // expect(_omniTokenAddress).not.eq(AddressZero);
-        // expect(await tokenManager2.sourceTokens(_omniTokenAddress, _srcChainId)).eq(_token.address);
-        //
-        // console.log(`totalSupply: ${formatEther(await _omniToken.totalSupply())}`);
-        // console.log(`balanceOf(_rc): ${formatEther(await _omniToken.balanceOf(_rc.address))}`);
-        // console.log(`balanceOf(user1): ${formatEther(await _omniToken.balanceOf(user1.address))}`);
+        expect(_omniTokenAddress).not.eq(AddressZero);
+        expect(await tokenManager2.sourceTokens(_omniTokenAddress, _srcChainId)).eq(_token.address);
+
+        console.log(`totalSupply: ${formatEther(await _omniToken.totalSupply())}`);
+        console.log(`balanceOf(_rc): ${formatEther(await _omniToken.balanceOf(_rc.address))}`);
+        console.log(`balanceOf(user1): ${formatEther(await _omniToken.balanceOf(user1.address))}`);
     });
 
     async function isNonceSuc(nonce: number) {
