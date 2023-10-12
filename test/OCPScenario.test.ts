@@ -423,4 +423,25 @@ describe("OCPScenario", async () => {
             router_omniMint(router, _user, _token, 4, _payload, _rc.address))
             .to.be.revertedWith("OCPRouter: invalid type");
     });
+
+    it("check ST => s7 => omniMint => _type = 1 => _omniToken", async() => {
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _user = user1;
+        const _token = usdc;
+
+        await router_omniMint(router, _user, _token, 1);
+        const _omniTokenAddress = await tokenManager2.omniTokens(_token.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+        const poolAddress = await poolFactory.getPool(_token.address);
+        expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, _user, _token, 1);
+        expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, _user, _token, 1);
+        expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, _user, _token, 2);
+        expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
+    });
 });
