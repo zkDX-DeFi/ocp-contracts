@@ -12,7 +12,7 @@ import {
     getOCPB_omniRedeem,
     getPayloadUserA,
     getReceiverContract,
-    router_omniMint
+    router_omniMint,getOmniToken
 } from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
@@ -24,6 +24,12 @@ import {
     POINT_ONE_E_18
 } from "../helpers/constantsTest";
 import {ethers} from "hardhat";
+
+// async function getOmniToken(tokenManager2: any, usdc: any) {
+//     const _srcChainId = CHAIN_ID_LOCAL;
+//     const _omniTokenAddress = await tokenManager2.omniTokens(usdc.address, _srcChainId);
+//     const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+// }
 
 describe("OCPScenario", async () => {
 
@@ -443,5 +449,30 @@ describe("OCPScenario", async () => {
 
         await router_omniMint(router, _user, _token, 2);
         expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
+    });
+
+    it("check ST => s8 => omniMint => _type = 1 * 3", async() => {
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _user = user1;
+        const _token = usdc;
+
+        await router_omniMint(router, _user, _token, 1);
+        await router_omniMint(router, _user, _token, 1);
+        await router_omniMint(router, _user, _token, 1);
+
+        const _omniTokenAddress = await tokenManager2.omniTokens(_token.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+
+        expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18);
+    });
+
+    it("check ST => s8 => omniMint => _type=1 + _type=2 + _type=1", async() => {
+        await router_omniMint(router, user1, usdc, 1);
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 1);
+
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(2));
     });
 });
