@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.4.1](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.4.0...v1.4.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* add console.log in OCPR.SOL ([88b81cb](https://github.com/zkDX-DeFi/ocp-contracts/commit/88b81cbd683a280c54286827be4daf35de1920ef))
+
+
+### Code Refactoring
+
+* change bridge nonblocking mode ([a2a7283](https://github.com/zkDX-DeFi/ocp-contracts/commit/a2a7283f62006d3325f95e5b0d56905546702dd5))
+
+
+### Tests
+
+* add test cases ([7a3c323](https://github.com/zkDX-DeFi/ocp-contracts/commit/7a3c323b3c2c8d01ac3b156b243b3dda99a57482))
+* check ST =&gt; S6 => omniMint => _type = 2 && payload = 0x ([3c41733](https://github.com/zkDX-DeFi/ocp-contracts/commit/3c417331b6fbac2d37b4e50cb8168e8096cdef88))
+* check ST =&gt; S6 => omniMint => _type = 3 or 4 ([6f9ce71](https://github.com/zkDX-DeFi/ocp-contracts/commit/6f9ce71d02074613b1dd26be81514524bc8c87fb))
+* check ST =&gt; s7 => omniMint => _type = 1 => _omniToken ([9c49ba5](https://github.com/zkDX-DeFi/ocp-contracts/commit/9c49ba56639175d861d21166096a49b89231181e))
+* check ST =&gt; s8 => omniMint => _type=1 + _type=2 + _type=1 ([20af122](https://github.com/zkDX-DeFi/ocp-contracts/commit/20af122d58b40a6dc2c729b221b4326b0fa572d5))
+* check STEST =&gt; S5 => omniMint => _type = 1 && payload != 0x ([13e644c](https://github.com/zkDX-DeFi/ocp-contracts/commit/13e644c9a98e7f1b02791d2d291d97a1a6daf04c))
+* code coverage = 100% ([d477ee2](https://github.com/zkDX-DeFi/ocp-contracts/commit/d477ee29110c8c0b2c0b4ca27864c864aa510717))
+* new test cases ([acc9616](https://github.com/zkDX-DeFi/ocp-contracts/commit/acc96164c77247f386c7cc8825ffb1a25107af60))
+* tuning failed test cases ([fdebf9d](https://github.com/zkDX-DeFi/ocp-contracts/commit/fdebf9dd1b5ea46980cb1ac5ebaae399ae3cdc43))
+* tuning failed test cases && code coverage = 100% ([30363eb](https://github.com/zkDX-DeFi/ocp-contracts/commit/30363ebb6243ac36342bdc3db4d21528c05b8ea9))
+* tuning test cases ([1eb5a85](https://github.com/zkDX-DeFi/ocp-contracts/commit/1eb5a85ae8a0bf380125bde0447defaecb0c50dd))
+
+
+### CI
+
+* merge fix ([a54a6b6](https://github.com/zkDX-DeFi/ocp-contracts/commit/a54a6b69b4b947d9e36df175e66d956cc3670263))
+
 ## [1.4.0](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.3.1...v1.4.0) (2023-10-11)
 
 
