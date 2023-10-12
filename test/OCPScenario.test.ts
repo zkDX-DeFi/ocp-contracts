@@ -422,7 +422,7 @@ describe("OCPScenario", async () => {
         expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
     });
 
-    it.only("check ST => s9 => omniMint => _type = 2212 => _payload != 0x", async() => {
+    it("check ST => s9 => omniMint => _type = 2212 => _payload != 0x", async() => {
         const _payload = getPayloadUserA(user1);
         await router_omniMint(router, user1, usdc, 2, _payload);
         await router_omniMint(router, user1, usdc, 2, _payload);
@@ -434,7 +434,7 @@ describe("OCPScenario", async () => {
         expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
     });
 
-    it.only("check ST => s9 => omniMint => _type = 2212 => _payload != 0x V2", async() => {
+    it("check ST => s9 => omniMint => _type = 2212 => _payload != 0x V2", async() => {
         const _payload = getPayloadUserA(user1);
         await router_omniMint(router, user1, usdc, 2, _payload);
         await router_omniMint(router, user1, usdc, 2, _payload);
