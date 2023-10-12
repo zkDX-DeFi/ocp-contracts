@@ -3,7 +3,7 @@ import {AddressZero, ApproveAmount, CHAIN_ID_LOCAL, CHAIN_ID_LOCAL2} from "./con
 import {BigNumber, Wallet} from "ethers";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {deployNew, newWallet} from "./utils";
-import {ONE_THOUSAND_E_18, TOKEN_USDC_NAME} from "./constantsTest";
+import {ONE_HUNDRED_E_18, ONE_THOUSAND_E_18, POINT_ONE_E_18, TOKEN_USDC_NAME} from "./constantsTest";
 import {expect} from "chai";
 import {OCPRouter__factory} from "../typechain-types";
 
@@ -255,4 +255,53 @@ export async function getOT_ZERO(owner: any, mintAmount: any, tmAddress: any) {
         AddressZero
     ]);
     return {ot};
+}
+
+
+export async function router_omniMint(
+    router: any,
+    user: any,
+    token: any,
+    _type : any = 2,
+    _payload : any = "0x",
+    _to : any = user.address,
+    _amountIn : any = ONE_HUNDRED_E_18,
+    _mintAmount : any = ONE_THOUSAND_E_18,
+    _remoteChainId: any = CHAIN_ID_LOCAL2,
+    _lzTxObj : any = {
+        dstGasForCall: 0,
+        dstNativeAmount: 0,
+        dstNativeAddr: '0x',
+    },
+    _refundAddress : any = user.address
+) {
+    await token.mint(user.address, _mintAmount);
+    await token.connect(user).approve(router.address, _mintAmount);
+    await router.connect(user).omniMint(
+        _remoteChainId,
+        token.address,
+        _amountIn,
+        _to,
+        _type,
+        _refundAddress,
+        _payload,
+        _lzTxObj,
+        {value: POINT_ONE_E_18});
+}
+
+export const getPayloadUserA = (userA: any) => {
+    const abiCoder = new ethers.utils.AbiCoder();
+    const payload = abiCoder.encode(['address'], [userA.address]);
+    return payload;
+}
+
+export async function getReceiverContract(_router: any) {
+    const _rc = await deployNew("ReceiverContract2", [_router.address]);
+    return _rc;
+}
+
+export async function getOmniToken(_tokenManager2: any, _usdc: any, _srcChainId: any = CHAIN_ID_LOCAL) {
+    const _omniTokenAddress = await _tokenManager2.omniTokens(_usdc.address, _srcChainId);
+    const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+    return _omniToken;
 }
