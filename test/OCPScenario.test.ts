@@ -63,11 +63,19 @@ describe("OCPScenario", async () => {
         tokenManager: any,
         tokenManager2: any,
         poolFactory: any,
-        poolFactory2: any
+        poolFactory2: any,
+        lzEndpoint: any,
+        lzEndpoint2: any
 
 
     beforeEach(async () => {
-        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2, poolFactory,poolFactory2} = await deployFixture());
+        ({owner, user1, user2,
+            bridge, bridge2,
+            router, router2,
+            tokenManager, tokenManager2,
+            poolFactory, poolFactory2,
+            lzEndpoint, lzEndpoint2
+        } = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
 
@@ -335,8 +343,26 @@ describe("OCPScenario", async () => {
 
         await router_omniMint(router, user1, usdc, 2);
         await router_omniMint(router, user1, usdc, 1);
+        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+    });
 
+    it("check STEST => S4 => omniMint => _payLoad is NOT 0x", async() => {
+        const b = bridge;
+        const b2 = bridge2;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const lz = lzEndpoint;
+        const lz2 = lzEndpoint2;
 
+        const _payload = ethers.utils.defaultAbiCoder
+            .encode(['address'], [user1.address]);
+
+        // await router_omniMint(router, user1, usdc, 1, _payload);
+        // console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+
+        await router_omniMint(router, user1, usdc, 1);
+        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+
+        await router_omniMint(router, user1, usdc, 1);
         console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
     });
 });
