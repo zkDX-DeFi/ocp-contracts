@@ -294,3 +294,8 @@ export const getPayloadUserA = (userA: any) => {
     const payload = abiCoder.encode(['address'], [userA.address]);
     return payload;
 }
+
+export async function getReceiverContract(_router: any) {
+    const _rc = await deployNew("ReceiverContract2", [_router.address]);
+    return _rc;
+}

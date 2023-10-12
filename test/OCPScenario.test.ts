@@ -7,7 +7,13 @@ import {
     CHAIN_ID_LOCAL3,
     TYPE_DEPLOY_AND_MINT, TYPE_MINT
 } from "../helpers/constants";
-import {getOCPB_omniMInt, getOCPB_omniRedeem, getPayloadUserA, router_omniMint} from "../helpers/utilsTest";
+import {
+    getOCPB_omniMInt,
+    getOCPB_omniRedeem,
+    getPayloadUserA,
+    getReceiverContract,
+    router_omniMint
+} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 import {
@@ -394,5 +400,27 @@ describe("OCPScenario", async () => {
 
         await router_omniMint(router, _user, _token, 2, _payload, _rc.address);
         expect(await tokenManager2.omniTokens(_token.address, _srcChainId)).to.eq(AddressZero);
+    });
+
+    it("check ST => S6 => omniMint => _type = 3 or 4", async() => {
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _user = user1;
+        const _token = usdc;
+        const _payload = getPayloadUserA(_user);
+        const _rc = await getReceiverContract(router2);
+
+        await expect(router_omniMint(router, _user, _token, 3))
+            .to.be.revertedWith("OCPRouter: invalid type");
+
+        await expect(router_omniMint(router, _user, _token, 4))
+            .to.be.revertedWith("OCPRouter: invalid type");
+
+        await expect(
+            router_omniMint(router, _user, _token, 3, _payload, _rc.address))
+            .to.be.revertedWith("OCPRouter: invalid type");
+
+        await expect(
+            router_omniMint(router, _user, _token, 4, _payload, _rc.address))
+            .to.be.revertedWith("OCPRouter: invalid type");
     });
 });
