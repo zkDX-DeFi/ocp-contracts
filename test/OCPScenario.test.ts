@@ -356,8 +356,8 @@ describe("OCPScenario", async () => {
         const _payload = ethers.utils.defaultAbiCoder
             .encode(['address'], [user1.address]);
 
-        // await router_omniMint(router, user1, usdc, 1, _payload);
-        // console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+        await router_omniMint(router, user1, usdc, 1, _payload);
+        console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
 
         await router_omniMint(router, user1, usdc, 1);
         console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
