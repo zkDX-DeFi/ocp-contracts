@@ -4,7 +4,7 @@ import {
     AddressZero,
     CHAIN_ID_LOCAL,
     CHAIN_ID_LOCAL2,
-    CHAIN_ID_LOCAL3,
+    CHAIN_ID_LOCAL3, HASH_256_ZERO,
     TYPE_DEPLOY_AND_MINT, TYPE_MINT
 } from "../helpers/constants";
 import {
@@ -286,6 +286,7 @@ describe("OCPScenario", async () => {
             .encode(['address'], [user1.address]);
         const _rc = await deployNew("ReceiverContract3", [router2.address]);
         const _refundAddress = _rc.address;
+        console.log("rc: ", _rc.address);
 
         await router_omniMint(
             router,
@@ -295,12 +296,13 @@ describe("OCPScenario", async () => {
             _payload,
             _refundAddress
         );
-        const _omniTokenAddress = await tokenManager2.omniTokens(_token.address, _srcChainId);
-        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+        console.log(`${_token.address}`);
+        console.log(`${_srcChainId}`);
 
+        const _omniTokenAddress = await tokenManager2.omniTokens(_token.address, _srcChainId);
         console.log(`tm2: ${tm2.address}`);
         console.log(`${_omniTokenAddress}`);
-
+        console.log(await isNonceSuc(1))
 
         // expect(_omniTokenAddress).not.eq(AddressZero);
         // expect(await tokenManager2.sourceTokens(_omniTokenAddress, _srcChainId)).eq(_token.address);
@@ -309,6 +311,11 @@ describe("OCPScenario", async () => {
         // console.log(`balanceOf(_rc): ${formatEther(await _omniToken.balanceOf(_rc.address))}`);
         // console.log(`balanceOf(user1): ${formatEther(await _omniToken.balanceOf(user1.address))}`);
     });
+
+    async function isNonceSuc(nonce: number) {
+        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
+        return HASH_256_ZERO == await bridge2.failedMessages(CHAIN_ID_LOCAL, path, nonce);
+    }
 
     it("check ST => S6 => omniMint => _type = 2 && payload = 0x", async() => {
         const _srcChainId = CHAIN_ID_LOCAL;
