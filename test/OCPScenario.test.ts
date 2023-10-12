@@ -7,7 +7,7 @@ import {
     CHAIN_ID_LOCAL3,
     TYPE_DEPLOY_AND_MINT, TYPE_MINT
 } from "../helpers/constants";
-import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
+import {getOCPB_omniMInt, getOCPB_omniRedeem, getPayloadUserA, router_omniMint} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 import {
@@ -18,37 +18,6 @@ import {
     POINT_ONE_E_18
 } from "../helpers/constantsTest";
 import {ethers} from "hardhat";
-
-async function router_omniMint(
-    router: any,
-    user: any,
-    token: any,
-    _type : any = 2,
-    _payload : any = "0x",
-    _to : any = user.address,
-    _amountIn : any = ONE_HUNDRED_E_18,
-    _mintAmount : any = ONE_THOUSAND_E_18,
-    _remoteChainId: any = CHAIN_ID_LOCAL2,
-    _lzTxObj : any = {
-        dstGasForCall: 0,
-        dstNativeAmount: 0,
-        dstNativeAddr: '0x',
-    },
-    _refundAddress : any = user.address
-) {
-    await token.mint(user.address, _mintAmount);
-    await token.connect(user).approve(router.address, _mintAmount);
-    await router.connect(user).omniMint(
-        _remoteChainId,
-        token.address,
-        _amountIn,
-        _to,
-        _type,
-        _refundAddress,
-        _payload,
-        _lzTxObj,
-        {value: POINT_ONE_E_18});
-}
 
 describe("OCPScenario", async () => {
 
@@ -406,5 +375,24 @@ describe("OCPScenario", async () => {
         console.log(`totalSupply: ${formatEther(await _omniToken.totalSupply())}`);
         console.log(`balanceOf(_rc): ${formatEther(await _omniToken.balanceOf(_rc.address))}`);
         console.log(`balanceOf(user1): ${formatEther(await _omniToken.balanceOf(user1.address))}`);
+    });
+
+    it("check ST => S6 => omniMint => _type = 2 && payload = 0x", async() => {
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _token = usdc;
+
+        await router_omniMint(router, user1, _token, 2);
+        expect(await tokenManager2.omniTokens(_token.address, _srcChainId)).to.eq(AddressZero);
+    });
+
+    it("check ST => S6 => omniMint => _type = 2 && payload != 0x", async() => {
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _user = user1;
+        const _token = usdc;
+        const _payload = getPayloadUserA(_user);
+        const _rc = await deployNew("ReceiverContract2", [router2.address]);
+
+        await router_omniMint(router, _user, _token, 2, _payload, _rc.address);
+        expect(await tokenManager2.omniTokens(_token.address, _srcChainId)).to.eq(AddressZero);
     });
 });
