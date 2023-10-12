@@ -451,7 +451,7 @@ describe("OCPScenario", async () => {
         expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
     });
 
-    it("check ST => s8 => omniMint => _type = 1 * 3", async() => {
+    it("check ST => s8 => omniMint => _type => 111", async() => {
         const _srcChainId = CHAIN_ID_LOCAL;
         const _user = user1;
         const _token = usdc;
@@ -466,7 +466,7 @@ describe("OCPScenario", async () => {
         expect(await _omniToken.balanceOf(_user.address)).to.be.equal(ONE_HUNDRED_E_18);
     });
 
-    it("check ST => s8 => omniMint => _type=1 + _type=2 + _type=1", async() => {
+    it("check ST => s8 => omniMint => _type => 121", async() => {
         await router_omniMint(router, user1, usdc, 1);
         await router_omniMint(router, user1, usdc, 2);
         await router_omniMint(router, user1, usdc, 1);
@@ -474,5 +474,26 @@ describe("OCPScenario", async () => {
         const ot = await getOmniToken(tokenManager2, usdc);
         expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
         expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(2));
+    });
+
+    it("check ST => s8 => omniMint => _type => 122", async() => {
+        await router_omniMint(router, user1, usdc, 1);
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 2);
+
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+    });
+
+    it("check ST => s8 => omniMint => _type => 2122", async() => {
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 1);
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 2);
+
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(ot.address).eq(AddressZero);
+        await expect(ot.totalSupply()).to.be.reverted;
     });
 });
