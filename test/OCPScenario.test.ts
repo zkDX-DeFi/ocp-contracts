@@ -365,4 +365,46 @@ describe("OCPScenario", async () => {
         await router_omniMint(router, user1, usdc, 1);
         console.log(`${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
     });
+
+    it('check STEST => S5 => omniMint => _type = 1 && payload = 0x', async() => {
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _token = usdc;
+        await router_omniMint(
+            router,
+            user1,
+            _token,
+            1
+        );
+
+        const _omniTokenAddress = await tokenManager2.omniTokens(_token.address, _srcChainId);
+        expect(_omniTokenAddress).not.eq(AddressZero);
+        expect(await tokenManager2.sourceTokens(_omniTokenAddress, _srcChainId))
+            .eq(_token.address);
+    });
+
+    it('check STEST => S5 => omniMint => _type = 1 && payload != 0x', async() => {
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _token = usdc;
+        const _payload = ethers.utils.defaultAbiCoder
+            .encode(['address'], [user1.address]);
+        const _rc = await deployNew("ReceiverContract2", [router2.address]);
+        const _refundAddress = _rc.address;
+
+        await router_omniMint(
+            router,
+            user1,
+            _token,
+            1,
+            _payload,
+            _refundAddress
+        );
+        const _omniTokenAddress = await tokenManager2.omniTokens(_token.address, _srcChainId);
+        const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
+        expect(_omniTokenAddress).not.eq(AddressZero);
+        expect(await tokenManager2.sourceTokens(_omniTokenAddress, _srcChainId)).eq(_token.address);
+
+        console.log(`totalSupply: ${formatEther(await _omniToken.totalSupply())}`);
+        console.log(`balanceOf(_rc): ${formatEther(await _omniToken.balanceOf(_rc.address))}`);
+        console.log(`balanceOf(user1): ${formatEther(await _omniToken.balanceOf(user1.address))}`);
+    });
 });
