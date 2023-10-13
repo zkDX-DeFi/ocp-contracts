@@ -12,7 +12,7 @@ import {
     getOCPB_omniRedeem,
     getPayloadUserA,
     getReceiverContract,
-    router_omniMint, getOmniToken, getLzTxObj, router_omniMint2, getReceiverContract3
+    router_omniMint, getOmniToken, getLzTxObj, router_omniMint2, getReceiverContract3, router_omniMint3
 } from "../helpers/utilsTest";
 import {formatEther, formatUnits, parseEther, parseUnits} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
@@ -771,5 +771,28 @@ describe("OCPScenario", async () => {
         const poolAddress = await poolFactory.getPool(usdc.address);
         expect(await usdc.balanceOf(poolAddress)).eq(ONE_THOUSAND_E_18.mul(2).add(ONE_HUNDRED_E_18.mul(2)));
         expect(await usdc.totalSupply()).eq(ONE_THOUSAND_E_18.mul(2).add(ONE_HUNDRED_E_18.mul(2)));
-    })
+    });
+
+    it("check ST => S14 => omniMint2 => user1(212) + user2(2) => usdcD6 => payload != 0x v4", async() => {
+        const _rc = await getReceiverContract3(router2);
+        const _payload = getPayloadUserA(user2);
+
+        await router_omniMint3(router, user1, usdc,2,ONE_HUNDRED_E_18, _rc.address, _payload);
+        await router_omniMint3(router, user1, usdc,1,ONE_HUNDRED_E_18, _rc.address, _payload);
+        await router_omniMint3(router, user1, usdc,2,ONE_HUNDRED_E_18, _rc.address, _payload);
+        await router_omniMint3(router, user2, usdc,2,ONE_HUNDRED_E_18, _rc.address, _payload);
+
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(_rc.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(user1.address)).to.be.equal(0);
+        expect(await ot.balanceOf(user2.address)).to.be.equal(0);
+
+        await router_omniMint3(router, user1, usdc);
+        await router_omniMint3(router, user2, usdc);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(5));
+        expect(await ot.balanceOf(_rc.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(1));
+        expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18.mul(1));
+    });
 });
