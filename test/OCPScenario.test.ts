@@ -494,4 +494,17 @@ describe("OCPScenario", async () => {
         expect(await usdcD6.totalSupply()).to.be.equal(_amount.mul(3));
         expect(await ot.totalSupply()).to.be.equal(parseEther("123.456").mul(3));
     });
+
+    it("check ST => s11 => omniMint => user1(2122) => usdcD6 => payload is empty", async() => {
+        const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
+        const _amount = parseUnits("123.456",6);
+        await router_omniMint(router, user1, usdcD6, 2, "0x", user1.address, _amount, _amount);
+        await router_omniMint(router, user1, usdcD6, 1, "0x", user1.address, _amount, _amount);
+        await router_omniMint(router, user1, usdcD6, 2, "0x", user1.address, _amount, _amount);
+        await router_omniMint(router, user1, usdcD6, 2, "0x", user1.address, _amount, _amount);
+
+        const ot = await getOmniToken(tokenManager2, usdcD6);
+        expect(await usdcD6.totalSupply()).to.be.equal(_amount.mul(4));
+        expect(await ot.totalSupply()).to.be.equal(parseEther("123.456").mul(3));
+    });
 });
