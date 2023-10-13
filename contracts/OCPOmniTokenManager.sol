@@ -160,7 +160,7 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         * @param _from The address to burn from
     */
     function omniBurn(address _omniToken, uint256 _amount, address _from) external onlyRouter override {
-        //todo: v0.3: TYPES=3
+        IOmniToken(_omniToken).burn(_from, _amount);
     }
 
     /**

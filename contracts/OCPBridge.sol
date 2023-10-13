@@ -17,6 +17,16 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
     event RevertMessageSuccess(uint16 _srcChainId, bytes _srcAddress, uint64 _nonce, bytes32 _payloadHash);
 
     /**
+        * @dev onlyRouter
+        * @dev Modifier to only allow the router to call the function.
+        * If the caller is not the router, the transaction will revert.
+    */
+    modifier onlyRouter() {
+        require(msg.sender == address(router), "OCPBridge: caller is not the router");
+        _;
+    }
+
+    /**
         * @dev mint token on remote chain
 
         * Requirements:
@@ -61,6 +71,18 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
         _lzSend(_remoteChainId, payload, _refundAddress, address(this), _txParamBuilder(_remoteChainId, _type, _lzTxParams), msg.value);
     }
 
+    function omniRedeem(
+        uint16 _remoteChainId,
+        address payable _refundAddress,
+        uint8 _type,
+        Structs.RedeemObj memory _redeemParams,
+        bytes memory _payload,
+        Structs.LzTxObj memory _lzTxParams
+    ) external payable onlyRouter {
+        bytes memory payload = abi.encode(_type, _redeemParams, _payload, _lzTxParams.dstGasForCall);
+        _lzSend(_remoteChainId, payload, _refundAddress, address(this), _txParamBuilder(_remoteChainId, _type, _lzTxParams), msg.value);
+    }
+
     /**
         * @dev quote mint token on remote chain
 
@@ -97,6 +119,9 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
         if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {
             Structs.MintObj memory mintParams = Structs.MintObj(address(0x1), 1, address(0x1), "Name", "Symbol");
             payload = abi.encode(_type, mintParams, _userPayload, _lzTxParams.dstGasForCall);
+        } else if (_type == Types.TYPE_REDEEM) {
+            Structs.RedeemObj memory redeemParams = Structs.RedeemObj(address(0x1), 1, address(0x1));
+            payload = abi.encode(_type, redeemParams, _userPayload, _lzTxParams.dstGasForCall);
         } else revert("OCPBridge: invalid quote type");
 
         bytes memory _txParams = _txParamBuilder(_remoteChainId, _type, _lzTxParams);
@@ -137,7 +162,6 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
             }
         }
 
-
         uint256 totalGas = gasLookup[_chainId][_type] + _lzTxParams.dstGasForCall;
         console.log("# BRIDGE._txParamBuilder => _chainId: ", _chainId);
         console.log("# BRIDGE._txParamBuilder => _type: ", _type);
@@ -148,7 +172,6 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
         } else {
             lzTxParam = abi.encodePacked(uint16(1), totalGas);
         }
-
         return lzTxParam;
     }
 
@@ -188,8 +211,7 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
 
         console.log("# Bridge._nonblockingLzReceive => _type", _type);
         // routing types
-//        if (_type == Types.TYPE_DEPLOY_AND_MINT)
-        {
+        if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {
             (, Structs.MintObj memory _mintParams,
                 bytes memory payload,
                 uint256 _dstGasForCall
@@ -197,6 +219,12 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
             console.log("# Bridge._nonblockingLzReceive => _mintParams.srcToken:", _mintParams.srcToken);
             router.omniMintRemote(_srcChainId, _srcAddress, _nonce, _type, _mintParams,
                 address(lzEndpoint), _dstGasForCall, payload);
+        } else if (_type == Types.TYPE_REDEEM) {
+            (, Structs.RedeemObj memory _redeemParams,
+                bytes memory payload,
+                uint256 _dstGasForCall
+            ) = abi.decode(_payload, (uint8, Structs.RedeemObj, bytes, uint256));
+            router.omniRedeemRemote(_srcChainId, _srcAddress, _nonce, _redeemParams, _dstGasForCall, payload);
         }
     }
 

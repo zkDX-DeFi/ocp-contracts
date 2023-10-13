@@ -6,13 +6,13 @@ import {
     CHAIN_ID_LOCAL,
     CHAIN_ID_LOCAL2, HASH_256_ZERO,
     TYPE_DEPLOY_AND_MINT,
-    TYPE_MINT
+    TYPE_MINT, TYPE_REDEEM
 } from "../helpers/constants";
-import {formatEther, parseEther} from "ethers/lib/utils";
+import {formatEther, parseEther, parseUnits} from "ethers/lib/utils";
 import {ethers} from "hardhat";
 
 /* added by Schneider */
-describe("Router", async () => {
+describe.only("Router", async () => {
 
     let user1: any,
         user2: any,
@@ -32,12 +32,17 @@ describe("Router", async () => {
             owner, user1, user2, bridge, bridge2, router, router2,
             tokenManager, tokenManager2, poolFactory, lzEndpoint2
         } = await deployFixture());
-        usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
+        usdc = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
     });
 
-    async function isNonceSuc(nonce: number) {
-        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
-        return HASH_256_ZERO == await bridge2.failedMessages(CHAIN_ID_LOCAL, path, nonce);
+    async function isNonceSuc(nonce: number, dstChainId = CHAIN_ID_LOCAL2) {
+        if (dstChainId == CHAIN_ID_LOCAL) {
+            let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
+            return HASH_256_ZERO == await bridge.failedMessages(CHAIN_ID_LOCAL, path, nonce);
+        } else {
+            let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
+            return HASH_256_ZERO == await bridge2.failedMessages(CHAIN_ID_LOCAL, path, nonce);
+        }
     }
 
     it("print deploy pool & token gas estimated", async () => {
@@ -60,7 +65,7 @@ describe("Router", async () => {
     it("omni deploy and mint suc", async () => {
 
         let refund = newWallet();
-        let amountIn = parseEther("1000");
+        let amountIn = parseUnits("1000", 6);
         let msgFee = await router.quoteLayerZeroFee(
             CHAIN_ID_LOCAL2,
             TYPE_DEPLOY_AND_MINT,
@@ -74,7 +79,7 @@ describe("Router", async () => {
 
         await usdc.mint(user1.address, amountIn);
         await usdc.connect(user1).approve(router.address, amountIn);
-        let tx = await router.connect(user1).omniMint(
+        await router.connect(user1).omniMint(
             CHAIN_ID_LOCAL2,
             usdc.address,
             amountIn,
@@ -101,11 +106,12 @@ describe("Router", async () => {
         expect(await isNonceSuc(1)).to.equal(true);
 
         // check token
+        let amountIn2 = parseUnits("1000", 18);
         let usdc2Addr = await tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
         expect(usdc2Addr).to.not.equal(AddressZero);
         let usdc2 = await ethers.getContractAt("OmniToken", usdc2Addr);
-        expect(await usdc2.balanceOf(user2.address)).to.equal(amountIn);
-        expect(await usdc2.totalSupply()).to.equal(amountIn);
+        expect(await usdc2.balanceOf(user2.address)).to.equal(amountIn2);
+        expect(await usdc2.totalSupply()).to.equal(amountIn2);
         let refundFee = await ethers.provider.getBalance(refund.address);
         expect(refundFee).to.gt(0);
         console.log("RefundFee:", formatEther(refundFee));
@@ -114,9 +120,9 @@ describe("Router", async () => {
     it("omniMint with payload suc", async () => {
 
         let receiverContract = await deployNew("ReceiverContract", [router2.address]);
-        let amountIn = parseEther("1000");
+        let amountIn = parseUnits("1000", 6);
         await usdc.mint(user1.address, amountIn);
-        await usdc.connect(user1).approve(router.address, amountIn);
+        await usdc.connect(user1).approve(router.address, ApproveAmount);
 
         let payload = ethers.utils.defaultAbiCoder.encode(['address'], [user1.address]);
         let msgFee = await router.quoteLayerZeroFee(
@@ -133,7 +139,7 @@ describe("Router", async () => {
         await router.connect(user1).omniMint(
             CHAIN_ID_LOCAL2,
             usdc.address,
-            parseEther("1000"),
+            amountIn,
             receiverContract.address,
             1,
             user1.address,
@@ -146,18 +152,19 @@ describe("Router", async () => {
             {value: msgFee[0]}
         );
 
+        let amountIn2 = parseUnits("1000", 18);
         let usdc2Addr = await tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
         let usdc2 = await ethers.getContractAt("OmniToken", usdc2Addr);
-        expect(await usdc2.totalSupply()).to.equal(amountIn);
+        expect(await usdc2.totalSupply()).to.equal(amountIn2);
         expect(await receiverContract.token()).to.equal(usdc2Addr);
-        expect(await receiverContract.total()).to.equal(amountIn);
-        expect(await receiverContract.balance(user1.address)).to.eq(amountIn);
+        expect(await receiverContract.total()).to.equal(amountIn2);
+        expect(await receiverContract.balance(user1.address)).to.eq(amountIn2);
 
     });
 
     it("omni mint suc - type 2", async () => {
 
-        let amountIn = parseEther("1000");
+        let amountIn = parseUnits("1000", 6);
         await usdc.mint(user1.address, amountIn.mul(2));
         await usdc.connect(user1).approve(router.address, ApproveAmount);
 
@@ -215,10 +222,80 @@ describe("Router", async () => {
         expect(await isNonceSuc(2)).to.eq(true);
 
         // check balances
+        let amountIn2 = parseUnits("1000", 18);
         let usdc2Addr = await tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
         let usdc2 = await ethers.getContractAt("OmniToken", usdc2Addr);
-        expect(await usdc2.balanceOf(user2.address)).to.equal(amountIn.mul(2));
-        expect(await usdc2.totalSupply()).to.equal(amountIn.mul(2));
+        expect(await usdc2.balanceOf(user2.address)).to.equal(amountIn2.mul(2));
+        expect(await usdc2.totalSupply()).to.equal(amountIn2.mul(2));
+    });
+
+    it("redeem suc", async () => {
+
+        let amountIn = parseUnits("1000", 6);
+        await usdc.mint(user1.address, amountIn.mul(2));
+        await usdc.connect(user1).approve(router.address, ApproveAmount);
+
+        // first: deploy and mint
+        await router.connect(user1).omniMint(
+            CHAIN_ID_LOCAL2,
+            usdc.address,
+            amountIn,
+            user2.address,
+            1,
+            user1.address,
+            "0x",
+            ({
+                dstGasForCall: 0,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x'
+            }),
+            {value: parseEther("0.1")}
+        )
+
+        // second: redeem
+        let msgFee = await router.quoteLayerZeroFee(
+            CHAIN_ID_LOCAL2,
+            TYPE_REDEEM,
+            "0x",
+            {
+                dstGasForCall: 0,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x'
+            });
+        console.log("Redeem Fee:", formatEther(msgFee[0]));
+
+        let usdc2Addr = tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
+        let usdc2 = await ethers.getContractAt("OmniToken", usdc2Addr);
+        let amountIn2 = parseUnits("500", 18);
+        let receiver = newWallet();
+
+        await router2.connect(user2).omniRedeem(
+            CHAIN_ID_LOCAL,
+            usdc2.address,
+            amountIn2,
+            receiver.address,
+            user2.address,
+            "0x",
+            ({
+                dstGasForCall: 0,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x'
+            }),
+            {value: msgFee[0]}
+        )
+
+        // check tx suc
+        expect(await isNonceSuc(1, CHAIN_ID_LOCAL)).to.eq(true);
+
+        // check burn suc
+        expect(await usdc2.totalSupply()).to.equal(amountIn2);
+        expect(await usdc2.balanceOf(user2.address)).to.equal(amountIn2);
+
+        // check dst balances
+        let poolAddr = await poolFactory.getPool(usdc.address);
+        expect(await usdc.balanceOf(poolAddr)).to.equal(parseUnits("500", 6));
+        expect(await usdc.balanceOf(receiver.address)).to.equal(parseUnits("500", 6));
+
     });
 
 });

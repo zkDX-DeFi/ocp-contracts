@@ -19,7 +19,6 @@ library Structs {
 
     struct RedeemObj {
         address srcToken;
-        uint16 dstChainId;
         uint256 amount;
         address to;
     }

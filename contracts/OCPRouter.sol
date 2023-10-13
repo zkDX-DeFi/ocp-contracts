@@ -144,6 +144,32 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bridge.omniMint{value: _msgFee}(_remoteChainId, _refundAddress, _type, mintParams, _payload, _lzTxParams);
     }
 
+    function omniRedeem(
+        uint16 _remoteChainId,
+        address _token,
+        uint256 _amountIn,
+        address _to,
+        address payable _refundAddress,
+        bytes memory _payload,
+        Structs.LzTxObj memory _lzTxParams
+    ) external override payable {
+        require(_to != address(0), "OCPRouter: receiver invalid");
+        require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
+
+        Structs.RedeemObj memory redeemParams;
+        redeemParams.srcToken = tokenManager.sourceTokens(_token, _remoteChainId);
+        require(redeemParams.srcToken != address(0x0), "OCPRouter: no srcToken on destination chain");
+        redeemParams.to = _to;
+        redeemParams.amount = _amountIn;
+
+        // burn local token
+        tokenManager.omniBurn(_token, _amountIn, msg.sender);
+
+        // redeem src token
+        bridge.omniRedeem{value: msg.value}(_remoteChainId, _refundAddress, Types.TYPE_REDEEM, redeemParams,
+            _payload, _lzTxParams);
+    }
+
     /**
         * @dev return the amount of token for the given amount of token on the other chain.
 
@@ -155,6 +181,12 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         uint256 decimals = IERC20Metadata(_token).decimals();
         if (decimals == 18) return _amount;
         return _amount * (10 ** (18 - decimals));
+    }
+
+    function _amountLocal(address _token, uint256 _amount) internal view returns (uint256) {
+        uint256 decimals = IERC20Metadata(_token).decimals();
+        if (decimals == 18) return _amount;
+        return _amount / (10 ** (18 - decimals));
     }
 
     /**
@@ -224,6 +256,22 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
             IOCPReceiver(_mintParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce, token,
                 _mintParams.amount, _payload);
         }
+    }
+
+    function omniRedeemRemote(
+        uint16 _srcChainId,
+        bytes memory _srcAddress,
+        uint256 _nonce,
+        Structs.RedeemObj memory _redeemParams,
+        uint256 _dstGasForCall,
+        bytes memory _payload
+    ) external onlyBridge {
+        uint256 _amount = _amountLocal(_redeemParams.srcToken, _redeemParams.amount);
+        poolFactory.withdraw(_redeemParams.srcToken, _redeemParams.to, _amount);
+
+        if (_payload.length > 0)
+            IOCPReceiver(_redeemParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce,
+                _redeemParams.srcToken, _amount, _payload);
     }
 
     /**

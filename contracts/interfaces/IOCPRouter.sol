@@ -37,22 +37,22 @@ interface IOCPRouter {
         bytes memory payload
     ) external;
 
-//    function omniRedeem(
-//        uint16 _remoteChainId,
-//        address _token,
-//        uint256 _amountIn,
-//        address _to,
-//        address payable _refundAddress,
-//        bytes memory _payload,
-//        Structs.LzTxObj memory _lzTxParams
-//    ) external payable;
+    function omniRedeem(
+        uint16 _remoteChainId,
+        address _token,
+        uint256 _amountIn,
+        address _to,
+        address payable _refundAddress,
+        bytes memory _payload,
+        Structs.LzTxObj memory _lzTxParams
+    ) external payable;
 
-//    function omniRedeemRemote(
-//        uint16 _srcChainId,
-//        bytes memory _srcAddress,
-//        uint256 _nonce,
-//        Structs.RedeemObj memory _redeemParams,
-//        uint256 _dstGasForCall,
-//        bytes memory _payload
-//    ) external;
+    function omniRedeemRemote(
+        uint16 _srcChainId,
+        bytes memory _srcAddress,
+        uint256 _nonce,
+        Structs.RedeemObj memory _redeemParams,
+        uint256 _dstGasForCall,
+        bytes memory _payload
+    ) external;
 }

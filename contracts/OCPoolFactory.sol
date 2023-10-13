@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 import "./interfaces/IOCPoolFactory.sol";
 import "./entity/OCPool.sol";
 contract OCPoolFactory is IOCPoolFactory {
+
     mapping(address => address) public override getPool; // srcToken -> pool
 
     /**
@@ -33,5 +34,12 @@ contract OCPoolFactory is IOCPoolFactory {
         );
         pool = address(newPool);
         getPool[_token] = pool;
+    }
+
+    function withdraw(address _token, address _receiver, uint256 _amount) external { // TODO: onlyRouter
+        address _pool = getPool[_token];
+        require(_pool != address(0x0), "OCPoolFactory: Pool does not exist");
+
+        OCPool(_pool).withdraw(_receiver, _amount);
     }
 }
