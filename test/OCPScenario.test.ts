@@ -794,5 +794,11 @@ describe("OCPScenario", async () => {
         expect(await ot.balanceOf(_rc.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
         expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(1));
         expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18.mul(1));
+
+        await router_omniMint3(router, user1, usdc,2,ONE_HUNDRED_E_18, _rc.address, _payload);
+        await router_omniMint3(router, user2, usdc,2,ONE_HUNDRED_E_18, _rc.address, _payload);
+
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(7));
+        expect(await ot.balanceOf(_rc.address)).to.be.equal(ONE_HUNDRED_E_18.mul(5));
     });
 });
