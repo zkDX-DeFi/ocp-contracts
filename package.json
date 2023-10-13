@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "hardhat clean && hardhat compile",
     "test": "yarn compile && hardhat test ",
+    "test2": "hardhat test",
     "docs-clean": "rm -rf docs",
     "docs-gen": "hardhat docgen",
     "coverage": "yarn compile && npx hardhat coverage",

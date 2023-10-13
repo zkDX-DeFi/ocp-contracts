@@ -11,6 +11,7 @@ library Structs {
 
     struct MintObj {
         address srcToken;
+        address sender;
         uint256 amount;
         address to;
         string name;

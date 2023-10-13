@@ -52,7 +52,7 @@ describe("OCPOTM", async () => {
     it("check OCPTM.FUNC => omniMint", async () => {
         const tm = tokenManager;
 
-        const _mintParams = [usdc.address, 1000, user1.address, "", ""];
+        const _mintParams = [usdc.address, owner.address, 1000, user1.address, "", ""];
         const _srcChainId = 0;
 
         await expect(
@@ -91,6 +91,7 @@ describe("OCPOTM", async () => {
         await tokenManager.connect(user1).createOmniToken(
             [
                 usdc.address,
+                user1.address,
                 mintAmount,
                 user2.address,
                 "USDC",
@@ -117,6 +118,7 @@ describe("OCPOTM", async () => {
         const mintAmount = parseEther("1000");
         const _mintParams = {
             srcToken: usdc.address,
+            sender: user1.address,
             amount: mintAmount,
             to: user2.address,
             name: "USDC",
@@ -218,6 +220,7 @@ describe("OCPOTM", async () => {
 
         const _mintParams = {
             srcToken: usdc.address,
+            sender: owner.address,
             amount: ONE_THOUSAND_E_18,
             to: user2.address,
             name: "USDC",

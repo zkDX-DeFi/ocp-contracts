@@ -34,6 +34,6 @@ describe("OCPPoolFactory", async () => {
         const poolAddress = await f.getPool(token.address);
         const p = await ethers.getContractAt("OCPool", poolAddress);
         expect(await p.token()).to.equal(token.address);
-        expect(await p.router()).to.equal(AddressZero);
+        expect(await p.factory()).to.equal(poolFactory.address);
     });
 });

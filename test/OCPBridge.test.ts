@@ -54,6 +54,7 @@ describe("OCPB", async () => {
 
         const _mintParams = {
             srcToken: AddressZero,
+            sender: owner.address,
             srcPool: AddressZero,
             dstChainId: 0,
             amount: 0,
@@ -150,6 +151,7 @@ describe("OCPB", async () => {
             TYPE_DEPLOY_AND_MINT,
             [
                 usdc.address,
+                user1.address,
                 mintAmount,
                 user2.address,
                 "USDC",
@@ -168,6 +170,7 @@ describe("OCPB", async () => {
             TYPE_DEPLOY_AND_MINT,
             [
                 usdc.address,
+                user1.address,
                 mintAmount,
                 user2.address,
                 "USDC",
@@ -232,6 +235,7 @@ describe("OCPB", async () => {
         const _refundAddress = OPRUSER.address;
         const _mintParams = {
             srcToken: usdc.address,
+            sender: OPRUSER.address,
             amount : ONE_THOUSAND_E_18,
             to: OPRUSER.address,
             name: "USDC",

@@ -227,7 +227,8 @@ export async function getOCPR_BRIDGE_SETTINGS(owner: any) {
 
 export const getMintParams_ZERO = {
     srcToken: AddressZero,
-        srcPool: AddressZero,
+    srcPool: AddressZero,
+    sender: AddressZero,
     dstChainId: 0,
     amount: 0,
     to: AddressZero,

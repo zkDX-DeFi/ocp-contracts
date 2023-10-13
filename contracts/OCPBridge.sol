@@ -117,7 +117,7 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
     ) external view returns (uint256, uint256) {
         bytes memory payload;
         if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {
-            Structs.MintObj memory mintParams = Structs.MintObj(address(0x1), 1, address(0x1), "Name", "Symbol");
+            Structs.MintObj memory mintParams = Structs.MintObj(address(0x1), address(0x1), 1, address(0x1), "Name", "Symbol");
             payload = abi.encode(_type, mintParams, _userPayload, _lzTxParams.dstGasForCall);
         } else if (_type == Types.TYPE_REDEEM) {
             Structs.RedeemObj memory redeemParams = Structs.RedeemObj(address(0x1), 1, address(0x1));
@@ -228,17 +228,33 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
         }
     }
 
-    // TODO: revert it on src chain
-//    function revertMessage(uint16 _srcChainId, bytes calldata _srcAddress, uint64 _nonce, bytes calldata _payload) public payable virtual {
-//        // assert there is message to retry
-//        bytes32 payloadHash = failedMessages[_srcChainId][_srcAddress][_nonce];
-//        require(payloadHash != bytes32(0), "OCPBridge: no stored message");
-//        require(keccak256(_payload) == payloadHash, "OCPBridge: invalid payload");
-//        // clear the stored message
-//        failedMessages[_srcChainId][_srcAddress][_nonce] = bytes32(0);
-//        // revert it ...
-//        emit RevertMessageSuccess(_srcChainId, _srcAddress, _nonce, payloadHash);
-//    }
+    function revertMessage(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) public payable virtual {
+        // assert there is message to revert
+        bytes32 payloadHash = failedMessages[_srcChainId][_srcAddress][_nonce];
+        require(payloadHash != bytes32(0), "OCPBridge: no stored message");
+        require(keccak256(_payload) == payloadHash, "OCPBridge: invalid payload");
+        // clear the stored message
+        failedMessages[_srcChainId][_srcAddress][_nonce] = bytes32(0);
+
+        // revert on srcChain
+        uint8 _type;
+        assembly {
+            _type := mload(add(_payload, 32))
+        }
+
+        console.log("# Bridge.revert => _type", _type);
+        if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {
+            // decode sender and amount
+            (,Structs.MintObj memory _mintParams,,) = abi.decode(_payload, (uint8, Structs.MintObj, bytes, uint256));
+            bytes memory revertPayload = abi.encode(Types.TYPE_REDEEM,
+                Structs.RedeemObj(_mintParams.srcToken, _mintParams.amount, _mintParams.sender), "", 0);
+            // redeem
+            _lzSend(_srcChainId, revertPayload, payable(msg.sender), address(this), _txParamBuilder(_srcChainId, Types.TYPE_REDEEM,
+                Structs.LzTxObj(0, 0, "")), msg.value);
+        }
+
+        emit RevertMessageSuccess(_srcChainId, _srcAddress, _nonce, payloadHash);
+    }
 
     function updateTrustedRemotes(uint16[] calldata _remoteChainIds, bytes[] calldata _paths) external onlyOwner {
         require(_remoteChainIds.length == _paths.length, "OCPBridge: invalid params");

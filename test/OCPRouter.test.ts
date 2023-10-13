@@ -216,6 +216,7 @@ describe("OCPR", async () => {
         const _type = 1;
         const _mintParams = {
             srcToken: usdc.address,
+            sender: owner.address,
             amount: 0,
             to: user1.address,
             name: "USDC",

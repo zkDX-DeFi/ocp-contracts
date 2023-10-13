@@ -134,6 +134,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     ) internal {
         Structs.MintObj memory mintParams;
         mintParams.srcToken = _token;
+        mintParams.sender = msg.sender;
         mintParams.amount = _amountD18(_token, _amountIn);
         mintParams.to = _to;
         if (_type == Types.TYPE_DEPLOY_AND_MINT) {
@@ -267,11 +268,13 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bytes memory _payload
     ) external onlyBridge {
         uint256 _amount = _amountLocal(_redeemParams.srcToken, _redeemParams.amount);
+        console.log("# _amount: ", _amount);
         poolFactory.withdraw(_redeemParams.srcToken, _redeemParams.to, _amount);
 
-        if (_payload.length > 0)
+        if (_payload.length > 0){
             IOCPReceiver(_redeemParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce,
                 _redeemParams.srcToken, _amount, _payload);
+        }
     }
 
     /**
