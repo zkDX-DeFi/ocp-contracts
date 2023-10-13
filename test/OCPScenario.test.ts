@@ -571,4 +571,16 @@ describe("OCPScenario", async () => {
         expect(await ot.balanceOf(_rc.address)).to.be.equal(0);
         expect(await ot.balanceOf(_rc2.address)).to.be.equal(parseEther("123.456").mul(1));
     });
+
+    it("check ST => s12 => omniMint => user(2122)", async() => {
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 1);
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 2);
+
+        const poolAddress = await poolFactory.getPool(usdc.address);
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(await usdc.balanceOf(poolAddress)).to.be.equal(ONE_HUNDRED_E_18.mul(4));
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+    })
 });
