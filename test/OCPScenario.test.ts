@@ -12,7 +12,7 @@ import {
     getOCPB_omniRedeem,
     getPayloadUserA,
     getReceiverContract,
-    router_omniMint, getOmniToken, getLzTxObj
+    router_omniMint, getOmniToken, getLzTxObj, router_omniMint2
 } from "../helpers/utilsTest";
 import {formatEther, formatUnits, parseEther, parseUnits} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
@@ -647,5 +647,40 @@ describe("OCPScenario", async () => {
 
         const ot = await getOmniToken(tokenManager2, usdc);
         expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(2));
-    })
+    });
+
+    it("check ST => S13 => omniMint => user1(2122)", async() => {
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user1, usdc, 1);
+        await router_omniMint(router, user1, usdc, 2);
+        await router_omniMint(router, user2, usdc, 2);
+
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
+        expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
+
+        await router_omniMint(router, user2, usdc);
+        await router_omniMint(router, user2, usdc);
+        await router_omniMint(router, user1, usdc);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(6));
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+    });
+
+    it("check ST => S14 => omniMint2 => user1(2122)", async() => {
+        await router_omniMint2(router, user1, usdc);
+        await router_omniMint2(router, user1, usdc,1);
+        await router_omniMint2(router, user1, usdc);
+        await router_omniMint2(router, user2, usdc);
+
+        const ot = await getOmniToken(tokenManager2, usdc);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
+        expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
+
+        const pool = poolFactory.getPool(usdc.address);
+        expect(await usdc.totalSupply()).eq(ONE_HUNDRED_E_18.mul(4));
+        expect(await usdc.balanceOf(pool)).eq(ONE_HUNDRED_E_18.mul(4));
+    });
 });

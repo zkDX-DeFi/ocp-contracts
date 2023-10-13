@@ -289,6 +289,35 @@ export async function router_omniMint(
         {value: POINT_ONE_E_18});
 }
 
+export async function router_omniMint2(
+    router: any,
+    user: any,
+    token: any,
+    _type : any = 2,
+    _amountIn : any = ONE_HUNDRED_E_18,
+    _payload : any = "0x",
+    _lzTxObj : any = {
+        dstGasForCall: 0,
+        dstNativeAmount: 0,
+        dstNativeAddr: '0x',
+    },
+    _remoteChainId: any = CHAIN_ID_LOCAL2,
+    _refundAddress : any = user.address
+) {
+    await token.mint(user.address, _amountIn);
+    await token.connect(user).approve(router.address, _amountIn);
+    return await router.connect(user).omniMint(
+        _remoteChainId,
+        token.address,
+        _amountIn,
+        user.address,
+        _type,
+        _refundAddress,
+        _payload,
+        _lzTxObj,
+        {value: POINT_ONE_E_18});
+}
+
 export const getPayloadUserA = (userA: any) => {
     const abiCoder = new ethers.utils.AbiCoder();
     const payload = abiCoder.encode(['address'], [userA.address]);
