@@ -683,4 +683,21 @@ describe("OCPScenario", async () => {
         expect(await usdc.totalSupply()).eq(ONE_HUNDRED_E_18.mul(4));
         expect(await usdc.balanceOf(pool)).eq(ONE_HUNDRED_E_18.mul(4));
     });
+
+    it("check ST => S14 => omniMint2 => user1(212) + user2(2) => usdcD6", async() => {
+        const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
+        await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6);
+        await router_omniMint2(router, user1, usdcD6,1,ONE_HUNDRED_E_6);
+        await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6);
+        await router_omniMint2(router, user2, usdcD6,2,ONE_HUNDRED_E_6);
+
+        const pool = poolFactory.getPool(usdcD6.address);
+        expect(await usdcD6.totalSupply()).eq(ONE_HUNDRED_E_6.mul(4));
+        expect(await usdcD6.balanceOf(pool)).eq(ONE_HUNDRED_E_6.mul(4));
+
+        const ot = await getOmniToken(tokenManager2, usdcD6);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+        expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
+        expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
+    });
 });
