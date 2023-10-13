@@ -12,7 +12,7 @@ import {
     getOCPB_omniRedeem,
     getPayloadUserA,
     getReceiverContract,
-    router_omniMint, getOmniToken, getLzTxObj, router_omniMint2
+    router_omniMint, getOmniToken, getLzTxObj, router_omniMint2, getReceiverContract3
 } from "../helpers/utilsTest";
 import {formatEther, formatUnits, parseEther, parseUnits} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
@@ -700,4 +700,32 @@ describe("OCPScenario", async () => {
         expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
         expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18);
     });
+
+    it("check ST => S14 => omniMint2 => user1(212) + user2(2) => usdcD6 => payload != 0x", async() => {
+        const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
+        const _rc = getReceiverContract3(router2.address);
+        const _payload = getPayloadUserA(user1);
+
+        await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6, _payload);
+        await router_omniMint2(router, user1, usdcD6,1,ONE_HUNDRED_E_6, _payload);
+        await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6, _payload);
+        await router_omniMint2(router, user2, usdcD6,2,ONE_HUNDRED_E_6, _payload);
+
+        const ot = await getOmniToken(tokenManager2, usdcD6);
+        expect(ot.address).eq(AddressZero);
+    });
+
+    // it("check ST => S14 => omniMint2 => user1(212) + user2(2) => usdcD6 => payload != 0x v2", async() => {
+    //     const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
+    //     const _payload = getPayloadUserA(user1);
+    //     const _lzTxObj = getLzTxObj;
+    //
+    //     await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6, _payload, _lzTxObj);
+    //     await router_omniMint2(router, user1, usdcD6,1,ONE_HUNDRED_E_6, _payload, _lzTxObj);
+    //     await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6, _payload, _lzTxObj);
+    //     await router_omniMint2(router, user2, usdcD6,2,ONE_HUNDRED_E_6, _payload, _lzTxObj);
+    //
+    //     const ot = await getOmniToken(tokenManager2, usdcD6);
+    //     expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(3));
+    // });
 });

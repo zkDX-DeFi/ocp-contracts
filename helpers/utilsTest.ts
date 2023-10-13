@@ -329,6 +329,11 @@ export async function getReceiverContract(_router: any) {
     return _rc;
 }
 
+export async function getReceiverContract3(_router: any) {
+    const _rc = await deployNew("ReceiverContract3", [_router.address]);
+    return _rc;
+}
+
 export async function getOmniToken(_tokenManager2: any, _usdc: any, _srcChainId: any = CHAIN_ID_LOCAL) {
     const _omniTokenAddress = await _tokenManager2.omniTokens(_usdc.address, _srcChainId);
     const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
