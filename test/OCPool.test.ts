@@ -15,10 +15,7 @@ describe("OP", async () => {
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
         op = await deployNew("OCPool",[usdc.address]);
     });
-    it("check OP.FUNC => redeem", async() => {
-        await op.withdraw(
-            AddressZero,
-            0
-        );
+    it("check OP.FUNC => withdraw", async() => {
+        await op.withdraw(user1.address, 0);
     });
 });

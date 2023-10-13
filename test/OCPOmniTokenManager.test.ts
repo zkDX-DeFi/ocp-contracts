@@ -276,11 +276,14 @@ describe("OCPOTM", async () => {
         const pool = await deployNew("OCPool", [_tokenAddress]);
 
 
+        await expect(pool.connect(user1).withdraw(user1.address, ONE_THOUSAND_E_18)).to.be.revertedWith("OCPool: caller is not the factory");
+        await expect(pool.withdraw(user1.address, ONE_THOUSAND_E_18))
+            .to.be.revertedWith("OCPool: insufficient balance");
+
+        await usdc.mint(pool.address, ONE_THOUSAND_E_18);
         await pool.withdraw(user1.address, ONE_THOUSAND_E_18);
 
-
         expect(await pool.token()).eq(_tokenAddress);
-        expect(await pool.router()).eq(AddressZero);
     });
 
     it("check OT.FUNC => constructor()", async() => {

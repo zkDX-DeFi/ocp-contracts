@@ -15,6 +15,7 @@ export const CHAIN_ID_BASE_TEST = "84531";
 export const TYPE_DEPLOY_AND_MINT = 1;
 export const TYPE_MINT = 2;
 export const TYPE_REDEEM = 3;
+export const TYPE_TRANSFER = 4;
 
 // Gas Limits
 export const DEFAULT_GAS_LIMIT_1 = 4500000;
