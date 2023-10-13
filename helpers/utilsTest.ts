@@ -290,6 +290,66 @@ export async function router_omniMint(
         {value: POINT_ONE_E_18});
 }
 
+export async function router_omniMint2(
+    router: any,
+    user: any,
+    token: any,
+    _type : any = 2,
+    _amountIn : any = ONE_HUNDRED_E_18,
+    _toAddress: any = user.address,
+    _payload : any = "0x",
+    _lzTxObj : any = {
+        dstGasForCall: 0,
+        dstNativeAmount: 0,
+        dstNativeAddr: '0x',
+    },
+    _remoteChainId: any = CHAIN_ID_LOCAL2,
+    _refundAddress : any = user.address
+) {
+    await token.mint(user.address, _amountIn);
+    await token.connect(user).approve(router.address, _amountIn);
+    return await router.connect(user).omniMint(
+        _remoteChainId,
+        token.address,
+        _amountIn,
+        _toAddress,
+        _type,
+        _refundAddress,
+        _payload,
+        _lzTxObj,
+        {value: POINT_ONE_E_18});
+}
+
+export async function router_omniMint3(
+    router: any,
+    user: any,
+    token: any,
+    _type : any = 2,
+    _amountIn : any = ONE_HUNDRED_E_18,
+    _toAddress: any = user.address,
+    _payload : any = "0x",
+    _lzTxObj : any = {
+        dstGasForCall: 600000,
+        dstNativeAmount: 0,
+        dstNativeAddr: '0x',
+    },
+    _remoteChainId: any = CHAIN_ID_LOCAL2,
+    _refundAddress : any = user.address
+) {
+    await token.mint(user.address, _amountIn);
+    await token.connect(user).approve(router.address, _amountIn);
+    return await router.connect(user).omniMint(
+        _remoteChainId,
+        token.address,
+        _amountIn,
+        _toAddress,
+        _type,
+        _refundAddress,
+        _payload,
+        _lzTxObj,
+        {value: POINT_ONE_E_18});
+}
+
 export const getPayloadUserA = (userA: any) => {
     const abiCoder = new ethers.utils.AbiCoder();
     const payload = abiCoder.encode(['address'], [userA.address]);
@@ -301,8 +361,19 @@ export async function getReceiverContract(_router: any) {
     return _rc;
 }
 
+export async function getReceiverContract3(_router: any) {
+    const _rc = await deployNew("ReceiverContract3", [_router.address]);
+    return _rc;
+}
+
 export async function getOmniToken(_tokenManager2: any, _usdc: any, _srcChainId: any = CHAIN_ID_LOCAL) {
     const _omniTokenAddress = await _tokenManager2.omniTokens(_usdc.address, _srcChainId);
     const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
     return _omniToken;
+}
+
+export const getLzTxObj = {
+    dstGasForCall: 600000,
+    dstNativeAmount: 0,
+    dstNativeAddr: '0x',
 }
