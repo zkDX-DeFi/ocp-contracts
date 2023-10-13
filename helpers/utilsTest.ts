@@ -295,6 +295,7 @@ export async function router_omniMint2(
     token: any,
     _type : any = 2,
     _amountIn : any = ONE_HUNDRED_E_18,
+    _toAddress: any = user.address,
     _payload : any = "0x",
     _lzTxObj : any = {
         dstGasForCall: 0,
@@ -310,7 +311,7 @@ export async function router_omniMint2(
         _remoteChainId,
         token.address,
         _amountIn,
-        user.address,
+        _toAddress,
         _type,
         _refundAddress,
         _payload,
