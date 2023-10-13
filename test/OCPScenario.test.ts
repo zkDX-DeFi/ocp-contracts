@@ -815,4 +815,34 @@ describe("OCPScenario", async () => {
         expect(await ot.balanceOf(user1.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
         expect(await ot.balanceOf(user2.address)).to.be.equal(ONE_HUNDRED_E_18.mul(2));
     });
+
+    it("check STEST => S15 => omniMint => _payLoad is NOT 0x", async() => {
+        const b = bridge;
+        const b2 = bridge2;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const lz = lzEndpoint;
+        const lz2 = lzEndpoint2;
+
+        const _payload = ethers.utils.defaultAbiCoder
+            .encode(['address'], [user1.address]);
+
+        let tx = await router_omniMint(router, user1, usdc, 1, _payload);
+        console.log(`1: ${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+
+        await router_omniMint(router, user1, usdc, 1);
+        console.log(`2: ${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+
+        await router_omniMint(router, user1, usdc, 1);
+        console.log(`3: ${await tokenManager2.omniTokens(usdc.address, _srcChainId)}`);
+
+        // retry by user
+        const txReceipt = await ethers.provider.getTransactionReceipt(tx.hash);
+        const event = bridge2.interface.parseLog(txReceipt.logs[2]);
+        let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
+        await expect(b2.retryMessage(_srcChainId, path, 1, event.args._payload))
+            .to.be.revertedWith("Transaction reverted: function call to a non-contract account");
+
+        // TODO: revert it on src chain by user
+        // await b2.revertMessage(_srcChainId, path, 1, event.args._payload)...
+    });
 });
