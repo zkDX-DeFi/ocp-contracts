@@ -736,4 +736,24 @@ describe("OCPScenario", async () => {
         expect(await ot.balanceOf(_rc.address)).to.be.equal(ONE_HUNDRED_E_18.mul(3));
         expect(await ot.balanceOf(_rc2.address)).to.be.equal(ONE_HUNDRED_E_18.mul(1));
     });
+
+    it("check ST => S14 => omniMint2 => user1(212) + user2(2) => usdcD6 => payload != 0x v3", async() => {
+        const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
+        const _rc = await getReceiverContract3(router2);
+        const _payload = getPayloadUserA(user1);
+
+        await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6, _rc.address, _payload);
+        await router_omniMint2(router, user1, usdcD6,1,ONE_HUNDRED_E_6, _rc.address, _payload);
+        await router_omniMint2(router, user1, usdcD6,2,ONE_HUNDRED_E_6, _rc.address, _payload);
+        await router_omniMint2(router, user2, usdcD6,2,ONE_HUNDRED_E_6, _rc.address, _payload);
+
+        let ot = await getOmniToken(tokenManager2, usdcD6);
+        expect(ot.address).eq(AddressZero);
+
+        const _lzTxObj = getLzTxObj;
+        await router_omniMint2(router, user1, usdcD6,1,ONE_HUNDRED_E_6, _rc.address, _payload, _lzTxObj);
+        ot = await getOmniToken(tokenManager2, usdcD6);
+        expect(await ot.totalSupply()).to.be.equal(ONE_HUNDRED_E_18.mul(1));
+        expect(await ot.balanceOf(_rc.address)).to.be.equal(ONE_HUNDRED_E_18.mul(1));
+    });
 });
