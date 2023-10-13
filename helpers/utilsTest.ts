@@ -305,3 +305,9 @@ export async function getOmniToken(_tokenManager2: any, _usdc: any, _srcChainId:
     const _omniToken = await ethers.getContractAt("OmniToken", _omniTokenAddress);
     return _omniToken;
 }
+
+export const getLzTxObj = {
+    dstGasForCall: 600000,
+    dstNativeAmount: 0,
+    dstNativeAddr: '0x',
+}
