@@ -7,7 +7,7 @@ import {
     CHAIN_ID_LOCAL3,
     TYPE_DEPLOY_AND_MINT, TYPE_MINT, TYPE_REDEEM, TYPE_TRANSFER
 } from "../helpers/constants";
-import {getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
+import {getLzTxObj, getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 import {ONE_THOUSAND_E_18} from "../helpers/constantsTest";
@@ -296,5 +296,29 @@ describe("OCPB", async () => {
             .revertedWith("OCPBridge: invalid params");
 
         await b.updateTrustedRemotes(_remoteChainIds, _paths);
+    });
+
+    it("check OCPB.FUNC => omniMint => onlyRouter", async() => {
+        const b = bridge;
+
+        const _remoteChainId = CHAIN_ID_LOCAL2;
+        const _refundAddress = user1.address;
+        const _type = TYPE_DEPLOY_AND_MINT;
+        const _redeemObj = {
+            srcToken: usdc.address,
+            amount: 0,
+            to: user1.address,
+        };
+        const _payload = "0x";
+        const _lzTxObj = getLzTxObj;
+
+        await expect(b.omniRedeem(
+            _remoteChainId,
+            _refundAddress,
+            _type,
+            _redeemObj,
+            _payload,
+            _lzTxObj
+        )).to.be.revertedWith("OCPBridge: caller is not the router");
     });
 });
