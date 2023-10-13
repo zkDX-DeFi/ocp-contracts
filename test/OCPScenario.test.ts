@@ -842,7 +842,12 @@ describe("OCPScenario", async () => {
         await expect(b2.retryMessage(_srcChainId, path, 1, event.args._payload))
             .to.be.revertedWith("Transaction reverted: function call to a non-contract account");
 
-        // TODO: revert it on src chain by user
-        // await b2.revertMessage(_srcChainId, path, 1, event.args._payload)...
+        await expect(b2.revertMessage(_srcChainId, usdc.address, 1, event.args._payload))
+            .to.be.revertedWith("OCPBridge: no stored message");
+
+        const _payload2 = getPayloadUserA(user1);
+
+        await expect(b2.retryMessage(_srcChainId, usdc.address, 1, _payload2))
+            .to.be.reverted;
     });
 });
