@@ -36,4 +36,12 @@ describe("OCPPoolFactory", async () => {
         expect(await p.token()).to.equal(token.address);
         expect(await p.factory()).to.equal(poolFactory.address);
     });
+
+    it("check OCPF.FUNC=> WITHDRAW", async() => {
+        const f = poolFactory;
+        await expect(f.withdraw(usdc.address, user1.address, 0))
+            .to.be.revertedWith("OCPoolFactory: Pool does not exist");
+        await f.createPool(usdc.address);
+        await f.withdraw(usdc.address, user1.address, 0);
+    })
 });
