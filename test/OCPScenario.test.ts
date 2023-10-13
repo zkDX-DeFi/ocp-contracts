@@ -14,7 +14,7 @@ import {
     getReceiverContract,
     router_omniMint,getOmniToken
 } from "../helpers/utilsTest";
-import {formatEther, parseEther} from "ethers/lib/utils";
+import {formatEther, formatUnits, parseEther, parseUnits} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 import {
     ONE_HUNDRED_E_18,
@@ -475,14 +475,23 @@ describe("OCPScenario", async () => {
 
     it("check ST => s11 => omniMint =>  user1(122) => usdcD6", async() => {
         const usdcD6 = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
-
+        const _amount = parseUnits("123.456",6);
         await router_omniMint(router, user1, usdcD6, 1,
             "0x", user1.address,
-            ONE_HUNDRED_E_6, ONE_HUNDRED_E_6);
+            _amount, _amount);
 
         const ot = await getOmniToken(tokenManager2, usdcD6);
+        expect(await usdcD6.totalSupply()).to.be.equal(_amount);
+        expect(await ot.totalSupply()).to.be.equal(parseEther("123.456"));
 
+        await router_omniMint(router, user1, usdcD6, 2,
+            "0x", user1.address,
+            _amount, _amount);
+        await router_omniMint(router, user1, usdcD6, 2,
+            "0x", user1.address,
+            _amount, _amount);
 
-        console.log(`${formatEther(await ot.totalSupply())}`);
+        expect(await usdcD6.totalSupply()).to.be.equal(_amount.mul(3));
+        expect(await ot.totalSupply()).to.be.equal(parseEther("123.456").mul(3));
     });
 });
