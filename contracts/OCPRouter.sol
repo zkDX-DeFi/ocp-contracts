@@ -243,15 +243,20 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         uint256 _dstGasForCall,
         bytes memory _payload
     ) external onlyBridge {
-        address token;
         console.log("# OCPR.address: ", address(this));
         console.log("# OCPR.omniMintRemote => _mintParams.srcToken: ", _mintParams.srcToken);
         console.log("# OCPR.omniMintRemote => _type: ", _type);
         console.log("# OCPR.omniMintRemote => _mintParams.to: ", _mintParams.to);
-        if (_type == Types.TYPE_DEPLOY_AND_MINT)
-            token = tokenManager.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
-        else
-            token = tokenManager.omniMint(_mintParams, _srcChainId);
+
+        address token = tokenManager.omniTokens(_mintParams.srcToken, _srcChainId);
+        if (_type == Types.TYPE_DEPLOY_AND_MINT) {
+            if (token == address(0))
+                token = tokenManager.createOmniToken(_mintParams, _lzEndpoint, _srcChainId);
+            else
+                tokenManager.omniMint(_mintParams, _srcChainId);
+        } else {
+            tokenManager.omniMint(_mintParams, _srcChainId);
+        }
 
         if (_payload.length > 0) {
             console.log("# OCPR.omniMintRemote => _payload.length>0");
@@ -273,7 +278,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         poolFactory.withdraw(_redeemParams.srcToken, _redeemParams.to, _amount);
 
         console.log("# _payload.length: ", _payload.length);
-        if (_payload.length > 0){
+        if (_payload.length > 0) {
             IOCPReceiver(_redeemParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce,
                 _redeemParams.srcToken, _amount, _payload);
         }

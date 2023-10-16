@@ -115,6 +115,11 @@ describe("Router", async () => {
         let refundFee = await ethers.provider.getBalance(refund.address);
         expect(refundFee).to.gt(0);
         console.log("RefundFee:", formatEther(refundFee));
+
+        // check token list
+        let omniTokenList = await tokenManager2.getOmniTokenList();
+        expect(omniTokenList.length).to.equal(1);
+        expect(omniTokenList[0]).to.equal(usdc2Addr);
     });
 
     it("omni mint with payload suc - type 1", async () => {

@@ -36,14 +36,15 @@ import "hardhat/console.sol";
 */
 
 contract OCPOmniTokenManager is IOCPOmniTokenManager {
+
     address public router;
     address public timeLock;
-    constructor () {
-        timeLock = msg.sender;
-    }
     mapping(address => mapping(uint16 => address)) public omniTokens; // srcToken -> srcChainId -> omniToken
     mapping(address => mapping(uint16 => address)) public sourceTokens; // omniToken -> srcChainId -> srcToken
+    address[] public omniTokenList;
+
     event TokenCreated(address indexed srcToken, uint16 indexed srcChainId, address indexed token);
+
     modifier onlyRouter() {
         require(msg.sender == router, "OCPTokenManager: caller is not the router");
         _;
@@ -52,6 +53,10 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
     modifier onlyTimeLock() {
         require(msg.sender == timeLock, "OCPTokenManager: caller is not the timelock");
         _;
+    }
+
+    constructor () {
+        timeLock = msg.sender;
     }
 
     /**
@@ -107,6 +112,7 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
 
         omniTokens[_mintParams.srcToken][_srcChainId] = token;
         sourceTokens[token][_srcChainId] = _mintParams.srcToken;
+        omniTokenList.push(token);
         emit TokenCreated(_mintParams.srcToken, _srcChainId, token);
     }
 
@@ -161,6 +167,10 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
     */
     function omniBurn(address _omniToken, uint256 _amount, address _from) external onlyRouter override {
         IOmniToken(_omniToken).burn(_from, _amount);
+    }
+
+    function getOmniTokenList() external view returns (address[] memory) {
+        return omniTokenList;
     }
 
     /**
