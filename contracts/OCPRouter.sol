@@ -160,8 +160,9 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         Structs.RedeemObj memory redeemParams;
         redeemParams.srcToken = tokenManager.sourceTokens(_token, _remoteChainId);
         require(redeemParams.srcToken != address(0x0), "OCPRouter: no srcToken on destination chain");
-        redeemParams.to = _to;
+        redeemParams.sender = msg.sender;
         redeemParams.amount = _amountIn;
+        redeemParams.to = _to;
 
         // burn local token
         tokenManager.omniBurn(_token, _amountIn, msg.sender);
@@ -271,6 +272,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         console.log("# _amount: ", _amount);
         poolFactory.withdraw(_redeemParams.srcToken, _redeemParams.to, _amount);
 
+        console.log("# _payload.length: ", _payload.length);
         if (_payload.length > 0){
             IOCPReceiver(_redeemParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce,
                 _redeemParams.srcToken, _amount, _payload);

@@ -306,6 +306,7 @@ describe("OCPB", async () => {
         const _type = TYPE_DEPLOY_AND_MINT;
         const _redeemObj = {
             srcToken: usdc.address,
+            sender: owner.address,
             amount: 0,
             to: user1.address,
         };

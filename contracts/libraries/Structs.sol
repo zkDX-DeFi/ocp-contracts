@@ -20,6 +20,7 @@ library Structs {
 
     struct RedeemObj {
         address srcToken;
+        address sender;
         uint256 amount;
         address to;
     }

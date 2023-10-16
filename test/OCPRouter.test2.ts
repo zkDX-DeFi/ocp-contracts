@@ -37,8 +37,8 @@ describe("Router", async () => {
 
     async function isNonceSuc(nonce: number, dstChainId = CHAIN_ID_LOCAL2) {
         if (dstChainId == CHAIN_ID_LOCAL) {
-            let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
-            return HASH_256_ZERO == await bridge.failedMessages(CHAIN_ID_LOCAL, path, nonce);
+            let path = ethers.utils.solidityPack(['address', 'address'], [bridge2.address, bridge.address]);
+            return HASH_256_ZERO == await bridge.failedMessages(CHAIN_ID_LOCAL2, path, nonce);
         } else {
             let path = ethers.utils.solidityPack(['address', 'address'], [bridge.address, bridge2.address]);
             return HASH_256_ZERO == await bridge2.failedMessages(CHAIN_ID_LOCAL, path, nonce);
@@ -235,7 +235,7 @@ describe("Router", async () => {
         expect(await isNonceSuc(1)).to.eq(false);
 
         // revert by user
-        let msgFee = await router.quoteLayerZeroFee(CHAIN_ID_LOCAL2, TYPE_REDEEM, "0x", [0, 0, "0x"]);
+        let msgFee = await router2.quoteLayerZeroFee(CHAIN_ID_LOCAL, TYPE_REDEEM, "0x", [0, 0, "0x"]);
         await bridge2.revertMessage(CHAIN_ID_LOCAL, path, 1, event.args._payload, {value: msgFee[0]});
 
         // check tx suc
@@ -382,6 +382,114 @@ describe("Router", async () => {
         expect(await usdc.balanceOf(poolAddr)).to.equal(parseUnits("500", 6));
         expect(await usdc.balanceOf(receiver.address)).to.equal(parseUnits("500", 6));
 
+    });
+
+    it("redeem suc with payload", async () => {
+
+        let amountIn = parseUnits("1000", 6);
+        await usdc.mint(user1.address, amountIn.mul(2));
+        await usdc.connect(user1).approve(router.address, ApproveAmount);
+
+        // first: deploy and mint
+        await router.connect(user1).omniMint(
+            CHAIN_ID_LOCAL2,
+            usdc.address,
+            amountIn,
+            user2.address,
+            1,
+            user1.address,
+            "0x", [0, 0, "0x"],
+            {value: parseEther("0.1")}
+        )
+
+        // second: redeem with payload
+        let receiverContract = await deployNew("ReceiverContract", [router.address]);
+        let payload = ethers.utils.defaultAbiCoder.encode(['address'], [user1.address]);
+        let usdc2Addr = tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
+        let usdc2 = await ethers.getContractAt("OmniToken", usdc2Addr);
+        let amountIn2 = parseUnits("500", 18);
+
+        await router2.connect(user2).omniRedeem(
+            CHAIN_ID_LOCAL,
+            usdc2.address,
+            amountIn2,
+            receiverContract.address,
+            user2.address,
+            payload,
+            [300000, 0, "0x"],
+            {value: parseEther("0.1")}
+        )
+
+        // check tx suc
+        expect(await isNonceSuc(1, CHAIN_ID_LOCAL)).to.eq(true);
+
+        // check burn suc
+        expect(await usdc2.totalSupply()).to.equal(amountIn2);
+        expect(await usdc2.balanceOf(user2.address)).to.equal(amountIn2);
+
+        // check dst balances
+        let poolAddr = await poolFactory.getPool(usdc.address);
+        expect(await usdc.balanceOf(poolAddr)).to.equal(parseUnits("500", 6));
+        expect(await usdc.balanceOf(receiverContract.address)).to.equal(parseUnits("500", 6));
+
+    });
+
+    it("redeem fail, revert suc", async () => {
+
+        let amountIn = parseUnits("1000", 6);
+        await usdc.mint(user1.address, amountIn.mul(2));
+        await usdc.connect(user1).approve(router.address, ApproveAmount);
+
+        // first: deploy and mint
+        await router.connect(user1).omniMint(
+            CHAIN_ID_LOCAL2,
+            usdc.address,
+            amountIn,
+            user2.address,
+            1,
+            user1.address,
+            "0x", [0, 0, "0x"],
+            {value: parseEther("0.1")}
+        )
+
+        // second: redeem with payload
+        let payload = ethers.utils.defaultAbiCoder.encode(['address'], [user1.address]);
+        let usdc2Addr = tokenManager2.omniTokens(usdc.address, CHAIN_ID_LOCAL);
+        let usdc2 = await ethers.getContractAt("OmniToken", usdc2Addr);
+        let amountIn2 = parseUnits("500", 18);
+
+        let tx = await router2.connect(user2).omniRedeem(
+            CHAIN_ID_LOCAL,
+            usdc2.address,
+            amountIn2,
+            user1.address,
+            user2.address,
+            payload,
+            [300000, 0, "0x"],
+            {value: parseEther("0.1")}
+        )
+
+        // check tx fail
+        expect(await isNonceSuc(1, CHAIN_ID_LOCAL)).to.eq(false);
+
+        // retry fail
+        const txReceipt = await ethers.provider.getTransactionReceipt(tx.hash);
+        const event = bridge.interface.parseLog(txReceipt.logs[1]);
+        let path = ethers.utils.solidityPack(['address', 'address'], [bridge2.address, bridge.address]);
+        await expect(bridge.retryMessage(CHAIN_ID_LOCAL2, path, 1, event.args._payload)).to.be.reverted;
+        expect(await isNonceSuc(1, CHAIN_ID_LOCAL)).to.eq(false);
+
+        // revert by user
+        let msgFee = await router.quoteLayerZeroFee(CHAIN_ID_LOCAL2, TYPE_MINT, "0x", [0, 0, "0x"]);
+        await bridge.revertMessage(CHAIN_ID_LOCAL2, path, 1, event.args._payload, {value: msgFee[0]});
+
+        // check tx suc
+        expect(await isNonceSuc(1, CHAIN_ID_LOCAL)).to.eq(true);
+        expect(await isNonceSuc(2)).to.eq(true);
+
+        // balance refunded
+        expect(await usdc2.totalSupply()).to.equal(parseEther("1000"));
+        expect(await usdc2.balanceOf(user2.address)).to.eq(parseEther("1000"));
     });
 
 });

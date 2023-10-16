@@ -120,7 +120,7 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
             Structs.MintObj memory mintParams = Structs.MintObj(address(0x1), address(0x1), 1, address(0x1), "Name", "Symbol");
             payload = abi.encode(_type, mintParams, _userPayload, _lzTxParams.dstGasForCall);
         } else if (_type == Types.TYPE_REDEEM) {
-            Structs.RedeemObj memory redeemParams = Structs.RedeemObj(address(0x1), 1, address(0x1));
+            Structs.RedeemObj memory redeemParams = Structs.RedeemObj(address(0x1), address(0x1), 1, address(0x1));
             payload = abi.encode(_type, redeemParams, _userPayload, _lzTxParams.dstGasForCall);
         } else revert("OCPBridge: invalid quote type");
 
@@ -236,22 +236,32 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
         // clear the stored message
         failedMessages[_srcChainId][_srcAddress][_nonce] = bytes32(0);
 
-        // revert on srcChain
+        // decode type
         uint8 _type;
         assembly {
             _type := mload(add(_payload, 32))
         }
 
         console.log("# Bridge.revert => _type", _type);
+        uint8 revertType;
+        bytes memory revertPayload;
         if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {
+            revertType = Types.TYPE_REDEEM;
             // decode sender and amount
             (,Structs.MintObj memory _mintParams,,) = abi.decode(_payload, (uint8, Structs.MintObj, bytes, uint256));
-            bytes memory revertPayload = abi.encode(Types.TYPE_REDEEM,
-                Structs.RedeemObj(_mintParams.srcToken, _mintParams.amount, _mintParams.sender), "", 0);
-            // redeem
-            _lzSend(_srcChainId, revertPayload, payable(msg.sender), address(this), _txParamBuilder(_srcChainId, Types.TYPE_REDEEM,
-                Structs.LzTxObj(0, 0, "")), msg.value);
+            revertPayload = abi.encode(Types.TYPE_REDEEM,
+                Structs.RedeemObj(_mintParams.srcToken, address(0x1), _mintParams.amount, _mintParams.sender), "", 0);
+        } else if (_type == Types.TYPE_REDEEM) {
+            revertType = Types.TYPE_MINT;
+            // decode sender and amount
+            (,Structs.RedeemObj memory _redeemParams,,) = abi.decode(_payload, (uint8, Structs.RedeemObj, bytes, uint256));
+            revertPayload = abi.encode(Types.TYPE_MINT,
+                Structs.MintObj(_redeemParams.srcToken, address(0x1), _redeemParams.amount, _redeemParams.sender, "", ""), "", 0);
         }
+
+        // send revert message
+        _lzSend(_srcChainId, revertPayload, payable(msg.sender), address(this), _txParamBuilder(_srcChainId, revertType,
+            Structs.LzTxObj(0, 0, "")), msg.value);
 
         emit RevertMessageSuccess(_srcChainId, _srcAddress, _nonce, payloadHash);
     }
