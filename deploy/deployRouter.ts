@@ -4,7 +4,6 @@ import {AddressZero} from "../helpers/constants";
 const func: DeployFunction = async function ({deployments, getNamedAccounts, network, getChainId}) {
     const {deploy, get, execute} = deployments;
     const {owner} = await getNamedAccounts();
-    const chainId = await getChainId();
     console.log(`>> deploying OCPRouter...`);
 
     const OCPPoolFactory = await get("OCPoolFactory");
