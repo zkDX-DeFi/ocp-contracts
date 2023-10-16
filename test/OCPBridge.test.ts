@@ -7,10 +7,11 @@ import {
     CHAIN_ID_LOCAL3,
     TYPE_DEPLOY_AND_MINT, TYPE_MINT, TYPE_REDEEM, TYPE_TRANSFER
 } from "../helpers/constants";
-import {getLzTxObj, getOCPB_omniMInt, getOCPB_omniRedeem} from "../helpers/utilsTest";
+import {getLzTxObj, getOCPB_omniMInt, getOCPB_omniRedeem, router_omniMint} from "../helpers/utilsTest";
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {LZ_NOT_ENOUGH_FEES, OWNABLE_CALLER_IS_NOT_THE_OWNER} from "../helpers/errors";
 import {ONE_THOUSAND_E_18} from "../helpers/constantsTest";
+import {ethers} from "hardhat";
 
 describe("OCPB", async () => {
 
@@ -321,5 +322,24 @@ describe("OCPB", async () => {
             _payload,
             _lzTxObj
         )).to.be.revertedWith("OCPBridge: caller is not the router");
+    });
+
+    it("check OCPB.FUNC => revertMessage", async() => {
+        const b = bridge;
+        const _srcChainId = CHAIN_ID_LOCAL;
+        const _srcAddress = usdc.address;
+        const _nonce = 1;
+        const _payload = "0x";
+        console.log(`${await b.failedMessages(
+            _srcChainId,
+            _srcAddress,
+            _nonce,
+        )}`);
+
+        await expect(b.revertMessage(
+            _srcChainId,
+            _srcAddress,
+            _nonce,
+            _payload)).to.be.revertedWith("OCPBridge: no stored message");
     });
 });
