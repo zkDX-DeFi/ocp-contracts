@@ -17,6 +17,7 @@
     "setup2": "hardhat setupBridge --network goerli --target-networks base_testnet,zksync_testnet",
     "setup3": "hardhat setupBridge --network base_testnet --target-networks goerli,zksync_testnet",
     "omniMint": "hardhat run scripts/omniMint.ts --network zksync_testnet",
+    "omniRedeem": "hardhat run scripts/omniRedeem.ts --network goerli",
     "clean-deployments": "rm -rf deployments"
   },
   "keywords": [],

@@ -1,6 +1,6 @@
 import {formatEther, parseEther} from "ethers/lib/utils";
 import {deployments, ethers, getNamedAccounts} from "hardhat";
-import {ApproveAmount, CHAIN_ID_BASE_TEST, TYPE_DEPLOY_AND_MINT} from "../helpers/constants";
+import {ApproveAmount, TYPE_DEPLOY_AND_MINT, TYPE_MINT} from "../helpers/constants";
 import {getLzChainIdByNetworkName} from "../helpers/lzUtils";
 
 async function main() {
@@ -29,16 +29,17 @@ async function main() {
     const router = await ethers.getContract("OCPRouter");
     const factory = await ethers.getContract("OCPoolFactory");
 
-    let remoteLzChainId = getLzChainIdByNetworkName("goerli");
+    let remoteLzChainId = getLzChainIdByNetworkName("base_testnet");
     let allowance = await usdc.allowance(owner, router.address);
     if (allowance.lt(amountIn)){
         console.log("approving...");
         await (await usdc.approve(router.address, ApproveAmount)).wait();
     }
 
+    let executeType = TYPE_MINT;
     let msgFee = await router.quoteLayerZeroFee(
         remoteLzChainId,
-        TYPE_DEPLOY_AND_MINT,
+        executeType,
         "0x",
         {
             dstGasForCall: 0,
@@ -54,7 +55,7 @@ async function main() {
         usdc.address,
         amountIn,
         owner,
-        true,
+        executeType,
         owner,
         "0x",
         ({
@@ -65,7 +66,7 @@ async function main() {
         {value: msgFee[0]}
     );
     console.log(`omniMint tx: ${tx.hash}`);
-    // https://testnet.layerzeroscan.com/10165/address/0x31f88af2ef8d6bdf93b670ee12b1cbc4febf2be9/message/10121/address/0xb162d66707442bd48489be84eae4dd8dfc30c9db/nonce/1
+    // https://testnet.layerzeroscan.com
 
     let pool = await factory.getPool(usdc.address);
     console.log(`pool address: ${pool}`);
