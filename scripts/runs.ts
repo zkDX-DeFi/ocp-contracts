@@ -16,11 +16,11 @@ async function runs() {
     // expect(router.address).to.equal(router2);
 
     // ==================== getOmniTokenList  ====================
-    // let list = await tokenManager.getOmniTokenList();
-    // for (let i = 0; i < list.length; i++) {
-    //     let token = await ethers.getContractAt("Token", list[i]);
-    //     console.log(`token: ${token.address}, name: ${await token.name()}`);
-    // }
+    let list = await tokenManager.getOmniTokenList();
+    for (let i = 0; i < list.length; i++) {
+        let token = await ethers.getContractAt("Token", list[i]);
+        console.log(`token: ${token.address}, name: ${await token.name()}`);
+    }
 
     // ==================== getOmniTokenInfo  ====================
 }

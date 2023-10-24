@@ -3,7 +3,9 @@ import fs from "fs";
 let targets: any = [
     "OCPRouter",
     "OCPBridge",
-    "OCPOmniTokenManager"
+    "OCPOmniTokenManager",
+    "USDC",
+    "esZKDX"
 ]
 
 let result: any = {

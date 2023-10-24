@@ -8,35 +8,37 @@ async function main() {
     const {deploy} = deployments;
     const {owner} = await getNamedAccounts();
 
-    let usdc;
+    let tokenName = "esZKDX";
+    let token;
+
     try {
-        usdc = await ethers.getContract("USDC");
+        token = await ethers.getContract(tokenName);
     } catch (e) {
         console.log("deploying token...");
-        const deployed = await deploy('USDC', {
+        const deployed = await deploy(tokenName, {
             contract: 'Token',
             from: owner,
-            args: ["USDC", 18, 0, parseEther("1000000"), parseEther("1000")],
+            args: [tokenName, 18, 0, parseEther("1000000"), parseEther("1000")],
             log: true
         });
-        usdc = await ethers.getContractAt("Token", deployed.address);
+        token = await ethers.getContractAt("Token", deployed.address);
     }
 
-    let balance = await usdc.balanceOf(owner);
+    let balance = await token.balanceOf(owner);
     let amountIn = parseEther("100");
-    if (balance.lt(amountIn)) await usdc.faucet();
+    if (balance.lt(amountIn)) await token.faucet();
 
     const router = await ethers.getContract("OCPRouter");
     const factory = await ethers.getContract("OCPoolFactory");
 
-    let remoteLzChainId = getLzChainIdByNetworkName("base_testnet");
-    let allowance = await usdc.allowance(owner, router.address);
+    let remoteLzChainId = getLzChainIdByNetworkName("goerli");
+    let allowance = await token.allowance(owner, router.address);
     if (allowance.lt(amountIn)){
         console.log("approving...");
-        await (await usdc.approve(router.address, ApproveAmount)).wait();
+        await (await token.approve(router.address, ApproveAmount)).wait();
     }
 
-    let executeType = TYPE_MINT;
+    let executeType = TYPE_DEPLOY_AND_MINT;
     let msgFee = await router.quoteLayerZeroFee(
         remoteLzChainId,
         executeType,
@@ -52,7 +54,7 @@ async function main() {
     console.log("minting...")
     let tx = await router.omniMint(
         remoteLzChainId,
-        usdc.address,
+        token.address,
         amountIn,
         owner,
         executeType,
@@ -68,7 +70,7 @@ async function main() {
     console.log(`omniMint tx: ${tx.hash}`);
     // https://testnet.layerzeroscan.com
 
-    let pool = await factory.getPool(usdc.address);
+    let pool = await factory.getPool(token.address);
     console.log(`pool address: ${pool}`);
 }
 
