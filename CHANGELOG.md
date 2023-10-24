@@ -1,5 +1,59 @@
 # Changelog
 
+## [1.5.0](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.4.1...v1.5.0) (2023-10-24)
+
+
+### Features
+
+* add bridge revert message ([dade1c7](https://github.com/zkDX-DeFi/ocp-contracts/commit/dade1c74f5337dfb7605b0051c283f141dba66ce))
+* add bridge revert type 3 ([0cd630e](https://github.com/zkDX-DeFi/ocp-contracts/commit/0cd630ec45614c94f21c3004d58ecf79e7c66ffe))
+* add omniMintETH ([f8e9ec7](https://github.com/zkDX-DeFi/ocp-contracts/commit/f8e9ec742926510faa7a89757915749284091bc0))
+* add redeem type ([de6fa20](https://github.com/zkDX-DeFi/ocp-contracts/commit/de6fa20f4b7e98ddde61c6ca43263f32c231bfae))
+
+
+### Feature Improvements
+
+* add token list, optimize type 1 mint ([7bc9734](https://github.com/zkDX-DeFi/ocp-contracts/commit/7bc97341e2e26a3f2fc8d4e3a1b7a9da388485ea))
+
+
+### Tests
+
+* add new test cases && code coverage = 100% ([9544d18](https://github.com/zkDX-DeFi/ocp-contracts/commit/9544d1847e9492d7cc080fb74e7f0cb48842d310))
+* add test cases ([9d9ce69](https://github.com/zkDX-DeFi/ocp-contracts/commit/9d9ce69a69ecbef3f11a4cddeb0a0cb755fd3a69))
+* add test code ([1e3ce10](https://github.com/zkDX-DeFi/ocp-contracts/commit/1e3ce10709b93ab79f34c3fd519f37a3d3b0e0c9))
+* All files                  |    98.43 |    91.07 |      100 |     99.4 |                | ([c09a7df](https://github.com/zkDX-DeFi/ocp-contracts/commit/c09a7dffd2fe861010f534513daa380a3fc8a1f7))
+* All files                  |    98.43 |    91.96 |      100 |     99.4 | ([92a6b7c](https://github.com/zkDX-DeFi/ocp-contracts/commit/92a6b7cc0aad51ef55f03267eb63b826780691ed))
+* check ST =&gt; s10 => omniMint => _type = 122 => _payload = 0x => user2 ([6e448fe](https://github.com/zkDX-DeFi/ocp-contracts/commit/6e448fec9fda158ea94ec648b309c1e6fbabbc21))
+* check ST =&gt; s10 => omniMint => user1(122) + user2(22) ([3c74d93](https://github.com/zkDX-DeFi/ocp-contracts/commit/3c74d93aa124e180eb88c24c4a7fe5c527d9b4a4))
+* check ST =&gt; s11 => omniMint =>  user1(122) => usdcD6 ([ceed937](https://github.com/zkDX-DeFi/ocp-contracts/commit/ceed937771573dfd663a844a2765e25b8735b4e6))
+* check ST =&gt; s11 => omniMint => user1(2122) => usdcD6 => lzTxObj is inValid ([5759612](https://github.com/zkDX-DeFi/ocp-contracts/commit/5759612fcf872490f973a2aec6b7e68eff2d408f))
+* check ST =&gt; s12 => omniMint => user(2122) ([b595f24](https://github.com/zkDX-DeFi/ocp-contracts/commit/b595f241633b5aef18fa341208675a7ccc2f08d2))
+* check ST =&gt; s12 => omniMint => user(2122) => user1+user2 ([a6dcfba](https://github.com/zkDX-DeFi/ocp-contracts/commit/a6dcfbab253fd717c79485b50129d9889881c3c2))
+* check ST =&gt; s12 => omniMint => user(212222) => user1+user2 => payload != 0x ([ac89530](https://github.com/zkDX-DeFi/ocp-contracts/commit/ac89530efd14cc990c9eb833425918caaa6a03e0))
+* check ST =&gt; s12 => omniMint => user1(2121) + user2(12) ([ddf80a7](https://github.com/zkDX-DeFi/ocp-contracts/commit/ddf80a794caebd799d317b416e21b8787908324b))
+* check ST =&gt; S13 => omniMint => user1(2121) ([b98aa49](https://github.com/zkDX-DeFi/ocp-contracts/commit/b98aa49a731700b28603d3ff9fb269b192e61b33))
+* check ST =&gt; S14 => omniMint2 => user1(212) + user2(2) => usdcD6 ([1a19a14](https://github.com/zkDX-DeFi/ocp-contracts/commit/1a19a1450416188479643afca57bf1e1f9205a9a))
+* check ST =&gt; S15 => omniMint2 => user1(212) + user2(2) => usdcD18 ([acd9ecd](https://github.com/zkDX-DeFi/ocp-contracts/commit/acd9ecde03b6dd01e249a19b4236998a54c01a9f))
+* check ST =&gt; s9 => omniMint => _type = 2212 => _payload != 0x V2 ([187ca97](https://github.com/zkDX-DeFi/ocp-contracts/commit/187ca97a05384fb73c2065a2a9579a9104958f28))
+* code coverage = 100% ([0fd253c](https://github.com/zkDX-DeFi/ocp-contracts/commit/0fd253c1c49ad156db05368d3564489cb2d43d9c))
+* code coverage = 100% ([214337c](https://github.com/zkDX-DeFi/ocp-contracts/commit/214337c03811f71099f78c95aeee51e380b00330))
+* code coverage = 100% ([5bbc02f](https://github.com/zkDX-DeFi/ocp-contracts/commit/5bbc02fc6e497724f0dfbadf232ce7c6232d2ce2))
+* code coverage = 100% ([1afdfc4](https://github.com/zkDX-DeFi/ocp-contracts/commit/1afdfc4b50c9ba5a089aacd9049721d30ebef605))
+* code coverage = All files                  |    98.43 |    89.29 |      100 |     99.4 |                | ([4e76ccc](https://github.com/zkDX-DeFi/ocp-contracts/commit/4e76ccc0a3b56e95474a73322d2d23aeb66b9471))
+* new test cases ([c6e3b77](https://github.com/zkDX-DeFi/ocp-contracts/commit/c6e3b77fa0e0ef9cc95c7061eef7ae4cfc994ad0))
+* new test cases && code coverage = 100% ([ff59ea2](https://github.com/zkDX-DeFi/ocp-contracts/commit/ff59ea229bbf027f1d5b2425d841b9f6a8b7f012))
+* OCPB.SOL OCPBridge.sol            |      100 |    91.67 |      100 |      100 | ([50fd02e](https://github.com/zkDX-DeFi/ocp-contracts/commit/50fd02ee135bce84f97a25e230825a9790de628c))
+* router_omniMint2 in UTILS.TEST ([783bd32](https://github.com/zkDX-DeFi/ocp-contracts/commit/783bd322a0dde3c8ac84d5eb41c58834b0870ea7))
+* tuning failed test cases ([0ba21a3](https://github.com/zkDX-DeFi/ocp-contracts/commit/0ba21a3a0128a1122bfbd49969560d6301e69b10))
+
+
+### Build System
+
+* deploy testnet 1016 ([30f1442](https://github.com/zkDX-DeFi/ocp-contracts/commit/30f14425d46d24a527960bd10f43070981fef392))
+* deploy testnet 1016-2 ([24461ce](https://github.com/zkDX-DeFi/ocp-contracts/commit/24461cea617f504f13f8d6363adbd885c839ea08))
+* deploy testnet 1023, add redeem script ([6c2cc29](https://github.com/zkDX-DeFi/ocp-contracts/commit/6c2cc29f28a61b12f3cd285ffa89a9f538ced05b))
+* deploy testnet 1024 ([a432432](https://github.com/zkDX-DeFi/ocp-contracts/commit/a4324326682c0b0a22e9b9f2c6b3a37553444740))
+
 ## [1.4.1](https://github.com/zkDX-DeFi/ocp-contracts/compare/v1.4.0...v1.4.1) (2023-10-12)
 
 
