@@ -7,7 +7,7 @@ import {
     DEFAULT_GAS_LIMIT_2,
     DEFAULT_GAS_LIMIT_3
 } from "../../helpers/constants";
-import {getLzEndPointByChainId} from "../../helpers/utils";
+import {getLzEndPointByChainId, getWethByChainId} from "../../helpers/utils";
 import {ethers} from "hardhat";
 
 const func: DeployFunction = async function ({deployments, getNamedAccounts, network, getChainId}) {
@@ -41,11 +41,11 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
         log: true
     });
 
-    // const wethAddress2 = await getWethByChainId(CHAIN_ID_LOCAL2);
+    const wethAddress2 = await getWethByChainId(CHAIN_ID_LOCAL2);
     const OCPRouter2 = await deploy('OCPRouter2', {
         contract: 'OCPRouter',
         from: owner,
-        args: [OCPPoolFactory2.address, OCPTokenManager2.address, OCPBridge2.address, AddressZero],
+        args: [OCPPoolFactory2.address, OCPTokenManager2.address, OCPBridge2.address, wethAddress2],
         log: true
     });
 

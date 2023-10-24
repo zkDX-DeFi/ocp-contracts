@@ -1,5 +1,5 @@
 import {DeployFunction} from 'hardhat-deploy/types';
-import {AddressZero} from "../helpers/constants";
+import {getWethByChainId} from "../helpers/utils";
 
 const func: DeployFunction = async function ({deployments, getNamedAccounts, network, getChainId}) {
     const {deploy, get, execute} = deployments;
@@ -10,9 +10,11 @@ const func: DeployFunction = async function ({deployments, getNamedAccounts, net
     const OCPTokenManager = await get("OCPOmniTokenManager");
     const OCPBridge = await get("OCPBridge");
 
+    const chainId = await getChainId();
+    const wethAddress = await getWethByChainId(chainId);
     const OCPRouter = await deploy('OCPRouter', {
         from: owner,
-        args: [OCPPoolFactory.address, OCPTokenManager.address, OCPBridge.address, AddressZero],
+        args: [OCPPoolFactory.address, OCPTokenManager.address, OCPBridge.address, wethAddress],
         log: true,
         waitConfirmations: 1,
     });

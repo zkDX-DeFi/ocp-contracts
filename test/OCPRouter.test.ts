@@ -65,11 +65,14 @@ describe("OCPR", async () => {
         tokenManager: any,
         tokenManager2: any,
         poolFactory: any,
-        poolFactory2: any
+        poolFactory2: any,
+        weth: any,
+        weth2: any;
 
 
     beforeEach(async () => {
-        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2, poolFactory,poolFactory2} = await deployFixture());
+        ({owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2,
+            poolFactory, poolFactory2, weth, weth2} = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 18, 0, 0, 0]);
     });
     it("check OCPR.VARIABLES => bridge()", async () => {
@@ -507,8 +510,8 @@ describe("OCPR", async () => {
         expect(await r.bridge()).eq(b.address);
         expect(await r2.bridge()).eq(b2.address);
 
-        expect(await r.weth()).eq(AddressZero);
-        expect(await r2.weth()).eq(AddressZero);
+        expect(await r.weth()).eq(weth.address);
+        expect(await r2.weth()).eq(weth2.address);
     });
     it("check Router.FUNC => quoteLayerZeroFee", async() => {
         const r = router;

@@ -96,6 +96,29 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         _omniMint(_token, _remoteChainId, _amountIn, _to, _type, _refundAddress, _payload, _lzTxParams, msg.value);
     }
 
+    function omniMintETH(
+        uint16 _remoteChainId,
+        uint256 _amountIn,
+        address _to,
+        uint8 _type,
+        address payable _refundAddress,
+        bytes memory _payload,
+        Structs.LzTxObj memory _lzTxParams
+    ) external payable {
+        require(msg.value > _amountIn, "OCPRouter: send value must be greater than amountIn");
+        require(weth != address(0), "OCPRouter: weth not set yet");
+        require(_to != address(0), "OCPRouter: receiver invalid");
+        require(_amountIn > 0, "OCPRouter: amountIn must be greater than 0");
+
+        IWETH(weth).deposit{value: _amountIn}();
+
+        address _pool = poolFactory.getPool(weth);
+        if (_pool == address(0)) _pool = poolFactory.createPool(weth);
+        IERC20(weth).safeTransfer(_pool, _amountIn);
+
+        _omniMint(weth, _remoteChainId, _amountIn, _to, _type, _refundAddress, _payload, _lzTxParams, msg.value - _amountIn);
+    }
+
     /**
         * @dev Transfers tokens from sender to receiver on the same chain.
 
@@ -275,7 +298,14 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     ) external onlyBridge {
         uint256 _amount = _amountLocal(_redeemParams.srcToken, _redeemParams.amount);
         console.log("# _amount: ", _amount);
-        poolFactory.withdraw(_redeemParams.srcToken, _redeemParams.to, _amount);
+        if (_redeemParams.srcToken != weth) {
+            poolFactory.withdraw(_redeemParams.srcToken, _redeemParams.to, _amount);
+        } else {
+            poolFactory.withdraw(weth, address(this), _amount);
+            IWETH(weth).withdraw(_amount);
+            (bool sent,) = _redeemParams.to.call{value: _amount}("");
+            require(sent, "OCPRouter: failed to send ether");
+        }
 
         console.log("# _payload.length: ", _payload.length);
         if (_payload.length > 0) {
@@ -296,4 +326,6 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
     function updateBridge(address _bridge) external onlyOwner {
         bridge = IOCPBridge(_bridge);
     }
+
+    receive() external payable {}
 }

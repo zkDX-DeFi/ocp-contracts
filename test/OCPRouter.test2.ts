@@ -25,12 +25,13 @@ describe("Router", async () => {
         tokenManager: any,
         tokenManager2: any,
         poolFactory: any,
-        lzEndpoint2: any;
+        lzEndpoint2: any,
+        weth: any
 
     beforeEach(async () => {
         ({
-            owner, user1, user2, bridge, bridge2, router, router2,
-            tokenManager, tokenManager2, poolFactory, lzEndpoint2
+            owner, user1, user2, bridge, bridge2, router, router2, tokenManager, tokenManager2,
+            poolFactory, lzEndpoint2, weth
         } = await deployFixture());
         usdc = await deployNew("Token", ["USDC", 6, 0, 0, 0]);
     });
@@ -344,8 +345,8 @@ describe("Router", async () => {
         )
 
         // second: redeem
-        let msgFee = await router.quoteLayerZeroFee(
-            CHAIN_ID_LOCAL2,
+        let msgFee = await router2.quoteLayerZeroFee(
+            CHAIN_ID_LOCAL,
             TYPE_REDEEM,
             "0x",
             {
@@ -497,4 +498,95 @@ describe("Router", async () => {
         expect(await usdc2.balanceOf(user2.address)).to.eq(parseEther("1000"));
     });
 
+    it("omni mint ETH with payload suc - type 1", async () => {
+
+        let receiverContract = await deployNew("ReceiverContract", [router2.address]);
+        let amountIn = parseEther("0.5");
+
+        let payload = ethers.utils.defaultAbiCoder.encode(['address'], [user1.address]);
+        let msgFee = await router.quoteLayerZeroFee(
+            CHAIN_ID_LOCAL2,
+            TYPE_DEPLOY_AND_MINT,
+            payload,
+            {
+                dstGasForCall: 300000,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x'
+            });
+        console.log("DeployMint Fee:", formatEther(msgFee[0]));
+
+        await router.connect(user1).omniMintETH(
+            CHAIN_ID_LOCAL2,
+            amountIn,
+            receiverContract.address,
+            TYPE_DEPLOY_AND_MINT,
+            user1.address,
+            payload,
+            ({
+                dstGasForCall: 300000,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x'
+            }),
+            {value: msgFee[0].add(amountIn)}
+        );
+
+        let weth2Address = await tokenManager2.omniTokens(weth.address, CHAIN_ID_LOCAL);
+        let weth2 = await ethers.getContractAt("OmniToken", weth2Address);
+        expect(await weth2.totalSupply()).to.equal(amountIn);
+        expect(await receiverContract.token()).to.equal(weth2Address);
+        expect(await receiverContract.total()).to.equal(amountIn);
+        expect(await receiverContract.balance(user1.address)).to.eq(amountIn);
+
+    });
+
+    it("omni redeem ETH suc", async () => {
+
+        let amountIn = parseEther("0.5");
+
+        // first: deploy and mint
+        await router.connect(user1).omniMintETH(
+            CHAIN_ID_LOCAL2,
+            amountIn,
+            user2.address,
+            TYPE_DEPLOY_AND_MINT,
+            user1.address,
+            "0x", [0, 0, "0x"],
+            {value: parseEther("0.6")}
+        );
+
+        // second: redeem
+        let msgFee = await router2.quoteLayerZeroFee(
+            CHAIN_ID_LOCAL,
+            TYPE_REDEEM,
+            "0x", [0, 0, "0x"]);
+        console.log("Redeem Fee:", formatEther(msgFee[0]));
+
+        let weth2Addr = tokenManager2.omniTokens(weth.address, CHAIN_ID_LOCAL);
+        let weth2 = await ethers.getContractAt("OmniToken", weth2Addr);
+        let receiver = newWallet();
+
+        await router2.connect(user2).omniRedeem(
+            CHAIN_ID_LOCAL,
+            weth2Addr,
+            parseEther("0.3"),
+            receiver.address,
+            user2.address,
+            "0x",
+            ({
+                dstGasForCall: 0,
+                dstNativeAmount: 0,
+                dstNativeAddr: '0x'
+            }),
+            {value: msgFee[0]}
+        )
+
+        // check burn suc
+        expect(await weth2.totalSupply()).to.equal(parseEther("0.2"));
+        expect(await weth2.balanceOf(user2.address)).to.equal(parseEther("0.2"));
+
+        // check dst balances
+        let poolAddr = await poolFactory.getPool(weth.address);
+        expect(await weth.balanceOf(poolAddr)).to.equal(parseEther("0.2"));
+        expect(await ethers.provider.getBalance(receiver.address)).to.equal(parseEther("0.3"));
+    });
 });

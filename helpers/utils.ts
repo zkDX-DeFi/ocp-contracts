@@ -24,12 +24,14 @@ export async function deployFixture() {
         bridge: await ethers.getContract("OCPBridge"),
         router: await ethers.getContract("OCPRouter"),
         lzEndpoint: await ethers.getContract("LZEndpoint"),
+        weth: await ethers.getContract("WETH"),
 
         poolFactory2: await ethers.getContract("OCPoolFactory2"),
         tokenManager2: await ethers.getContract("OCPOmniTokenManager2"),
         bridge2: await ethers.getContract("OCPBridge2"),
         router2: await ethers.getContract("OCPRouter2"),
         lzEndpoint2: await ethers.getContract("LZEndpoint2"),
+        weth2: await ethers.getContract("WETH2"),
     }
 
     return {...users, ...contracts};
@@ -76,7 +78,8 @@ export async function getWethByChainId(chainId: any) {
             log: true
         });
     } else {
-        weth = await deploy("Token", {
+        weth = await deploy("WETH", {
+            contract: "Token",
             from: owner.address,
             args: ["WETH", 18, 0, 0, 0],
             log: true

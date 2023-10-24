@@ -1,4 +1,5 @@
 import {deployments, ethers, getNamedAccounts} from "hardhat";
+import {parseEther} from "ethers/lib/utils";
 
 async function runs() {
 
@@ -16,13 +17,16 @@ async function runs() {
     // expect(router.address).to.equal(router2);
 
     // ==================== getOmniTokenList  ====================
-    let list = await tokenManager.getOmniTokenList();
-    for (let i = 0; i < list.length; i++) {
-        let token = await ethers.getContractAt("Token", list[i]);
-        console.log(`token: ${token.address}, name: ${await token.name()}`);
-    }
+    // let list = await tokenManager.getOmniTokenList();
+    // for (let i = 0; i < list.length; i++) {
+    //     let token = await ethers.getContractAt("Token", list[i]);
+    //     console.log(`token: ${token.address}, name: ${await token.name()}`);
+    // }
 
     // ==================== getOmniTokenInfo  ====================
+
+    let exZKDX = await ethers.getContract("esZKDX")
+    await exZKDX.mint("0x4e8730f175811C3079C411309DB823E62a4f9598", parseEther("10000"));
 }
 
 runs().then(() => process.exit(0))
