@@ -8,7 +8,7 @@ async function main() {
     const {deploy} = deployments;
     const {owner} = await getNamedAccounts();
 
-    let tokenName = "esZKDX";
+    let tokenName = "tUSDC";
     let token;
 
     try {
@@ -31,7 +31,7 @@ async function main() {
     const router = await ethers.getContract("OCPRouter");
     const factory = await ethers.getContract("OCPoolFactory");
 
-    let remoteLzChainId = getLzChainIdByNetworkName("goerli");
+    let remoteLzChainId = getLzChainIdByNetworkName("linea_testnet");
     let allowance = await token.allowance(owner, router.address);
     if (allowance.lt(amountIn)){
         console.log("approving...");

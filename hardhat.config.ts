@@ -57,7 +57,11 @@ const config: HardhatUserConfig = {
             zksync: true,
             url: secret.url_zksync_testnet,
             accounts: [secret.key_dev]
-        }
+        },
+        linea_testnet: {
+            url: secret.url_linea_testnet,
+            accounts: [secret.key_dev],
+        },
     },
     contractSizer: {
         runOnCompile: false

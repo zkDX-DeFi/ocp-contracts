@@ -4,13 +4,12 @@ let targets: any = [
     "OCPRouter",
     "OCPBridge",
     "OCPOmniTokenManager",
-    "USDC",
-    "esZKDX"
+    "tUSDC"
 ]
 
 let result: any = {
     "zksync_testnet": {},
-    "goerli": {},
+    "linea_testnet": {},
     "base_testnet": {}
 }
 
@@ -19,7 +18,7 @@ async function main() {
     console.log("=== merge abi start at %s ===", new Date().toString());
 
     addresses("zksync_testnet");
-    addresses("goerli");
+    addresses("linea_testnet");
     addresses("base_testnet");
 
     fs.writeFileSync('scripts/files/addresses.json', JSON.stringify(result));

@@ -1,11 +1,11 @@
 import {deployments, ethers, run} from "hardhat";
 import {
     CHAIN_ID_BASE_TEST,
-    CHAIN_ID_GOERLI,
+    CHAIN_ID_GOERLI, CHAIN_ID_LINEA_TESTNET,
     CHAIN_ID_LOCAL,
     CHAIN_ID_LOCAL2, CHAIN_ID_ZKSYNC_TESTNET,
     ENDPOINT_BASE_TESTNET,
-    ENDPOINT_GOERLI, ENDPOINT_ZKSYNC_TESTNET
+    ENDPOINT_GOERLI, ENDPOINT_LINEA_TESTNET, ENDPOINT_ZKSYNC_TESTNET
 } from "./constants";
 
 export async function deployFixture() {
@@ -60,6 +60,8 @@ export async function getLzEndPointByChainId(chainId: any) {
         return ENDPOINT_BASE_TESTNET;
     } else if (chainId == CHAIN_ID_ZKSYNC_TESTNET) {
         return ENDPOINT_ZKSYNC_TESTNET;
+    } else if (chainId == CHAIN_ID_LINEA_TESTNET) {
+        return ENDPOINT_LINEA_TESTNET;
     }
     if (!endpoint)
         throw new Error("lzEndpoint not found on network " + chainId);
