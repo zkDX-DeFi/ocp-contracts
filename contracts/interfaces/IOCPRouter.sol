@@ -16,15 +16,15 @@ interface IOCPRouter {
         Structs.LzTxObj memory _lzTxParams
     ) external payable;
 
-//    function omniMintETH(
-//        uint16 _remoteChainId,
-//        uint256 _amountIn,
-//        address _to,
-//        bool _needDeploy,
-//        address payable _refundAddress,
-//        bytes memory _payload,
-//        Structs.LzTxObj memory _lzTxParams
-//    ) external payable;
+    function omniMintETH(
+        uint16 _remoteChainId,
+        uint256 _amountIn,
+        address _to,
+        uint8 _type,
+        address payable _refundAddress,
+        bytes memory _payload,
+        Structs.LzTxObj memory _lzTxParams
+    ) external payable;
 
     function omniMintRemote(
         uint16 _srcChainId,

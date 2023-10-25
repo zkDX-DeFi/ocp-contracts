@@ -7,7 +7,7 @@ async function main() {
 
     const {owner} = await getNamedAccounts();
     let tokenManager = await ethers.getContract("OCPOmniTokenManager")
-    let redeemToken = "USDC";
+    let redeemToken = "WETH";
 
     let list = await tokenManager.getOmniTokenList();
     let omniTokenAddr = "";
@@ -43,7 +43,7 @@ async function main() {
     let tx = await router.omniRedeem(
         remoteLzChainId,
         omniTokenAddr,
-        parseEther("50"),
+        parseEther("0.0001"),
         owner,
         owner,
         "0x",

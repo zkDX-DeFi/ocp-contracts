@@ -104,7 +104,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         address payable _refundAddress,
         bytes memory _payload,
         Structs.LzTxObj memory _lzTxParams
-    ) external payable {
+    ) external override payable {
         require(msg.value > _amountIn, "OCPRouter: send value must be greater than amountIn");
         require(weth != address(0), "OCPRouter: weth not set yet");
         require(_to != address(0), "OCPRouter: receiver invalid");
