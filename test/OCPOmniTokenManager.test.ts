@@ -159,44 +159,44 @@ describe("OCPOTM", async () => {
         expect (await tm.router()).eq(r2.address);
     });
 
-    it("check OCPTM.FUNC => approveSourceTokens()", async() => {
-        const tm = tokenManager;
-        const _omniTokens = [usdc.address];
-        const _srcTokens = [usdc.address];
-        const _srcChainIds = CHAIN_ID_LOCAL;
-        await tm.approveSourceTokens(_omniTokens, _srcChainIds, _srcTokens);
-
-        const _invalidOmniTokens = [usdc.address, usdc.address];
-        await expect(tm
-            .approveSourceTokens(_invalidOmniTokens, _srcChainIds, _srcTokens))
-            .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
-
-        const invalidUser = user1;
-        await expect(tm
-            .connect(invalidUser)
-            .approveSourceTokens(_omniTokens, _srcChainIds, _srcTokens))
-            .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
-    });
-
-    it("check OCPTM.FUNC => requestAddSourceTokens()", async() => {
-        const tm = tokenManager;
-        const _srcTokens = [usdc.address];
-        const _srcChainIds = [CHAIN_ID_LOCAL];
-        const _omniToken = usdc.address;
-
-        await tm.requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken);
-
-        const _invalidSrcTokens = [usdc.address, usdc.address];
-        await expect(tm
-            .requestAddSourceTokens(_invalidSrcTokens, _srcChainIds, _omniToken))
-            .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
-
-        const _invalidUser = user1;
-        await expect(tm
-            .connect(_invalidUser)
-            .requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken))
-            .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
-    });
+    // it("check OCPTM.FUNC => approveSourceTokens()", async() => {
+    //     const tm = tokenManager;
+    //     const _omniTokens = [usdc.address];
+    //     const _srcTokens = [usdc.address];
+    //     const _srcChainIds = CHAIN_ID_LOCAL;
+    //     await tm.approveSourceTokens(_omniTokens, _srcChainIds, _srcTokens);
+    //
+    //     const _invalidOmniTokens = [usdc.address, usdc.address];
+    //     await expect(tm
+    //         .approveSourceTokens(_invalidOmniTokens, _srcChainIds, _srcTokens))
+    //         .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
+    //
+    //     const invalidUser = user1;
+    //     await expect(tm
+    //         .connect(invalidUser)
+    //         .approveSourceTokens(_omniTokens, _srcChainIds, _srcTokens))
+    //         .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
+    // });
+    //
+    // it("check OCPTM.FUNC => requestAddSourceTokens()", async() => {
+    //     const tm = tokenManager;
+    //     const _srcTokens = [usdc.address];
+    //     const _srcChainIds = [CHAIN_ID_LOCAL];
+    //     const _omniToken = usdc.address;
+    //
+    //     await tm.requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken);
+    //
+    //     const _invalidSrcTokens = [usdc.address, usdc.address];
+    //     await expect(tm
+    //         .requestAddSourceTokens(_invalidSrcTokens, _srcChainIds, _omniToken))
+    //         .to.be.revertedWith(OCPTOKENMANAGER_INVALID_INPUT);
+    //
+    //     const _invalidUser = user1;
+    //     await expect(tm
+    //         .connect(_invalidUser)
+    //         .requestAddSourceTokens(_srcTokens, _srcChainIds, _omniToken))
+    //         .to.be.revertedWith(OCPTOKENMANAGER_CALLER_IS_NOT_THE_TIMELOCK);
+    // });
 
     it("check OCPTM.FUNC => updateTimeLock()", async() => {
         const tm = tokenManager;

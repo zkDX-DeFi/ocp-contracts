@@ -174,56 +174,24 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
     }
 
     /**
-        * @dev Add a source token
-
-        * Requirements:
-
-            * `_srcToken` cannot be the zero address
-
-            * `_srcChainId` cannot be the zero address
-
-            * `_omniToken` cannot be the zero address
-
-            * only the timelock can call this function
-
-        * @param _srcTokens The address of the source token
-        * @param _srcChainIds The source chain id
-        * @param _omniToken The address of the OmniToken
-    */
-    function requestAddSourceTokens(
-        address[] calldata _srcTokens,
-        uint16[] calldata _srcChainIds,
-        address _omniToken
-    ) external onlyTimeLock {
-        // TODO: alternative to addSourceToken -- 1
-        require(_srcTokens.length == _srcChainIds.length, "OCPTokenManager: invalid input");
-        for (uint256 i = 0; i < _srcTokens.length; i++) {
-            sourceTokens[_srcTokens[i]][_srcChainIds[i]] = _omniToken;
-        }
-    }
-
-    /**
-        * @dev Approve a source token
+        * @dev add source tokens
 
         * Requirements:
 
             * `_omniTokens` cannot be the zero address
-
-            * `_srcChainId` cannot be the zero address
-
+            * `_srcChainIds` cannot be the zero address
             * `_srcTokens` cannot be the zero address
-
             * only the timelock can call this function
 
         * @param _omniTokens The address of the OmniToken
-        * @param _srcChainId The source chain id
+        * @param _srcChainIds The source chain id
         * @param _srcTokens The address of the source token
     */
-    function approveSourceTokens(address[] calldata _omniTokens, uint16 _srcChainId, address[] calldata _srcTokens) external onlyTimeLock {
-        // TODO: alternative to addSourceToken -- 2
-        require(_omniTokens.length == _srcTokens.length, "OCPTokenManager: invalid input");
-        for (uint256 i = 0; i < _omniTokens.length; i++) {
-            sourceTokens[_omniTokens[i]][_srcChainId] = _srcTokens[i];
+    function addSourceTokens(address[] calldata _srcTokens, uint16[] calldata _srcChainIds, address[] calldata _omniTokens) external onlyTimeLock {
+        require(_srcTokens.length == _srcChainIds.length && _srcTokens.length == _omniTokens.length, "OCPTokenManager: invalid length");
+        for (uint256 i = 0; i < _srcTokens.length; i++) {
+            omniTokens[_srcTokens[i]][_srcChainIds[i]] = _omniTokens[i];
+            sourceTokens[_omniTokens[i]][_srcChainIds[i]] = _srcTokens[i];
         }
     }
 
