@@ -82,8 +82,8 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         Structs.LzTxObj memory _lzTxParams
     ) external override payable {
         require(_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT, "OCPRouter: invalid type");
-        console.log("# OCPR.address: ", address(this));
-        console.log("# OCPR.omniMint => _token: ", _token);
+        // console.log("# OCPR.address: ", address(this));
+        // console.log("# OCPR.omniMint => _token: ", _token);
 
         require(_token != address(0), "OCPRouter: token invalid");
         require(_to != address(0), "OCPRouter: receiver invalid");
@@ -266,10 +266,10 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         uint256 _dstGasForCall,
         bytes memory _payload
     ) external onlyBridge {
-        console.log("# OCPR.address: ", address(this));
-        console.log("# OCPR.omniMintRemote => _mintParams.srcToken: ", _mintParams.srcToken);
-        console.log("# OCPR.omniMintRemote => _type: ", _type);
-        console.log("# OCPR.omniMintRemote => _mintParams.to: ", _mintParams.to);
+        // console.log("# OCPR.address: ", address(this));
+        // console.log("# OCPR.omniMintRemote => _mintParams.srcToken: ", _mintParams.srcToken);
+        // console.log("# OCPR.omniMintRemote => _type: ", _type);
+        // console.log("# OCPR.omniMintRemote => _mintParams.to: ", _mintParams.to);
 
         address token = tokenManager.omniTokens(_mintParams.srcToken, _srcChainId);
         if (_type == Types.TYPE_DEPLOY_AND_MINT) {
@@ -282,7 +282,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         }
 
         if (_payload.length > 0) {
-            console.log("# OCPR.omniMintRemote => _payload.length>0");
+            // console.log("# OCPR.omniMintRemote => _payload.length>0");
             IOCPReceiver(_mintParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce, token,
                 _mintParams.amount, _payload);
         }
@@ -297,7 +297,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
         bytes memory _payload
     ) external onlyBridge {
         uint256 _amount = _amountLocal(_redeemParams.srcToken, _redeemParams.amount);
-        console.log("# _amount: ", _amount);
+        // console.log("# _amount: ", _amount);
         if (_redeemParams.srcToken != weth) {
             poolFactory.withdraw(_redeemParams.srcToken, _redeemParams.to, _amount);
         } else {
@@ -307,7 +307,7 @@ contract OCPRouter is IOCPRouter, Ownable, ReentrancyGuard {
             require(sent, "OCPRouter: failed to send ether");
         }
 
-        console.log("# _payload.length: ", _payload.length);
+        // console.log("# _payload.length: ", _payload.length);
         if (_payload.length > 0) {
             IOCPReceiver(_redeemParams.to).ocpReceive{gas: _dstGasForCall}(_srcChainId, _srcAddress, _nonce,
                 _redeemParams.srcToken, _amount, _payload);

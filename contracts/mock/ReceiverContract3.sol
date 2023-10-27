@@ -17,6 +17,6 @@ contract ReceiverContract3 is IOCPReceiver {
     }
 
     function ocpReceive(uint16, bytes memory, uint256, address _token, uint256 _amount, bytes memory _payload) external {
-        console.log("AAA");
+        // console.log("AAA");
     }
 }

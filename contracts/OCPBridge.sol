@@ -64,10 +64,10 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
     ) external payable { // TODO: onlyRouter
         bytes memory payload = abi.encode(_type, _mintParams, _payload, _lzTxParams.dstGasForCall);
 
-        console.log("# BRIDGE.address: ", address(this));
-        console.log("# BRIDGE.omniMint() => _mintParams.srcToken: ", _mintParams.srcToken);
-        console.log("# BRIDGE.omniMint() => _remoteChainId: ", _remoteChainId);
-        console.log("# BRIDGE.omniMint() => _type: ", _type);
+        // console.log("# BRIDGE.address: ", address(this));
+        // console.log("# BRIDGE.omniMint() => _mintParams.srcToken: ", _mintParams.srcToken);
+        // console.log("# BRIDGE.omniMint() => _remoteChainId: ", _remoteChainId);
+        // console.log("# BRIDGE.omniMint() => _type: ", _type);
         _lzSend(_remoteChainId, payload, _refundAddress, address(this), _txParamBuilder(_remoteChainId, _type, _lzTxParams), msg.value);
     }
 
@@ -163,9 +163,9 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
         }
 
         uint256 totalGas = gasLookup[_chainId][_type] + _lzTxParams.dstGasForCall;
-        console.log("# BRIDGE._txParamBuilder => _chainId: ", _chainId);
-        console.log("# BRIDGE._txParamBuilder => _type: ", _type);
-        console.log("# BRIDGE._txParamBuilder => totalGas ", totalGas);
+        // console.log("# BRIDGE._txParamBuilder => _chainId: ", _chainId);
+        // console.log("# BRIDGE._txParamBuilder => _type: ", _type);
+        // console.log("# BRIDGE._txParamBuilder => totalGas ", totalGas);
 
         if (_lzTxParams.dstNativeAmount > 0 && dstNativeAddr != address(0x0)) {
             lzTxParam = abi.encodePacked(uint16(2), totalGas, _lzTxParams.dstNativeAmount, _lzTxParams.dstNativeAddr);
@@ -202,21 +202,21 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
         * @param _payload user payload
     */
     function _nonblockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
-        console.log("# Bridge.address: ", address(this));
+        // console.log("# Bridge.address: ", address(this));
 
         uint8 _type;
         assembly {
             _type := mload(add(_payload, 32))
         }
 
-        console.log("# Bridge._nonblockingLzReceive => _type", _type);
+        // console.log("# Bridge._nonblockingLzReceive => _type", _type);
         // routing types
         if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {
             (, Structs.MintObj memory _mintParams,
                 bytes memory payload,
                 uint256 _dstGasForCall
             ) = abi.decode(_payload, (uint8, Structs.MintObj, bytes, uint256));
-            console.log("# Bridge._nonblockingLzReceive => _mintParams.srcToken:", _mintParams.srcToken);
+            // console.log("# Bridge._nonblockingLzReceive => _mintParams.srcToken:", _mintParams.srcToken);
             router.omniMintRemote(_srcChainId, _srcAddress, _nonce, _type, _mintParams,
                 address(lzEndpoint), _dstGasForCall, payload);
         } else if (_type == Types.TYPE_REDEEM) {
@@ -242,7 +242,7 @@ contract OCPBridge is NonblockingLzApp, IOCPBridge {
             _type := mload(add(_payload, 32))
         }
 
-        console.log("# Bridge.revert => _type", _type);
+        // console.log("# Bridge.revert => _type", _type);
         uint8 revertType;
         bytes memory revertPayload;
         if (_type == Types.TYPE_DEPLOY_AND_MINT || _type == Types.TYPE_MINT) {

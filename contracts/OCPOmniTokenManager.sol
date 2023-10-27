@@ -103,12 +103,12 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         );
         token = address(newToken);
 
-        console.log("# OCPOTM.address: ", address(this));
-        console.log("# OCPOTM.createOmniToken => _mintParams.srcToken: ", _mintParams.srcToken);
-        console.log("# OCPOTM.createOmniToken => _srcChainId: ", _srcChainId);
-        console.log("# OCPOTM.createOmniToken => token: ", token);
-        console.log("# OCPOTM.createOmniToken => _mintParams.amount", _mintParams.amount);
-        console.log("# OCPOTM.createOmniToken => _mintParams.to", _mintParams.to);
+        // console.log("# OCPOTM.address: ", address(this));
+        // console.log("# OCPOTM.createOmniToken => _mintParams.srcToken: ", _mintParams.srcToken);
+        // console.log("# OCPOTM.createOmniToken => _srcChainId: ", _srcChainId);
+        // console.log("# OCPOTM.createOmniToken => token: ", token);
+        // console.log("# OCPOTM.createOmniToken => _mintParams.amount", _mintParams.amount);
+        // console.log("# OCPOTM.createOmniToken => _mintParams.to", _mintParams.to);
 
         omniTokens[_mintParams.srcToken][_srcChainId] = token;
         sourceTokens[token][_srcChainId] = _mintParams.srcToken;
@@ -141,8 +141,8 @@ contract OCPOmniTokenManager is IOCPOmniTokenManager {
         uint16 _srcChainId
     ) external onlyRouter override returns (address token) {
         token = omniTokens[_mintParams.srcToken][_srcChainId];
-        console.log("# OCPOTM.address: ", address(this));
-        console.log("# OCPOTM.omniMint => token: ", address(token));
+        // console.log("# OCPOTM.address: ", address(this));
+        // console.log("# OCPOTM.omniMint => token: ", address(token));
 
         require(token != address(0x0), "OCPTokenManager: omni token is not deployed yet");
         IOmniToken(token).mint(_mintParams.to, _mintParams.amount);
